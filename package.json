@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "import:trello": "node --env-file-if-exists=.env scripts/import-trello.mjs",
     "import:trello-export": "node scripts/import-trello-export.mjs",
+    "classify:inventory": "node scripts/classify-inventory.mjs --write",
     "migrate:media": "node --env-file-if-exists=.env scripts/migrate-media-to-supabase.mjs"
   },
   "dependencies": {

@@ -49,6 +49,14 @@ The resumable migration downloads the imported Trello image previews with your a
 
 The older `npm run import:trello` command is still available when you need a fresh API import directly from a board.
 
+## Refresh inventory classifications
+
+```powershell
+npm run classify:inventory
+```
+
+This deterministically assigns every vehicle to a body type and adds supported Hybrid, Electric, Diesel, Manual, Performance, Luxury, and Brand New tags from explicit title and description evidence. It updates `src/data/seed.json` and regenerates `supabase/seed/classified-inventory.sql` for the shared database.
+
 ## Team access
 
 Team access is allowlisted in `public.team_members`. Add an email there before that person signs up. Row-level security denies inventory and media access to signed-out or unapproved users.

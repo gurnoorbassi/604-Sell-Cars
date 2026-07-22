@@ -24,7 +24,11 @@
       "https://trello.com/1/cards/6a09a491cdff0b50e2426952/attachments/6a3b99b4d88e079ccb07c888/previews/6a3b99b5d88e079ccb07c906/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=tfugfdwf5vei5Vb9a4GAWhup0osRUCDL"
+    "carfax": "https://vhr.carfax.ca/?id=tfugfdwf5vei5Vb9a4GAWhup0osRUCDL",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "5119bd7c",
@@ -55,7 +59,12 @@
     "videos": [
       "https://trello.com/1/cards/6970bb45a5d9030a5119bd7c/attachments/6970bc0100601983c9705145/download/FE336A6E-0896-4030-93FE-94799ED0BC35segment_video_2.mp4"
     ],
-    "carfax": "https://vhr.carfax.ca/?id=MIgv6GYKhBiqc3inUveu0Fbp58GN7lXT"
+    "carfax": "https://vhr.carfax.ca/?id=MIgv6GYKhBiqc3inUveu0Fbp58GN7lXT",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "0561ff75",
@@ -82,7 +91,12 @@
       "https://trello.com/1/cards/6a32014a12b2d9ec0561ff75/attachments/6a32018a919d044b91f0f82a/previews/6a320192919d044b91f0f89c/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/en/?id=n8%2BpLHjtKOjQa%2BwiodK9RXixoy%2BsMadp"
+    "carfax": "https://vhr.carfax.ca/en/?id=n8%2BpLHjtKOjQa%2BwiodK9RXixoy%2BsMadp",
+    "b": "SUV",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "548ecbb3",
@@ -107,7 +121,14 @@
       "https://trello.com/1/cards/6a3746eda4bd0742548ecbb3/attachments/6a37474d5f850cbfe98b17b9/previews/6a37474e5f850cbfe98b1a1e/download/photo.webp",
       "https://trello.com/1/cards/6a3746eda4bd0742548ecbb3/attachments/6a37474ea30df69d0cdc70c4/previews/6a37474fa30df69d0cdc7136/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid",
+      "Electric",
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "85bc3ff1",
@@ -133,7 +154,12 @@
       "https://trello.com/1/cards/6a2e144194932e5285bc3ff1/attachments/6a2e145372fd061c04dec2d1/previews/6a2e145872fd061c04dec2e5/download/DSC01132.webp",
       "https://trello.com/1/cards/6a2e144194932e5285bc3ff1/attachments/6a2e1453ebcf26c0d42ff464/previews/6a2e1458ebcf26c0d42ff478/download/DSC01161.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "6aab6402",
@@ -158,7 +184,13 @@
       "https://trello.com/1/cards/6a3746e19ee50bdb6aab6402/attachments/6a374716e3370ea9ef9de48b/previews/6a374717e3370ea9ef9de4ed/download/photo.webp",
       "https://trello.com/1/cards/6a3746e19ee50bdb6aab6402/attachments/6a3747180c2bdc0e6c494eb6/previews/6a3747180c2bdc0e6c494f26/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid",
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "f2a78739",
@@ -188,7 +220,12 @@
       "https://trello.com/1/cards/6a37475158933cb3f2a78739/attachments/6a3747815829c6d5da28a827/previews/6a3747825829c6d5da28a889/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=WR%2FVBzNf9IIGFBnaiU6+K3++xmiQVkZo"
+    "carfax": "https://vhr.carfax.ca/?id=WR%2FVBzNf9IIGFBnaiU6+K3++xmiQVkZo",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "d39d2737",
@@ -215,7 +252,9 @@
       "https://trello.com/1/cards/69701991591d4310d39d2737/attachments/697da3402b2368a177a9d73b/previews/697da3452b2368a177a9d79f/download/DSC03512.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=Kf7o5twFCJeD4ktqv369fQCD%2FPmkUl8Q"
+    "carfax": "https://vhr.carfax.ca/?id=Kf7o5twFCJeD4ktqv369fQCD%2FPmkUl8Q",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "a752cbd6",
@@ -237,7 +276,12 @@
       "https://trello.com/1/cards/6a18ec6c80349b5ca752cbd6/attachments/6a18ed0b88b50f04bdc127dd/previews/6a18ed1088b50f04bdc1283d/download/photo.webp",
       "https://trello.com/1/cards/6a18ec6c80349b5ca752cbd6/attachments/6a18ed1347b6ddc9409abc3c/previews/6a18ed1947b6ddc9409ad1d8/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "dabebd40",
@@ -266,7 +310,9 @@
       "https://trello.com/1/cards/69704ec2ccb5b5b7dabebd40/attachments/6972ba6b59535651f3de34a0/previews/6972ba6c59535651f3de3512/download/Screenshot_2026-01-22_at_4.01.25_PM.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=bSEA%2BW1LJpHIDMOxXviSqhzjfh5ulvmX"
+    "carfax": "https://vhr.carfax.ca/?id=bSEA%2BW1LJpHIDMOxXviSqhzjfh5ulvmX",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "7c3723d1",
@@ -288,7 +334,9 @@
       "https://trello.com/1/cards/699531fcaf361fc27c3723d1/attachments/6995325a461af61ac1b97615/previews/6995325d461af61ac1b97681/download/photo.webp",
       "https://trello.com/1/cards/699531fcaf361fc27c3723d1/attachments/6995325fad142c0cfb88556f/previews/69953264ad142c0cfb8855eb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "5a81f3fb",
@@ -316,7 +364,9 @@
       "https://trello.com/1/cards/6972e586c21e66c75a81f3fb/attachments/6972e5a0f63e054e44fb772d/previews/6972e5a0f63e054e44fb77a9/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=99yax8G7YhZyAGVSwGqr%2FUsUXCtbLO8t"
+    "carfax": "https://vhr.carfax.ca/?id=99yax8G7YhZyAGVSwGqr%2FUsUXCtbLO8t",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "ab501bb9",
@@ -338,7 +388,9 @@
       "https://trello.com/1/cards/69743387efcf88e4ab501bb9/attachments/697433af9f030a9b06671008/previews/697433b09f030a9b06671064/download/photo.webp",
       "https://trello.com/1/cards/69743387efcf88e4ab501bb9/attachments/697433b0e5fca9089e139a0e/previews/697433b1e5fca9089e139a7a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "84e49442",
@@ -361,7 +413,9 @@
       "https://trello.com/1/cards/6a0fb6d6d0cd27a584e49442/attachments/6a0fb6fed4c4cfc83f42f5f0/previews/6a0fb6ffd4c4cfc83f42f926/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=vG3QmUmwIvQxUStEO5IDZaLCIG03aBSJ#accident-damage-section"
+    "carfax": "https://vhr.carfax.ca/?id=vG3QmUmwIvQxUStEO5IDZaLCIG03aBSJ#accident-damage-section",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "ea875fce",
@@ -382,7 +436,9 @@
       "https://trello.com/1/cards/69f84549f59c561fea875fce/attachments/69f8456a6d89b468830a9576/previews/69f845706d89b468830aa23a/download/DSC03798.webp",
       "https://trello.com/1/cards/69f84549f59c561fea875fce/attachments/69f8456b46053568bccc0522/previews/69f8457046053568bccc165c/download/DSC03818.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "d026b176",
@@ -403,7 +459,11 @@
       "https://trello.com/1/cards/69f847d9b44b1c72d026b176/attachments/69f8485bfab2ffb70b851bc2/previews/69f84860fab2ffb70b851c32/download/DSC03893.webp",
       "https://trello.com/1/cards/69f847d9b44b1c72d026b176/attachments/69f84865af4a86860874504f/previews/69f8486caf4a8686087460b5/download/DSC03894.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "8f2d0298",
@@ -424,7 +484,11 @@
       "https://trello.com/1/cards/69f84853840961e28f2d0298/attachments/69f84899fae46790d7ff1f9e/previews/69f8489efae46790d7ff200c/download/DSC03509.webp",
       "https://trello.com/1/cards/69f84853840961e28f2d0298/attachments/69f848a0fcacd7ec03f4db58/previews/69f848a4fcacd7ec03f4dbda/download/DSC03511.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "c90602d3",
@@ -445,7 +509,11 @@
       "https://trello.com/1/cards/69f848c2e6cb32a3c90602d3/attachments/69f84918575df2b4dcd6687a/previews/69f8491d575df2b4dcd668e8/download/DSC03659.webp",
       "https://trello.com/1/cards/69f848c2e6cb32a3c90602d3/attachments/69f8491f86c557cbe6ad2bf9/previews/69f8492486c557cbe6ad338c/download/DSC03663.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "763a6c02",
@@ -466,7 +534,9 @@
       "https://trello.com/1/cards/69f50dfc21ba43d3763a6c02/attachments/69f50e20b18587b106c58140/previews/69f50e21b18587b106c581b0/download/photo.webp",
       "https://trello.com/1/cards/69f50dfc21ba43d3763a6c02/attachments/69f50e22f326efd18e48cc57/previews/69f50e23f326efd18e48ce94/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "891ab4b0",
@@ -487,7 +557,9 @@
       "https://trello.com/1/cards/69f50ea7da5e7eb8891ab4b0/attachments/69f50ec3810f88b83322ecc3/previews/69f50ec4810f88b83322ed33/download/image.webp",
       "https://trello.com/1/cards/69f50ea7da5e7eb8891ab4b0/attachments/69f50ec6309425c89c8d3201/previews/69f50ec7309425c89c8d3627/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "7c0e114b",
@@ -501,7 +573,9 @@
     "photos": [
       "https://trello.com/1/cards/69f51075fb0fa3cd7c0e114b/attachments/69f5107658db2feb1c8c36be/previews/69f5107758db2feb1c8c36ce/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "78ea4b14",
@@ -522,7 +596,9 @@
       "https://trello.com/1/cards/69f510126d70f70678ea4b14/attachments/69f5102c7826eaf07654a1ec/previews/69f5102d7826eaf07654a250/download/photo.webp",
       "https://trello.com/1/cards/69f510126d70f70678ea4b14/attachments/69f5102da65bb384818b26aa/previews/69f5102ea65bb384818b271c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f5520ee7",
@@ -543,7 +619,11 @@
       "https://trello.com/1/cards/69f50f52222e6fccf5520ee7/attachments/69f50f6c1444653cc101732f/previews/69f50f6d1444653cc101739d/download/photo.webp",
       "https://trello.com/1/cards/69f50f52222e6fccf5520ee7/attachments/69f50f70225f60a09b86be44/previews/69f50f71225f60a09b86bec2/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "47de41cf",
@@ -563,7 +643,9 @@
       "https://trello.com/1/cards/69f8531c6d6bf04847de41cf/attachments/69f8534f7cc08e5d7d29173f/previews/69f853517cc08e5d7d291a5e/download/photo.webp",
       "https://trello.com/1/cards/69f8531c6d6bf04847de41cf/attachments/69f853512f35bf73a692daa2/previews/69f853522f35bf73a692db10/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "2697111e",
@@ -583,7 +665,9 @@
       "https://trello.com/1/cards/69fdc17787533b972697111e/attachments/69fdc192adfe1f384f49fdab/previews/69fdc192adfe1f384f49fe19/download/photo.webp",
       "https://trello.com/1/cards/69fdc17787533b972697111e/attachments/69fdc193a0e3e917e8914fe5/previews/69fdc194a0e3e917e8915063/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "a74162ca",
@@ -604,7 +688,9 @@
       "https://trello.com/1/cards/6a0f578541d78614a74162ca/attachments/6a0f58eb9ac92355c864e7e6/previews/6a0f58f09ac92355c864e90c/download/photo.webp",
       "https://trello.com/1/cards/6a0f578541d78614a74162ca/attachments/6a0f58f444e6834a5be9c655/previews/6a0f58f944e6834a5be9c6d7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "7f4f346a",
@@ -625,7 +711,9 @@
       "https://trello.com/1/cards/6a0fb3d1aa4b3ee77f4f346a/attachments/6a0fb4130ae272df7656a065/previews/6a0fb4160ae272df7656a0d3/download/image.webp",
       "https://trello.com/1/cards/6a0fb3d1aa4b3ee77f4f346a/attachments/6a0fb418d5e34bc184c6f5f6/previews/6a0fb41ad5e34bc184c6f8e4/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "45fd89f2",
@@ -646,7 +734,9 @@
       "https://trello.com/1/cards/6a0fb52c0d1c16c745fd89f2/attachments/6a0fb5fb17653032b6a20395/previews/6a0fb5ff17653032b6a20e40/download/image.webp",
       "https://trello.com/1/cards/6a0fb52c0d1c16c745fd89f2/attachments/6a0fb6001490b10f94a3547c/previews/6a0fb6031490b10f94a354fa/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "378d65f2",
@@ -667,7 +757,9 @@
       "https://trello.com/1/cards/6a0fb70dc70ae200378d65f2/attachments/6a0fb74b5337c9b1cc458b10/previews/6a0fb7515337c9b1cc458b86/download/photo.webp",
       "https://trello.com/1/cards/6a0fb70dc70ae200378d65f2/attachments/6a0fb75261b125c994ef8f13/previews/6a0fb75761b125c994ef8f91/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "89235e25",
@@ -688,7 +780,9 @@
       "https://trello.com/1/cards/6a0fb73ea79ffa5b89235e25/attachments/6a0fb81023b1d82c63c42342/previews/6a0fb81523b1d82c63c423b0/download/photo.webp",
       "https://trello.com/1/cards/6a0fb73ea79ffa5b89235e25/attachments/6a0fb8176e6b24197ed647d3/previews/6a0fb81c6e6b24197ed64857/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f3ed9931",
@@ -709,7 +803,9 @@
       "https://trello.com/1/cards/6a0fb81408662db1f3ed9931/attachments/6a0fb8938fd5a9601bd1c749/previews/6a0fb8978fd5a9601bd1c7b7/download/photo.webp",
       "https://trello.com/1/cards/6a0fb81408662db1f3ed9931/attachments/6a0fb89913afc26732628d44/previews/6a0fb89e13afc26732628dc6/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "95e2163c",
@@ -730,7 +826,9 @@
       "https://trello.com/1/cards/6a1694e76350562c95e2163c/attachments/6a169544a9dc48540adba523/previews/6a169545a9dc48540adba81f/download/image.webp",
       "https://trello.com/1/cards/6a1694e76350562c95e2163c/attachments/6a169546ff3845a8c1d8cbd6/previews/6a169547ff3845a8c1d8ce9b/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "d1c79a7d",
@@ -750,7 +848,9 @@
       "https://trello.com/1/cards/69ff1a932044f15dd1c79a7d/attachments/69ff1aa18ea7198d712ea489/previews/69ff1aa18ea7198d712ea4d3/download/photo.webp",
       "https://trello.com/1/cards/69ff1a932044f15dd1c79a7d/attachments/69ff1aa232e5a68245b1b44f/previews/69ff1aa232e5a68245b1b4a5/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "0ae038ec",
@@ -771,7 +871,9 @@
       "https://trello.com/1/cards/69ff1c8f36ea8c580ae038ec/attachments/69ff1ca916257d957e065124/previews/69ff1ca916257d957e0651e2/download/photo.webp",
       "https://trello.com/1/cards/69ff1c8f36ea8c580ae038ec/attachments/69ff1cabe96864372a7f5e6a/previews/69ff1cabe96864372a7f5ec0/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "4cd951b3",
@@ -792,7 +894,12 @@
       "https://trello.com/1/cards/69ff2167ea6ea3314cd951b3/attachments/69ff217cbef8ab3b99e4cf86/previews/69ff217dbef8ab3b99e4cfdc/download/photo.webp",
       "https://trello.com/1/cards/69ff2167ea6ea3314cd951b3/attachments/69ff217e505cdd958af55c48/previews/69ff217e505cdd958af55caa/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "88213338",
@@ -813,7 +920,9 @@
       "https://trello.com/1/cards/69ff22330e7a31fb88213338/attachments/69ff224b2f6846a5b21ea13d/previews/69ff224c2f6846a5b21ea195/download/photo.webp",
       "https://trello.com/1/cards/69ff22330e7a31fb88213338/attachments/69ff224cca664d54e88353e1/previews/69ff224eca664d54e8835445/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "d3c360e3",
@@ -834,7 +943,12 @@
       "https://trello.com/1/cards/69ff2523a677cc9ad3c360e3/attachments/69ff253dc420fe00e95ee6eb/previews/69ff253dc420fe00e95ee741/download/photo.webp",
       "https://trello.com/1/cards/69ff2523a677cc9ad3c360e3/attachments/69ff253e5012b04ac201d07b/previews/69ff253e5012b04ac201d0dd/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "c406ebcf",
@@ -855,7 +969,9 @@
       "https://trello.com/1/cards/69ff2601b5106344c406ebcf/attachments/69ff26288d568c764bd42888/previews/69ff26298d568c764bd428de/download/photo.webp",
       "https://trello.com/1/cards/69ff2601b5106344c406ebcf/attachments/69ff2629350864a767790175/previews/69ff2629350864a7677901d7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "fe9bdc1b",
@@ -876,7 +992,9 @@
       "https://trello.com/1/cards/69ff272ce678f10ffe9bdc1b/attachments/69ff27480a84badb377d2ae8/previews/69ff274a0a84badb377d2b3e/download/photo.webp",
       "https://trello.com/1/cards/69ff272ce678f10ffe9bdc1b/attachments/69ff274bc20130c7d1bf12ae/previews/69ff274bc20130c7d1bf1478/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "78e80bf5",
@@ -897,7 +1015,9 @@
       "https://trello.com/1/cards/69ff27ec55fff9be78e80bf5/attachments/69ff282345c1097bb4db024f/previews/69ff282545c1097bb4db02a9/download/photo.webp",
       "https://trello.com/1/cards/69ff27ec55fff9be78e80bf5/attachments/69ff28265d26389a22705e44/previews/69ff28265d26389a22705eaa/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "8545a399",
@@ -918,7 +1038,9 @@
       "https://trello.com/1/cards/69ff2920493fc98b8545a399/attachments/69ff2937f83059e96ee2655e/previews/69ff2937f83059e96ee265b4/download/photo.webp",
       "https://trello.com/1/cards/69ff2920493fc98b8545a399/attachments/69ff2938b19b2001371a2713/previews/69ff2938b19b2001371a2775/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "2955adc2",
@@ -939,7 +1061,9 @@
       "https://trello.com/1/cards/69ff2a1e2a6ede0a2955adc2/attachments/69ff2a33f90afe6978515755/previews/69ff2a34f90afe69785157ab/download/photo.webp",
       "https://trello.com/1/cards/69ff2a1e2a6ede0a2955adc2/attachments/69ff2a344655c40150845f65/previews/69ff2a354655c40150845fc7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "8344ece5",
@@ -960,7 +1084,9 @@
       "https://trello.com/1/cards/6a0052f94088c70c8344ece5/attachments/6a0053194db3ba825fd6b8a5/previews/6a00531a4db3ba825fd6b8fb/download/photo.webp",
       "https://trello.com/1/cards/6a0052f94088c70c8344ece5/attachments/6a00531a9d32acf0f6a5bb77/previews/6a00531b9d32acf0f6a5bbd9/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "01ea7886",
@@ -981,7 +1107,11 @@
       "https://trello.com/1/cards/6a0055e1b7801bf001ea7886/attachments/6a0055f8505cdd958a865bf6/previews/6a0055f8505cdd958a865c4c/download/photo.webp",
       "https://trello.com/1/cards/6a0055e1b7801bf001ea7886/attachments/6a0055f97702a29aafe331c3/previews/6a0055f97702a29aafe33225/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "fc233bba",
@@ -1002,7 +1132,9 @@
       "https://trello.com/1/cards/6a0056a9a5a1a7cefc233bba/attachments/6a0056bff4ad245dd3e6674c/previews/6a0056bff4ad245dd3e667a2/download/photo.webp",
       "https://trello.com/1/cards/6a0056a9a5a1a7cefc233bba/attachments/6a0056c0062da750db42e49d/previews/6a0056c0062da750db42e4ff/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "d1c2126c",
@@ -1023,7 +1155,9 @@
       "https://trello.com/1/cards/6a0058681e99e88ed1c2126c/attachments/6a00587ec2ff42e12aafcf3c/previews/6a00587ec2ff42e12aafcf92/download/photo.webp",
       "https://trello.com/1/cards/6a0058681e99e88ed1c2126c/attachments/6a00587faa9694e6fbb1986a/previews/6a00587faa9694e6fbb198cc/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "4bf6dd67",
@@ -1044,7 +1178,9 @@
       "https://trello.com/1/cards/6a0059f8228a40c74bf6dd67/attachments/6a005a0b8ce6366ac2c4b0dd/previews/6a005a0c8ce6366ac2c4b133/download/photo.webp",
       "https://trello.com/1/cards/6a0059f8228a40c74bf6dd67/attachments/6a005a0c85eed4651d012a1c/previews/6a005a0d85eed4651d012a7e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e66b951d",
@@ -1065,7 +1201,9 @@
       "https://trello.com/1/cards/6a005b441bfd4c77e66b951d/attachments/6a005b5883a64fda04172262/previews/6a005b5a83a64fda041722b8/download/photo.webp",
       "https://trello.com/1/cards/6a005b441bfd4c77e66b951d/attachments/6a005b5b8aa38b18ca69bb99/previews/6a005b5b8aa38b18ca69bbfb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "5406b17c",
@@ -1079,7 +1217,9 @@
     "photos": [
       "https://trello.com/1/cards/6a01b9553d5ae92a5406b17c/attachments/6a01b957df2b2adcf0b6f2e8/previews/6a01b957df2b2adcf0b6f2f8/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "eb2cd6a8",
@@ -1100,7 +1240,9 @@
       "https://trello.com/1/cards/6a01bbb0891ead62eb2cd6a8/attachments/6a01bbcc25f77d7770595974/previews/6a01bbcd25f77d77705959ca/download/photo.webp",
       "https://trello.com/1/cards/6a01bbb0891ead62eb2cd6a8/attachments/6a01bbcd841a78f67cd8bf28/previews/6a01bbce841a78f67cd8bf8a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "bc1d01e9",
@@ -1121,7 +1263,9 @@
       "https://trello.com/1/cards/6a01bc2cd2ec4e36bc1d01e9/attachments/6a01bc4836fcb8165c8eea3a/previews/6a01bc4a36fcb8165c8eef61/download/photo.webp",
       "https://trello.com/1/cards/6a01bc2cd2ec4e36bc1d01e9/attachments/6a01bc4b4395b8ca58d3b9fc/previews/6a01bc4b4395b8ca58d3bc14/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "c57bd42b",
@@ -1142,7 +1286,9 @@
       "https://trello.com/1/cards/6a01bd1ef07209dcc57bd42b/attachments/6a01bd32d4d90a9729417a62/previews/6a01bd32d4d90a9729417ab8/download/photo.webp",
       "https://trello.com/1/cards/6a01bd1ef07209dcc57bd42b/attachments/6a01bd3359a622f3946d799b/previews/6a01bd3359a622f3946d79fd/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "d82da2ce",
@@ -1164,7 +1310,9 @@
       "https://trello.com/1/cards/6a01bd87090564d8d82da2ce/attachments/6a01bd9dd876355391e836bc/previews/6a01bd9dd876355391e8384a/download/photo.webp",
       "https://trello.com/1/cards/6a01bd87090564d8d82da2ce/attachments/6a01bd9e948a592554ed641d/previews/6a01bd9f948a592554ed647f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "4c429c64",
@@ -1185,7 +1333,11 @@
       "https://trello.com/1/cards/6a01be18710912a24c429c64/attachments/6a01be30bdb2fc1eb8df1be1/previews/6a01be30bdb2fc1eb8df1c37/download/photo.webp",
       "https://trello.com/1/cards/6a01be18710912a24c429c64/attachments/6a01be310c92820203260b5d/previews/6a01be310c92820203260bc3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Brand New"
+    ]
   },
   {
     "id": "26c0d47b",
@@ -1206,7 +1358,9 @@
       "https://trello.com/1/cards/6a01bf3b7808abf026c0d47b/attachments/6a01bfa5e55751976bb03dab/previews/6a01bfa5e55751976bb03e01/download/photo.webp",
       "https://trello.com/1/cards/6a01bf3b7808abf026c0d47b/attachments/6a01bfa6d6aa53ed70798668/previews/6a01bfa6d6aa53ed70798735/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "abc067bf",
@@ -1227,7 +1381,9 @@
       "https://trello.com/1/cards/6a01c0de58e6cb04abc067bf/attachments/6a01c0f6019a5a3974732f7d/previews/6a01c0f6019a5a3974732fe0/download/photo.webp",
       "https://trello.com/1/cards/6a01c0de58e6cb04abc067bf/attachments/6a01c0f72fbb8222e76c33d3/previews/6a01c0f82fbb8222e76c3435/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "12a49525",
@@ -1248,7 +1404,11 @@
       "https://trello.com/1/cards/6a01c1891e047fdf12a49525/attachments/6a01c19e1ebecc13016bfad2/previews/6a01c19f1ebecc13016bfb28/download/photo.webp",
       "https://trello.com/1/cards/6a01c1891e047fdf12a49525/attachments/6a01c1a093fb2e2f8368edcc/previews/6a01c1a193fb2e2f8368f047/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "6595b0ab",
@@ -1269,7 +1429,9 @@
       "https://trello.com/1/cards/6a16c00a7cf0d4526595b0ab/attachments/6a16c028b86fd48b760ee2e0/previews/6a16c029b86fd48b760ee34e/download/photo.webp",
       "https://trello.com/1/cards/6a16c00a7cf0d4526595b0ab/attachments/6a16c02a462f3b9c2c0b24ca/previews/6a16c02b462f3b9c2c0b254c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "de9a4ffb",
@@ -1290,7 +1452,9 @@
       "https://trello.com/1/cards/6a235eb4f0b0d623de9a4ffb/attachments/6a235f03d4658a9ecaadbc23/previews/6a235f07d4658a9ecaadbc91/download/image.webp",
       "https://trello.com/1/cards/6a235eb4f0b0d623de9a4ffb/attachments/6a235f095ec204179e0a4bd9/previews/6a235f0d5ec204179e0a4c57/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "81791100",
@@ -1311,7 +1475,11 @@
       "https://trello.com/1/cards/6a4b5c27d675ea8f81791100/attachments/6a4b5c5a9975cbd0fb27666b/previews/6a4b5c5d9975cbd0fb2766d9/download/photo.webp",
       "https://trello.com/1/cards/6a4b5c27d675ea8f81791100/attachments/6a4b5c5e6d2066b54390b721/previews/6a4b5c616d2066b54390c036/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Diesel"
+    ]
   },
   {
     "id": "0c67955b",
@@ -1334,7 +1502,9 @@
       "https://trello.com/1/cards/6a4b5c5ccf0c0b220c67955b/attachments/6a4b5c923af3175b30c2e436/previews/6a4b5c953af3175b30c2ebaa/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=9LEqgw1FktplYxLPjaQqye7e8L0HiZo4"
+    "carfax": "https://vhr.carfax.ca/?id=9LEqgw1FktplYxLPjaQqye7e8L0HiZo4",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "59a5dced",
@@ -1354,7 +1524,12 @@
       "https://trello.com/1/cards/6a4b7a228502280859a5dced/attachments/6a4b7a41306fa78be1c62bb0/previews/6a4b7a42306fa78be1c62e3e/download/photo.webp",
       "https://trello.com/1/cards/6a4b7a228502280859a5dced/attachments/6a4b7a4334dbed32a3c510dc/previews/6a4b7a4434dbed32a3c5115a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "3cbe2e2f",
@@ -1376,7 +1551,11 @@
       "https://trello.com/1/cards/6a4b7a567f4a630f3cbe2e2f/attachments/6a4b7aaae6c869b13d843d46/previews/6a4b7aade6c869b13d843dc4/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=dgKtGaqhnO8cgEuweTiQ5NHrUaCJVNaG"
+    "carfax": "https://vhr.carfax.ca/?id=dgKtGaqhnO8cgEuweTiQ5NHrUaCJVNaG",
+    "b": "SUV",
+    "f": [
+      "Electric"
+    ]
   },
   {
     "id": "b0822f68",
@@ -1397,7 +1576,11 @@
       "https://trello.com/1/cards/6a4b7aab616c1f81b0822f68/attachments/6a4b7ae816f78657b814d801/previews/6a4b7aeb16f78657b814d870/download/photo.webp",
       "https://trello.com/1/cards/6a4b7aab616c1f81b0822f68/attachments/6a4b7b8312ca8f94c1816fd8/previews/6a4b7b8612ca8f94c1817056/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "88dbb04a",
@@ -1420,7 +1603,9 @@
       "https://trello.com/1/cards/6a4b7b97064c830a88dbb04a/attachments/6a4b7bca55305c9507094fa5/previews/6a4b7bcd55305c9507095027/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=3F2yawMaj3QfqCoBYyWED%2FAGTVIQt4rx"
+    "carfax": "https://vhr.carfax.ca/?id=3F2yawMaj3QfqCoBYyWED%2FAGTVIQt4rx",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "138a2712",
@@ -1443,7 +1628,11 @@
       "https://trello.com/1/cards/6a4b7bcde580e4f6138a2712/attachments/6a4b7bfa8fc10f854cec3f32/previews/6a4b7bfd8fc10f854cec45ba/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=z%2BXtwzQa4uH5iXmyN5JmxDneqtcQpQBU"
+    "carfax": "https://vhr.carfax.ca/?id=z%2BXtwzQa4uH5iXmyN5JmxDneqtcQpQBU",
+    "b": "SUV",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "bf330fa8",
@@ -1467,7 +1656,9 @@
       "https://trello.com/1/cards/6a4f0ee6939cbad2bf330fa8/attachments/6a4f0f04cb5207fb0eb2a204/previews/6a4f0f05cb5207fb0eb2a26a/download/photo.webp",
       "https://trello.com/1/cards/6a4f0ee6939cbad2bf330fa8/attachments/6a4f0f062d6921d6b65d332a/previews/6a4f0f082d6921d6b65d3479/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "c60170a8",
@@ -1490,7 +1681,9 @@
       "https://trello.com/1/cards/6a4f0f0e6243d92cc60170a8/attachments/6a4f0f376dc068eaf437452d/previews/6a4f0f386dc068eaf4374665/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=Uv7LUN2Z8tKfnIdZIKFDfKTFqiqmKTJI"
+    "carfax": "https://vhr.carfax.ca/?id=Uv7LUN2Z8tKfnIdZIKFDfKTFqiqmKTJI",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "c502e76c",
@@ -1516,7 +1709,11 @@
       "https://trello.com/1/cards/6a4f0f3853fd47e2c502e76c/attachments/6a4f0f5f59358bf1bed1eb5a/previews/6a4f0f6059358bf1bed1ebd0/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=zJ4bEwPUwGN%2Fu5CBY4%2BhyUmkfejv%2FFEL"
+    "carfax": "https://vhr.carfax.ca/?id=zJ4bEwPUwGN%2Fu5CBY4%2BhyUmkfejv%2FFEL",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "327e438f",
@@ -1540,7 +1737,9 @@
       "https://trello.com/1/cards/6a4f0f65e3b3413b327e438f/attachments/6a4f0f8a3b0b90a5e9aa817d/previews/6a4f0f8d3b0b90a5e9aa81ed/download/photo.webp",
       "https://trello.com/1/cards/6a4f0f65e3b3413b327e438f/attachments/6a4f0f8ec27d5047112687e8/previews/6a4f0f92c27d504711268868/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "c5ad654e",
@@ -1564,7 +1763,9 @@
       "https://trello.com/1/cards/6a4f0f8b24a1fe1cc5ad654e/attachments/6a4f0faadd20f4b954cce30b/previews/6a4f0fabdd20f4b954cce505/download/photo.webp",
       "https://trello.com/1/cards/6a4f0f8b24a1fe1cc5ad654e/attachments/6a4f0fac8f9d37e5e2555828/previews/6a4f0fad8f9d37e5e255589e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "3f22aa63",
@@ -1588,7 +1789,11 @@
       "https://trello.com/1/cards/6a4f0faf0353a34c3f22aa63/attachments/6a4f0fccb8115b7fd5f6d27b/previews/6a4f0fcdb8115b7fd5f6d55c/download/photo.webp",
       "https://trello.com/1/cards/6a4f0faf0353a34c3f22aa63/attachments/6a4f0fce6c4b355a3f352245/previews/6a4f0fcf6c4b355a3f3530b2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "ae01131a",
@@ -1611,7 +1816,9 @@
       "https://trello.com/1/cards/6a4f0ff95126ab05ae01131a/attachments/6a4f10198878288f6962557a/previews/6a4f101a8878288f696255f0/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=dqXWykgvy38pRSBEvpDfntxZHUMRTsWz"
+    "carfax": "https://vhr.carfax.ca/?id=dqXWykgvy38pRSBEvpDfntxZHUMRTsWz",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "9323548c",
@@ -1631,7 +1838,12 @@
       "https://trello.com/1/cards/6a4f1040bb99c5f29323548c/attachments/6a4f1064fef585096f74ab71/previews/6a4f1065fef585096f74abdf/download/photo.webp",
       "https://trello.com/1/cards/6a4f1040bb99c5f29323548c/attachments/6a4f1066eb534c5185ea0081/previews/6a4f1067eb534c5185ea029d/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Brand New"
+    ]
   },
   {
     "id": "27c73694",
@@ -1651,7 +1863,13 @@
       "https://trello.com/1/cards/6a4f1071de18390a27c73694/attachments/6a4f10928f25bb6753014651/previews/6a4f10938f25bb675301481c/download/photo.webp",
       "https://trello.com/1/cards/6a4f1071de18390a27c73694/attachments/6a4f1095bfdf00c048d414c0/previews/6a4f1096bfdf00c048d4153e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Hybrid",
+      "Luxury",
+      "Brand New"
+    ]
   },
   {
     "id": "c29223e5",
@@ -1670,7 +1888,12 @@
       "https://trello.com/1/cards/6a58ff0b4bed4494c29223e5/attachments/6a58ff3674288da709a06d75/previews/6a58ff3974288da709a06de3/download/photo.webp",
       "https://trello.com/1/cards/6a58ff0b4bed4494c29223e5/attachments/6a58ff3ae3d8f6f965ff4038/previews/6a58ff3de3d8f6f965ff40b6/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Brand New"
+    ]
   },
   {
     "id": "173c3649",
@@ -1689,7 +1912,12 @@
       "https://trello.com/1/cards/6a58ff906a536b53173c3649/attachments/6a58ffb8664ff3ea699e6cad/previews/6a58ffbb664ff3ea699e6d1f/download/photo.webp",
       "https://trello.com/1/cards/6a58ff906a536b53173c3649/attachments/6a58ffbc09d128b25f2ec5a3/previews/6a58ffbf09d128b25f2ec623/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Hybrid",
+      "Brand New"
+    ]
   },
   {
     "id": "b4b55bc0",
@@ -1707,7 +1935,11 @@
       "https://trello.com/1/cards/6a590015b6eadb10b4b55bc0/attachments/6a590040e177e8f9c5ece862/previews/6a590043e177e8f9c5ece8c2/download/photo.webp",
       "https://trello.com/1/cards/6a590015b6eadb10b4b55bc0/attachments/6a590044f6faac986287b29c/previews/6a590047f6faac986287b30a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Brand New"
+    ]
   },
   {
     "id": "a94f7d47",
@@ -1727,7 +1959,11 @@
       "https://trello.com/1/cards/6a59007ac8124486a94f7d47/attachments/6a59009fc6736c4829532736/previews/6a5900a2c6736c48295327a4/download/photo.webp",
       "https://trello.com/1/cards/6a59007ac8124486a94f7d47/attachments/6a5900a30daaefc5cb3762ac/previews/6a5900a60daaefc5cb37632c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric"
+    ]
   },
   {
     "id": "f8d7ab86",
@@ -1745,7 +1981,9 @@
       "https://trello.com/1/cards/6a5901c37daffc57f8d7ab86/attachments/6a5901ea00f2d66899fbc712/previews/6a5901ec00f2d66899fbc782/download/photo.webp",
       "https://trello.com/1/cards/6a5901c37daffc57f8d7ab86/attachments/6a5901ed4ad53fbc311da245/previews/6a5901f04ad53fbc311da2c3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "dbca29ec",
@@ -1763,7 +2001,11 @@
       "https://trello.com/1/cards/6a5901eafebf230bdbca29ec/attachments/6a5902155fd8d281fb9379aa/previews/6a5902185fd8d281fb937a1a/download/photo.webp",
       "https://trello.com/1/cards/6a5901eafebf230bdbca29ec/attachments/6a5902196b7c922432cc8b9c/previews/6a59021c6b7c922432cc911d/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "c2770b9e",
@@ -1778,7 +2020,9 @@
       "https://trello.com/1/cards/6a59023bce336620c2770b9e/attachments/6a59024a3e16d1931ce03bcc/previews/6a59024c3e16d1931ce03c0e/download/photo.webp",
       "https://trello.com/1/cards/6a59023bce336620c2770b9e/attachments/6a59024d5af8e7fac654ee55/previews/6a5902505af8e7fac654eea3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "c5c97d57",
@@ -1798,7 +2042,9 @@
       "https://trello.com/1/cards/6a59026595e30e25c5c97d57/attachments/6a59028bd422a6705c2c0022/previews/6a59028ed422a6705c2c0796/download/photo.webp",
       "https://trello.com/1/cards/6a59026595e30e25c5c97d57/attachments/6a590290a8de4636272e1a5f/previews/6a590293a8de4636272e1add/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "4a65ff20",
@@ -1821,7 +2067,11 @@
       "https://trello.com/1/cards/6970418b3390b4684a65ff20/attachments/69704208609cdcd44ae200c5/previews/69704209609cdcd44ae20143/download/IMG_7522.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/en-ca/?id=l9ttMXxWf5E2mOzxPnwZ2HIocUTG2I%2Fd"
+    "carfax": "https://vhr.carfax.ca/en-ca/?id=l9ttMXxWf5E2mOzxPnwZ2HIocUTG2I%2Fd",
+    "b": "Sedan",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "aef51831",
@@ -1838,7 +2088,12 @@
       "https://trello.com/1/cards/696f5c1dc2c72925aef51831/attachments/696f5c4769cae6b0015835ef/previews/696f5c4869cae6b00158363d/download/IMG_3264.webp",
       "https://trello.com/1/cards/696f5c1dc2c72925aef51831/attachments/696f5c4c0be4186d1e4f28dc/previews/696f5c4d0be4186d1e4f293a/download/IMG_3270.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "0bd15845",
@@ -1866,7 +2121,9 @@
       "https://trello.com/1/cards/698d3c1acb72131b0bd15845/attachments/698d3cae42fbb83649c6cdbb/previews/698d3caf42fbb83649c6cf9a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=LVJjo9Gal2yNzZuX9jPstHVrvdj0A+b2"
+    "carfax": "https://vhr.carfax.ca/?id=LVJjo9Gal2yNzZuX9jPstHVrvdj0A+b2",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e05e76ef",
@@ -1893,7 +2150,9 @@
       "https://trello.com/1/cards/69ab4b6066c4ee39e05e76ef/attachments/69ab4babeb94cfa82e4ad694/previews/69ab4bb0eb94cfa82e4ad6a6/download/DSC04016.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=095c1hdxMQvUcHPIESlrzFz6wngakdfn"
+    "carfax": "https://vhr.carfax.ca/?id=095c1hdxMQvUcHPIESlrzFz6wngakdfn",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "31ee0e4d",
@@ -1921,7 +2180,9 @@
       "https://trello.com/1/cards/69702654681ce16931ee0e4d/attachments/697db72725a897ee353048b6/previews/697db72c25a897ee35305449/download/DSC04183.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=qWKrtx8aSkXoHkZItF6TwVo91gnrHBlL"
+    "carfax": "https://vhr.carfax.ca/?id=qWKrtx8aSkXoHkZItF6TwVo91gnrHBlL",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "65ab66e1",
@@ -1948,7 +2209,9 @@
       "https://trello.com/1/cards/69b4a81ce7f42df265ab66e1/attachments/69b4a88fd6d3b622a94b7b0c/previews/69b4a892d6d3b622a94b7b7a/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=kQfRmD02VY%2FXrr2D29oezIe0CtcdRlXf"
+    "carfax": "https://vhr.carfax.ca/?id=kQfRmD02VY%2FXrr2D29oezIe0CtcdRlXf",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "a1a94186",
@@ -1973,7 +2236,9 @@
       "https://trello.com/1/cards/69d0834c3d5a94e7a1a94186/attachments/69d0836d2137d10b6059ab2f/previews/69d083702137d10b6059ab91/download/photo.webp",
       "https://trello.com/1/cards/69d0834c3d5a94e7a1a94186/attachments/69d0837190a751315c5e5d9a/previews/69d0837490a751315c5e5e0d/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "77364e8e",
@@ -1995,7 +2260,9 @@
       "https://trello.com/1/cards/69d08386b0f8e72677364e8e/attachments/69d083dc449168ee66025ba9/previews/69d083df449168ee66025c07/download/photo.webp",
       "https://trello.com/1/cards/69d08386b0f8e72677364e8e/attachments/69d083e0f31928c1ebb771d4/previews/69d083e3f31928c1ebb77246/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "d7e942d1",
@@ -2012,7 +2279,12 @@
       "https://trello.com/1/cards/69d087b7b3887980d7e942d1/attachments/69d0881db1516df769b988fa/previews/69d08820b1516df769b98948/download/image.webp",
       "https://trello.com/1/cards/69d087b7b3887980d7e942d1/attachments/69d088229911d8acca8d078e/previews/69d088259911d8acca8d07f1/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Van",
+    "f": [
+      "Diesel",
+      "Luxury"
+    ]
   },
   {
     "id": "98fa0961",
@@ -2040,7 +2312,11 @@
       "https://trello.com/1/cards/69d75a3b0ce1ddf798fa0961/attachments/69d75b04f6aa2aa97253806a/previews/69d75b09f6aa2aa97253880f/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=Bqmd14E0bW98EXhStAlQbz8BA8ooC%2FiY"
+    "carfax": "https://vhr.carfax.ca/?id=Bqmd14E0bW98EXhStAlQbz8BA8ooC%2FiY",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "8e8af96f",
@@ -2062,7 +2338,9 @@
       "https://trello.com/1/cards/69e01712a9f390388e8af96f/attachments/69e017b773c6fd223792a9b6/previews/69e017ba73c6fd223792b695/download/image.webp",
       "https://trello.com/1/cards/69e01712a9f390388e8af96f/attachments/69e017c1d0fbf8611c6d9c40/previews/69e017c3d0fbf8611c6d9cbe/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "3250dba7",
@@ -2085,7 +2363,9 @@
       "https://trello.com/1/cards/69e2da7c801a42493250dba7/attachments/69e2deb61c799dfa7f4cb0c0/previews/69e2debb1c799dfa7f4cb133/download/DSC09295.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=f%2FLm1jfQNOPeVxl4p42rGYVvs03RDP8T"
+    "carfax": "https://vhr.carfax.ca/?id=f%2FLm1jfQNOPeVxl4p42rGYVvs03RDP8T",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "c1ef14af",
@@ -2107,7 +2387,9 @@
       "https://trello.com/1/cards/69e2e10f07d4c332c1ef14af/attachments/69e2e159948e9fa870b708e6/previews/69e2e15f948e9fa870b70958/download/DSC09345.webp",
       "https://trello.com/1/cards/69e2e10f07d4c332c1ef14af/attachments/69e2e163231b4012c7139e53/previews/69e2e168231b4012c7139ed3/download/DSC09347.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "cfaf7c9a",
@@ -2132,7 +2414,9 @@
       "https://trello.com/1/cards/69e2e3836f2e5089cfaf7c9a/attachments/69f2616e49f310e38a14cd35/previews/69f2617149f310e38a14cd93/download/image.webp",
       "https://trello.com/1/cards/69e2e3836f2e5089cfaf7c9a/attachments/69f261731ab894a2b22b852a/previews/69f261761ab894a2b22b8598/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "1434c2ac",
@@ -2158,7 +2442,12 @@
     "videos": [
       "https://trello.com/1/cards/69e41292c58a4a891434c2ac/attachments/69e416fec25d72247968079d/download/IMG_1928.mov"
     ],
-    "carfax": "https://vhr.carfax.ca/?id=sNPIFoNeMQ4opKs0zdoP1SJxzmZ6JHx2"
+    "carfax": "https://vhr.carfax.ca/?id=sNPIFoNeMQ4opKs0zdoP1SJxzmZ6JHx2",
+    "b": "Coupe",
+    "f": [
+      "Manual",
+      "Performance"
+    ]
   },
   {
     "id": "6dce37d8",
@@ -2180,7 +2469,11 @@
       "https://trello.com/1/cards/69e412a0cee18dc46dce37d8/attachments/69e4175c6af70dca53267945/previews/69e417606af70dca532679b7/download/photo.webp",
       "https://trello.com/1/cards/69e412a0cee18dc46dce37d8/attachments/69e4176259551b421c012e37/previews/69e4176759551b421c012eb9/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "4dcd70e4",
@@ -2207,7 +2500,9 @@
       "https://trello.com/1/cards/69e412af3ece865a4dcd70e4/attachments/69e419af12ecce28427c93d3/previews/69e419b412ecce28427c9441/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=nGxI0wq5j5ngfMdtj6jeTRDowY7mJLdS"
+    "carfax": "https://vhr.carfax.ca/?id=nGxI0wq5j5ngfMdtj6jeTRDowY7mJLdS",
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "f1ea3403",
@@ -2234,7 +2529,9 @@
       "https://trello.com/1/cards/69e4197d6e65c1bff1ea3403/attachments/69e41ceda949a93381272b48/previews/69e41cf1a949a9338127335d/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=y3NEuqeUk5eQlsCR4ICa6ZOW40PQLnOw"
+    "carfax": "https://vhr.carfax.ca/?id=y3NEuqeUk5eQlsCR4ICa6ZOW40PQLnOw",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "95f50d4c",
@@ -2258,7 +2555,11 @@
       "https://trello.com/1/cards/69e97f3fb39bb99d95f50d4c/attachments/69e97fa71d83201469a559ee/previews/69e97fab1d83201469a5736a/download/photo.webp",
       "https://trello.com/1/cards/69e97f3fb39bb99d95f50d4c/attachments/69e97fb1e79010c4e6ac314b/previews/69e97fb7e79010c4e6ac410b/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Manual"
+    ]
   },
   {
     "id": "65b10af1",
@@ -2281,7 +2582,11 @@
       "https://trello.com/1/cards/69ed57f55084c44d65b10af1/attachments/69ed5811dc473c53bd6e3573/previews/69ed5812dc473c53bd6e35f1/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=h2kbjzjm9IDq9n70pOk3aC8AiKqIiTdh"
+    "carfax": "https://vhr.carfax.ca/?id=h2kbjzjm9IDq9n70pOk3aC8AiKqIiTdh",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "439ea220",
@@ -2309,7 +2614,9 @@
       "https://trello.com/1/cards/69f13a6bcf485cd5439ea220/attachments/69f26301ba2cab91e452bc64/previews/69f26305ba2cab91e452bcd6/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=wN5FMPP0Gj8rTgnCcEupz3l9GKfmXCau"
+    "carfax": "https://vhr.carfax.ca/?id=wN5FMPP0Gj8rTgnCcEupz3l9GKfmXCau",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "7c4a5d03",
@@ -2334,7 +2641,11 @@
       "https://trello.com/1/cards/69f1421395c81a1a7c4a5d03/attachments/69f1442479dfd19871c45e30/previews/69f1442879dfd19871c45e90/download/photo.webp",
       "https://trello.com/1/cards/69f1421395c81a1a7c4a5d03/attachments/69f1442bc06600b34700b419/previews/69f14431c06600b34700b487/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "272d65fa",
@@ -2356,7 +2667,9 @@
       "https://trello.com/1/cards/69f1392d62faa80e272d65fa/attachments/69f139ad85cbd8e12dcf818e/previews/69f139b385cbd8e12dcf8200/download/photo.webp",
       "https://trello.com/1/cards/69f1392d62faa80e272d65fa/attachments/69f139b440708bd1d9067ab4/previews/69f139b940708bd1d9067b38/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "850f69d6",
@@ -2378,7 +2691,12 @@
       "https://trello.com/1/cards/6a111ba72d41d1f0850f69d6/attachments/6a1129e446bc1b67c6e4eb5c/previews/6a1129e946bc1b67c6e4ebca/download/image.webp",
       "https://trello.com/1/cards/6a111ba72d41d1f0850f69d6/attachments/6a1129ea820f0e0d37e46d20/previews/6a1129ee820f0e0d37e46da2/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "fb37a66b",
@@ -2405,7 +2723,11 @@
       "https://trello.com/1/cards/6a13918e891636c6fb37a66b/attachments/6a1391d97b4e79a405911f3a/previews/6a1391df7b4e79a405912dad/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=tNqMfF5XjrmdrxEMFTxRM5nsJgOT2%2B%2FR"
+    "carfax": "https://vhr.carfax.ca/?id=tNqMfF5XjrmdrxEMFTxRM5nsJgOT2%2B%2FR",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "cb577d14",
@@ -2428,7 +2750,11 @@
       "https://trello.com/1/cards/6a18d77d232da805cb577d14/attachments/6a18d934cabc50e36c946de7/previews/6a18d936cabc50e36c946e67/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=un7xCT232E59XTdm%2FGGv0pFw%2F%2BSXQmXp"
+    "carfax": "https://vhr.carfax.ca/?id=un7xCT232E59XTdm%2FGGv0pFw%2F%2BSXQmXp",
+    "b": "SUV",
+    "f": [
+      "Electric"
+    ]
   },
   {
     "id": "b23decee",
@@ -2452,7 +2778,9 @@
       "https://trello.com/1/cards/6a18d7606c398cc3b23decee/attachments/6a18d7e0cd374eaf2ce66e94/previews/6a18d7e7cd374eaf2ce66ef2/download/photo.webp",
       "https://trello.com/1/cards/6a18d7606c398cc3b23decee/attachments/6a18d7e9775f57e913a28fdf/previews/6a18d7ee775f57e913a29e07/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "cad637e1",
@@ -2477,7 +2805,12 @@
       "https://trello.com/1/cards/6a18d7f474bc8dd2cad637e1/attachments/6a18da6fedc42558b67ee5b5/previews/6a18da75edc42558b67efca0/download/photo.webp",
       "https://trello.com/1/cards/6a18d7f474bc8dd2cad637e1/attachments/6a18da780348fe1d35372bb4/previews/6a18da7d0348fe1d35372c22/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "4dd528be",
@@ -2505,7 +2838,9 @@
       "https://trello.com/1/cards/6a18ebeca6bf0b394dd528be/attachments/6a18ec354c9856fb2b858afd/previews/6a18ec3a4c9856fb2b858b6f/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=ntZQL3Jd0g%2Br3%2FoxZWOLqzZPRcAYAkqy"
+    "carfax": "https://vhr.carfax.ca/?id=ntZQL3Jd0g%2Br3%2FoxZWOLqzZPRcAYAkqy",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "5d8c8391",
@@ -2527,7 +2862,9 @@
       "https://trello.com/1/cards/6a18ec27e21a603c5d8c8391/attachments/6a18ecb1116ae6282a226f07/previews/6a18ecb5116ae6282a226f77/download/photo.webp",
       "https://trello.com/1/cards/6a18ec27e21a603c5d8c8391/attachments/6a18ecb7f9ce917d9cdf2822/previews/6a18ecbbf9ce917d9cdf28a4/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "14a90595",
@@ -2548,7 +2885,11 @@
       "https://trello.com/1/cards/6a20df91e3d5de5d14a90595/attachments/6a20e37993d1a191f4131ae6/previews/6a20e38093d1a191f4132cb9/download/photo.webp",
       "https://trello.com/1/cards/6a20df91e3d5de5d14a90595/attachments/6a20e381e5ae2a81f34eb4fe/previews/6a20e388e5ae2a81f34eb608/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "b88c4c91",
@@ -2576,7 +2917,9 @@
       "https://trello.com/1/cards/6a2c831f3602e23cb88c4c91/attachments/6a2c83a5d07e092184707538/previews/6a2c83a9d07e0921847075aa/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=5stIKdXfc7u0ICLJmCDI+jfzs068L4FM"
+    "carfax": "https://vhr.carfax.ca/?id=5stIKdXfc7u0ICLJmCDI+jfzs068L4FM",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "a113c579",
@@ -2600,7 +2943,9 @@
       "https://trello.com/1/cards/6a2c83bfb32b28eca113c579/attachments/6a2c8419daa932df866dd781/previews/6a2c841adaa932df866dd7ff/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=9m6oyg2XHFvhKdGTz9bTtUOVuv3ryuZ5"
+    "carfax": "https://vhr.carfax.ca/?id=9m6oyg2XHFvhKdGTz9bTtUOVuv3ryuZ5",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "63979616",
@@ -2626,7 +2971,9 @@
       "https://trello.com/1/cards/6a2c83e1efb7a6eb63979616/attachments/6a2c84364af6472a4efa47cb/previews/6a2c84374af6472a4efa483b/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=xE%2Blr3qZ%2B3kcZh6lQLKgvpF%2B8BnO1Rdw"
+    "carfax": "https://vhr.carfax.ca/?id=xE%2Blr3qZ%2B3kcZh6lQLKgvpF%2B8BnO1Rdw",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "1f07731f",
@@ -2653,7 +3000,11 @@
       "https://trello.com/1/cards/6a2dfbe9d33993b71f07731f/attachments/6a2dfc8ef6aa28782ebdd7fb/previews/6a2dfc94f6aa28782ebdd86d/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=EaQV7izdc+O2QDStvYaRWi3+3IEwCL1D"
+    "carfax": "https://vhr.carfax.ca/?id=EaQV7izdc+O2QDStvYaRWi3+3IEwCL1D",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "d20c2dba",
@@ -2676,7 +3027,9 @@
       "https://trello.com/1/cards/6a2c84098a251777d20c2dba/attachments/6a2c84d1af5cd331d5cc810f/previews/6a2c84d3af5cd331d5cc818d/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=47%2FdWF%2FMMfFpEGnWgaZRgCUScg5f%2B%2FRv"
+    "carfax": "https://vhr.carfax.ca/?id=47%2FdWF%2FMMfFpEGnWgaZRgCUScg5f%2B%2FRv",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3d095b0b",
@@ -2704,7 +3057,9 @@
       "https://trello.com/1/cards/6a30ec382f5d91e13d095b0b/attachments/6a30ec8ee7efb175c052b23b/previews/6a30ec90e7efb175c052b2a9/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=Dt3z+24CWFOuNG%2FVJlqMPK%2FCjLuWdNxi"
+    "carfax": "https://vhr.carfax.ca/?id=Dt3z+24CWFOuNG%2FVJlqMPK%2FCjLuWdNxi",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "265268ae",
@@ -2732,7 +3087,9 @@
       "https://trello.com/1/cards/6a30ecb5538dba20265268ae/attachments/6a30ecdd0602e8f03fe23f1c/previews/6a30ecde0602e8f03fe241fb/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=AQrzhygaQI7bGczWaxwAg+Xbh6cj7CH0"
+    "carfax": "https://vhr.carfax.ca/?id=AQrzhygaQI7bGczWaxwAg+Xbh6cj7CH0",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3932f72e",
@@ -2760,7 +3117,9 @@
       "https://trello.com/1/cards/6a30ed1c5620e2743932f72e/attachments/6a30ed42277d107067fd68ae/previews/6a30ed43277d107067fd691c/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=eOaca%2B%2Fch2xerOgzALIJ8M8C%2FuUCgVXD"
+    "carfax": "https://vhr.carfax.ca/?id=eOaca%2B%2Fch2xerOgzALIJ8M8C%2FuUCgVXD",
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "0a4bdba2",
@@ -2788,7 +3147,9 @@
       "https://trello.com/1/cards/6a30ed4ca49694840a4bdba2/attachments/6a30ed72176158330aa4fec9/previews/6a30ed73176158330aa4ff37/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=3fxvvbhxT5Zeso9eRZRcP852d1%2Fjz9zT"
+    "carfax": "https://vhr.carfax.ca/?id=3fxvvbhxT5Zeso9eRZRcP852d1%2Fjz9zT",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "c5f714c9",
@@ -2815,7 +3176,9 @@
       "https://trello.com/1/cards/6a30ed7bd55a4c27c5f714c9/attachments/6a30ed9f496731c118d241ba/previews/6a30eda1496731c118d246e8/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=o43mfYZ1lcrelcxfJq8RYgIxxFQYw676"
+    "carfax": "https://vhr.carfax.ca/?id=o43mfYZ1lcrelcxfJq8RYgIxxFQYw676",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "f6e7bf93",
@@ -2840,7 +3203,9 @@
       "https://trello.com/1/cards/6a32191c2575e371f6e7bf93/attachments/6a32417dc9288f0f09a9dcd3/previews/6a32418fc9288f0f09a9dd35/download/photo.webp",
       "https://trello.com/1/cards/6a32191c2575e371f6e7bf93/attachments/6a32419bcb3a41ff96174002/previews/6a3241a1cb3a41ff96174a32/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "57f99fad",
@@ -2865,7 +3230,9 @@
       "https://trello.com/1/cards/6a326e44df5f5f2657f99fad/attachments/6a327463fae3f10759ca9369/previews/6a327468fae3f10759ca93c7/download/photo.webp",
       "https://trello.com/1/cards/6a326e44df5f5f2657f99fad/attachments/6a32746bdddbef72636a2897/previews/6a327473dddbef72636a3679/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "a04e3965",
@@ -2893,7 +3260,9 @@
       "https://trello.com/1/cards/6a326e90118420c1a04e3965/attachments/6a32750ee42b9a06da407817/previews/6a327516e42b9a06da40788c/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=bySU9GdE8BNYcjfiFavYv3y0B4NX7edk"
+    "carfax": "https://vhr.carfax.ca/?id=bySU9GdE8BNYcjfiFavYv3y0B4NX7edk",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "39d0eefe",
@@ -2919,7 +3288,9 @@
       "https://trello.com/1/cards/6a386194f444c17e39d0eefe/attachments/6a3861d569ff78be3d4d53a8/previews/6a3861db69ff78be3d4d542a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=VkwLAQ9YnNDWpxvvg%2BiWIdfwdGfhSc0u"
+    "carfax": "https://vhr.carfax.ca/?id=VkwLAQ9YnNDWpxvvg%2BiWIdfwdGfhSc0u",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "2d040731",
@@ -2944,7 +3315,9 @@
       "https://trello.com/1/cards/6a386206ff3d43852d040731/attachments/6a38638d46f68d783ad52ad5/previews/6a38639146f68d783ad52b33/download/photo.webp",
       "https://trello.com/1/cards/6a386206ff3d43852d040731/attachments/6a3863932a249cf26501c9cf/previews/6a3863992a249cf26501ca42/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "d4edba4e",
@@ -2969,7 +3342,9 @@
       "https://trello.com/1/cards/6a3862f600de4c19d4edba4e/attachments/6a38659b980952195efd63bc/previews/6a3865a0980952195efd641c/download/photo.webp",
       "https://trello.com/1/cards/6a3862f600de4c19d4edba4e/attachments/6a3865a2a53a381debe45efd/previews/6a3865a8a53a381debe45f6b/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "12b07f00",
@@ -2996,7 +3371,12 @@
       "https://trello.com/1/cards/6a386cc9025de09612b07f00/attachments/6a388f839801e3fa2ebc184f/previews/6a388f8a9801e3fa2ebc18d3/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=L%2BHg7psAC04zZovROMVVy3w96j6SsytH"
+    "carfax": "https://vhr.carfax.ca/?id=L%2BHg7psAC04zZovROMVVy3w96j6SsytH",
+    "b": "Sedan",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "0e3b25b9",
@@ -3017,7 +3397,11 @@
       "https://trello.com/1/cards/6a39e1239efbc0980e3b25b9/attachments/6a39e4bb152784cc6c08e053/previews/6a39e4c9152784cc6c08e0c5/download/photo.webp",
       "https://trello.com/1/cards/6a39e1239efbc0980e3b25b9/attachments/6a39fa2f8328e6dee702ed83/previews/6a39fa368328e6dee702ee05/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Offroad",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "8b37a13a",
@@ -3039,7 +3423,11 @@
       "https://trello.com/1/cards/69912ba4026686108b37a13a/attachments/69912c1895cdb5e5ab7f25ac/previews/69912c1c95cdb5e5ab7f2608/download/image.webp",
       "https://trello.com/1/cards/69912ba4026686108b37a13a/attachments/69912c1d0b56558cb7a3ff84/previews/69912c200b56558cb7a3fff0/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "25ebaa15",
@@ -3064,7 +3452,12 @@
       "https://trello.com/1/cards/6a30eded9519973725ebaa15/attachments/6a30ee168f296f681272c3f4/previews/6a30ee178f296f681272c597/download/photo.webp",
       "https://trello.com/1/cards/6a30eded9519973725ebaa15/attachments/6a30ee19673f03e9f8ae5dc2/previews/6a30ee1a673f03e9f8ae62d7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "cb0b7fab",
@@ -3089,7 +3482,9 @@
       "https://trello.com/1/cards/6a3c60653da4632ccb0b7fab/attachments/6a3c60c9f4ed00bceb0f1db3/previews/6a3c60cdf4ed00bceb0f27a3/download/photo.webp",
       "https://trello.com/1/cards/6a3c60653da4632ccb0b7fab/attachments/6a3c610fadddaeecf831b690/previews/6a3c6113adddaeecf831b700/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "8076fa66",
@@ -3114,7 +3509,9 @@
       "https://trello.com/1/cards/6a3c60bc7fc31c658076fa66/attachments/6a3c617f057c33fc8316e91b/previews/6a3c6185057c33fc8316e979/download/photo.webp",
       "https://trello.com/1/cards/6a3c60bc7fc31c658076fa66/attachments/6a3c6187152d2d628dd7f95b/previews/6a3c618e152d2d628dd7f9cd/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "4fbf980f",
@@ -3136,7 +3533,11 @@
       "https://trello.com/1/cards/6a3c6193c2c59b3b4fbf980f/attachments/6a3c65934f438e0108694717/previews/6a3c65984f438e0108694789/download/image.webp",
       "https://trello.com/1/cards/6a3c6193c2c59b3b4fbf980f/attachments/6a3c6599808294708403e457/previews/6a3c659c808294708403e4d7/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "7fa5b0ec",
@@ -3161,7 +3562,9 @@
       "https://trello.com/1/cards/6a3c61b6a2ec42e37fa5b0ec/attachments/6a3c6638a212ae59737260a4/previews/6a3c663ba212ae5973726104/download/photo.webp",
       "https://trello.com/1/cards/6a3c61b6a2ec42e37fa5b0ec/attachments/6a3c663d9f8a26b6634fd01b/previews/6a3c66409f8a26b6634fd089/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "2fdc3400",
@@ -3184,7 +3587,11 @@
       "https://trello.com/1/cards/6a3f3a55d1b0584f2fdc3400/attachments/6a3f3aa90f7e582a52f3b94b/previews/6a3f3ab00f7e582a52f3b9d1/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=lOuQlTXI6XD9xpTf3AdvSSUzHH6NOfFD"
+    "carfax": "https://vhr.carfax.ca/?id=lOuQlTXI6XD9xpTf3AdvSSUzHH6NOfFD",
+    "b": "SUV",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "a50fad79",
@@ -3205,7 +3612,9 @@
       "https://trello.com/1/cards/6a3f3ab03802e6b9a50fad79/attachments/6a3f3b1e57e82eb1e957c454/previews/6a3f3b2757e82eb1e957c977/download/photo.webp",
       "https://trello.com/1/cards/6a3f3ab03802e6b9a50fad79/attachments/6a3f3b28f8c9278c59462b45/previews/6a3f3b2ff8c9278c59462bc7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "c1fa28c4",
@@ -3233,7 +3642,12 @@
       "https://trello.com/1/cards/6a3f3ad194ebdd59c1fa28c4/attachments/6a3f3b95f95a4505a2afe0df/previews/6a3f3b9bf95a4505a2afe14d/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/en-ca/?id=O7q8SeEkNg9c0fFcjH6jNxZaDmo5NvJX"
+    "carfax": "https://vhr.carfax.ca/en-ca/?id=O7q8SeEkNg9c0fFcjH6jNxZaDmo5NvJX",
+    "b": "SUV",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "152f2037",
@@ -3257,7 +3671,9 @@
       "https://trello.com/1/cards/6a3f3b2b13e026cb152f2037/attachments/6a3f3c366799f382aea503ec/previews/6a3f3c3b6799f382aea50d61/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=i%2FtmRh3H6qHxT%2FMe1PemmrmuVzyeS8GT"
+    "carfax": "https://vhr.carfax.ca/?id=i%2FtmRh3H6qHxT%2FMe1PemmrmuVzyeS8GT",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "e511331f",
@@ -3285,7 +3701,11 @@
       "https://trello.com/1/cards/6a3f3b4ce8ec2214e511331f/attachments/6a3f50105b0d42f5b58c4928/previews/6a3f50195b0d42f5b58c5a68/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=NAQjXl3nc2SPGZ2AXNICJwz7nJnN1lhn"
+    "carfax": "https://vhr.carfax.ca/?id=NAQjXl3nc2SPGZ2AXNICJwz7nJnN1lhn",
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "f9940497",
@@ -3310,7 +3730,9 @@
       "https://trello.com/1/cards/6a43382720929962f9940497/attachments/6a43393bffabe7edcf3adc3c/previews/6a43393cffabe7edcf3adcaa/download/image.webp",
       "https://trello.com/1/cards/6a43382720929962f9940497/attachments/6a43393d449fecfc54993d74/previews/6a43393f449fecfc549940a3/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "561f8adf",
@@ -3337,7 +3759,9 @@
       "https://trello.com/1/cards/6a45c845539f5322561f8adf/attachments/6a45c85e1e25eb5f31e312c5/previews/6a45c85f1e25eb5f31e31333/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=bo8%2FP1kv17ZS5c30sGRpj%2FaVFjERh0%2B7"
+    "carfax": "https://vhr.carfax.ca/?id=bo8%2FP1kv17ZS5c30sGRpj%2FaVFjERh0%2B7",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "36f225d0",
@@ -3359,7 +3783,11 @@
       "https://trello.com/1/cards/6a4c46876a223aae36f225d0/attachments/6a4c46a1cdf9a4d1e9b5eacd/previews/6a4c46a2cdf9a4d1e9b5eb3d/download/photo.webp",
       "https://trello.com/1/cards/6a4c46876a223aae36f225d0/attachments/6a4c46a3ebd6f004b1da179f/previews/6a4c46a4ebd6f004b1da1821/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "6fe9a6e5",
@@ -3382,7 +3810,11 @@
       "https://trello.com/1/cards/6a4c6f5fe445d6ae6fe9a6e5/attachments/6a4c6f8371259b81987ab3ae/previews/6a4c6f8471259b81987ab861/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=b63BsInLmFNfSAvozTlvNp6h9LU7dPkp"
+    "carfax": "https://vhr.carfax.ca/?id=b63BsInLmFNfSAvozTlvNp6h9LU7dPkp",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "16fb95f8",
@@ -3409,7 +3841,12 @@
       "https://trello.com/1/cards/6a57aa486450d7a616fb95f8/attachments/6a57aa69cf2586b71cef2c74/previews/6a57aa6acf2586b71cef2cf2/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=RUPjhO%2B9mFfmW9SHGW5aV6CmGW7dSwnh"
+    "carfax": "https://vhr.carfax.ca/?id=RUPjhO%2B9mFfmW9SHGW5aV6CmGW7dSwnh",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "e88ceaf7",
@@ -3433,7 +3870,9 @@
       "https://trello.com/1/cards/6a58fe5b06513c03e88ceaf7/attachments/6a58fe79f3819803ba54bf9d/previews/6a58fe7af3819803ba54c00b/download/photo.webp",
       "https://trello.com/1/cards/6a58fe5b06513c03e88ceaf7/attachments/6a58fe7becf75ef80fd05eda/previews/6a58fe7cecf75ef80fd060e4/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Van",
+    "f": []
   },
   {
     "id": "abe9eda3",
@@ -3461,7 +3900,9 @@
       "https://trello.com/1/cards/6a58fe9c947d3489abe9eda3/attachments/6a58febd7ca3ecc3812ee05e/previews/6a58febe7ca3ecc3812ee0dc/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=DWo5qNiDiFSoKtFLzZXGahr7xYPqKi6r"
+    "carfax": "https://vhr.carfax.ca/?id=DWo5qNiDiFSoKtFLzZXGahr7xYPqKi6r",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f5a7439c",
@@ -3475,7 +3916,12 @@
       "https://trello.com/1/cards/696f53ebdbc3b6b2f5a7439c/attachments/696f5406d18405f801768b45/previews/696f5407d18405f801768b55/download/IMG_3175.webp",
       "https://trello.com/1/cards/696f53ebdbc3b6b2f5a7439c/attachments/696f5c93ca527f46a330dde1/previews/696f5c94ca527f46a330de0d/download/IMG_3184.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "f8f631be",
@@ -3490,7 +3936,12 @@
       "https://trello.com/1/cards/696f5aff6dd40d2cf8f631be/attachments/696f5b1b63fc6c0e2f3807e4/previews/696f5b1c63fc6c0e2f3809a3/download/IMG_3221.webp",
       "https://trello.com/1/cards/696f5aff6dd40d2cf8f631be/attachments/696f5b201d3b11cee231af22/previews/696f5b211d3b11cee231af72/download/IMG_3234.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "d7be2fc2",
@@ -3501,7 +3952,12 @@
     "photos": [
       "https://trello.com/1/cards/69704b5a59e61b8ad7be2fc2/attachments/69704b7bac7c94f40b3cdb0e/previews/69704b7cac7c94f40b3cdb1c/download/IMG_7535.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "572dd90c",
@@ -3523,6 +3979,10 @@
     ],
     "videos": [
       "https://trello.com/1/cards/6a09a77218f84e2c572dd90c/attachments/6a09a783821d019f6064d3ad/download/40f9c7841bcd4cb6b397bf9cb79c6b51.mov"
+    ],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
     ]
   },
   {
@@ -3537,7 +3997,11 @@
       "https://trello.com/1/cards/696f5df2b5c4c30b29bfec63/attachments/696f5e170ee920d28c38a68d/previews/696f5e180ee920d28c38a6ad/download/IMG_3424.webp",
       "https://trello.com/1/cards/696f5df2b5c4c30b29bfec63/attachments/696f5e1d19060d2cfbc353c0/previews/696f5e1e19060d2cfbc353ee/download/IMG_3428.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "9ac43cde",
@@ -3548,7 +4012,12 @@
     "photos": [
       "https://trello.com/1/cards/697064416124c5449ac43cde/attachments/69706444deaa3c7835deb266/previews/69706445deaa3c7835deb274/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "5826f17f",
@@ -3564,7 +4033,9 @@
       "https://trello.com/1/cards/6970e0ddb653c1035826f17f/attachments/6970e1205df3280086465fed/previews/6970e1215df3280086466039/download/photo.webp",
       "https://trello.com/1/cards/6970e0ddb653c1035826f17f/attachments/6970e1233516141280e5697b/previews/6970e1243516141280e569d7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "40e4c6ed",
@@ -3584,7 +4055,9 @@
     ],
     "videos": [
       "https://trello.com/1/cards/6970e083a57e8e0c40e4c6ed/attachments/6970e0f076a19fdb2fdc405c/download/IMG_5538.mp4"
-    ]
+    ],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "6994e19a",
@@ -3602,7 +4075,9 @@
       "https://trello.com/1/cards/6970c30ce1d95f176994e19a/attachments/6970c38e9bf86f936051281b/previews/6970c3909bf86f9360512b9f/download/photo.webp",
       "https://trello.com/1/cards/6970c30ce1d95f176994e19a/attachments/6970c3915b8f1449fd48af2d/previews/6970c3925b8f1449fd48afa9/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "e19371a0",
@@ -3621,7 +4096,11 @@
       "https://trello.com/1/cards/6970c7a4b649c2dde19371a0/attachments/6970c80768ef56a93d1ed9e1/previews/6970c80868ef56a93d1eda4d/download/photo.webp",
       "https://trello.com/1/cards/6970c7a4b649c2dde19371a0/attachments/6970c81220ce7b0f1d0e5eb8/previews/6970c81320ce7b0f1d0e5f34/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "c688f11d",
@@ -3642,7 +4121,9 @@
     ],
     "videos": [
       "https://trello.com/1/cards/6970bf5f6247b8d0c688f11d/attachments/6970c05317f999f427686a4f/download/IMG_5613.mp4"
-    ]
+    ],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "dd60ea30",
@@ -3661,7 +4142,13 @@
       "https://trello.com/1/cards/6970e2c2c1825a19dd60ea30/attachments/6970e32930d7e14e8202cfaf/previews/6970e32b30d7e14e8202d01d/download/photo.webp",
       "https://trello.com/1/cards/6970e2c2c1825a19dd60ea30/attachments/6970e32c8db516a412f63c4f/previews/6970e32d8db516a412f63ccb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid",
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "149ff887",
@@ -3683,7 +4170,11 @@
       "https://trello.com/1/cards/6972c6d8fb6cd2ef149ff887/attachments/6972c71ffac30806acc83a11/previews/6972c721fac30806acc83a8d/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=l5v6raTJOPYzT%2BbVbNwnrmjVmuhH4t%2B1"
+    "carfax": "https://vhr.carfax.ca/?id=l5v6raTJOPYzT%2BbVbNwnrmjVmuhH4t%2B1",
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "c0ae1da4",
@@ -3705,7 +4196,9 @@
       "https://trello.com/1/cards/6970493aa26a7a57c0ae1da4/attachments/697049bb0f9f9e2bc2a1bcd0/previews/697049bc0f9f9e2bc2a1bd50/download/IMG_8391.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=JDHqsXdoORniDtVEqVn16oquqZalkAWn"
+    "carfax": "https://vhr.carfax.ca/?id=JDHqsXdoORniDtVEqVn16oquqZalkAWn",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f94b7af3",
@@ -3725,7 +4218,9 @@
       "https://trello.com/1/cards/697814e25fa6fcb1f94b7af3/attachments/6978192591d75975981ee220/previews/6978192691d75975981ee28c/download/image.webp",
       "https://trello.com/1/cards/697814e25fa6fcb1f94b7af3/attachments/69781927e5eee7dba022827a/previews/69781928e5eee7dba022849f/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3604e41d",
@@ -3745,7 +4240,12 @@
       "https://trello.com/1/cards/69732ce31cac2d4b3604e41d/attachments/69732d03a5344ab82437f095/previews/69732d04a5344ab82437f101/download/photo.webp",
       "https://trello.com/1/cards/69732ce31cac2d4b3604e41d/attachments/69732d05c56b5a6107c12d2c/previews/69732d05c56b5a6107c12ea2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "8b155a6e",
@@ -3767,7 +4267,12 @@
       "https://trello.com/1/cards/6972cded54a182228b155a6e/attachments/6972ce0b7bb8f484908ba96d/previews/6972ce0b7bb8f484908ba9e9/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=MVhwF1WpK6c3GUQfH0PYLQeApDwplxUj"
+    "carfax": "https://vhr.carfax.ca/?id=MVhwF1WpK6c3GUQfH0PYLQeApDwplxUj",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "12ac2299",
@@ -3789,7 +4294,9 @@
       "https://trello.com/1/cards/696f62347177c08512ac2299/attachments/697d3d5ab7391e2b0f345d0d/previews/697d3d60b7391e2b0f345d7d/download/DSC02166.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=rrDhC2Bvj0xlmONXB047mAPJsnOd6Ggs"
+    "carfax": "https://vhr.carfax.ca/?id=rrDhC2Bvj0xlmONXB047mAPJsnOd6Ggs",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "588eae95",
@@ -3809,7 +4316,9 @@
       "https://trello.com/1/cards/697c19fc0545d6d2588eae95/attachments/697c1a128584ef3dbb76356a/previews/697c1a178584ef3dbb7635a8/download/IMG_8211.webp",
       "https://trello.com/1/cards/697c19fc0545d6d2588eae95/attachments/697c1a12f02485cd3ab3d7da/previews/697c1a17f02485cd3ab3d828/download/IMG_8200.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "2f60c396",
@@ -3830,7 +4339,11 @@
       "https://trello.com/1/cards/69707ef85a0e9f302f60c396/attachments/697da25948563e1307c01713/previews/697da25e48563e1307c01781/download/DSC01697.webp"
     ],
     "videos": [],
-    "carfax": "https://trello.com/1/cards/69707ef85a0e9f302f60c396/attachments/69707f39e7421c78f00baf22/download/CARFAX_Canada_Vehicle_History_Report_(1).pdf"
+    "carfax": "https://trello.com/1/cards/69707ef85a0e9f302f60c396/attachments/69707f39e7421c78f00baf22/download/CARFAX_Canada_Vehicle_History_Report_(1).pdf",
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "41362cc0",
@@ -3851,7 +4364,11 @@
       "https://trello.com/1/cards/69707b40b1d7963b41362cc0/attachments/697c1c4df30a291c70e6b1bb/previews/697c1c53f30a291c70e6b22d/download/DSC01260.webp"
     ],
     "videos": [],
-    "carfax": "https://trello.com/1/cards/69707b40b1d7963b41362cc0/attachments/69707de36b2c259c0ab9bafb/download/CARFAX_Canada_Vehicle_History_Report_(2).pdf"
+    "carfax": "https://trello.com/1/cards/69707b40b1d7963b41362cc0/attachments/69707de36b2c259c0ab9bafb/download/CARFAX_Canada_Vehicle_History_Report_(2).pdf",
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "45c7a1c5",
@@ -3873,7 +4390,9 @@
       "https://trello.com/1/cards/6970e1f255ccce7d45c7a1c5/attachments/6970e28989568cd33bfe630d/previews/6970e28a89568cd33bfe6379/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=029vU8AWPeozyR0acKa67buO2yDrJZoo"
+    "carfax": "https://vhr.carfax.ca/?id=029vU8AWPeozyR0acKa67buO2yDrJZoo",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "40ac5df5",
@@ -3894,7 +4413,9 @@
       "https://trello.com/1/cards/6a18d79e4c61f83440ac5df5/attachments/6a18d97fd48ed35f03591a4b/previews/6a18d983d48ed35f03591ab9/download/photo.webp",
       "https://trello.com/1/cards/6a18d79e4c61f83440ac5df5/attachments/6a18d985052d8e359d067445/previews/6a18d989052d8e359d068268/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "2cb52ed4",
@@ -3910,7 +4431,11 @@
       "https://trello.com/1/cards/696f60c7bf4021362cb52ed4/attachments/696f61392275e9274613acb1/previews/696f613b2275e9274613aec3/download/IMG_7489.webp",
       "https://trello.com/1/cards/696f60c7bf4021362cb52ed4/attachments/696f615dcbc7a211565016f9/previews/696f615fcbc7a21156501737/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "96621bc8",
@@ -3932,7 +4457,11 @@
       "https://trello.com/1/cards/6970181569d3592d96621bc8/attachments/6984941cab221d03ea6aceeb/previews/6984941dab221d03ea6ad040/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=KLuR8Hd0tdBA%2BkJ7HOIrA1D5rWx6KffA"
+    "carfax": "https://vhr.carfax.ca/?id=KLuR8Hd0tdBA%2BkJ7HOIrA1D5rWx6KffA",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "e80c8c30",
@@ -3952,7 +4481,9 @@
       "https://trello.com/1/cards/697039880d399678e80c8c30/attachments/697da396676d96e91ee01cdb/previews/697da39b676d96e91ee01d37/download/DSC01885.webp",
       "https://trello.com/1/cards/697039880d399678e80c8c30/attachments/697da39b369e42edfe00cd06/previews/697da3a0369e42edfe00cd74/download/DSC01948.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "95357353",
@@ -3970,7 +4501,9 @@
       "https://trello.com/1/cards/6970816a3296599295357353/attachments/697084dfba561a0efd2bdec9/previews/697084e1ba561a0efd2bdf19/download/IMG_4837.webp"
     ],
     "videos": [],
-    "carfax": "https://trello.com/1/cards/6970816a3296599295357353/attachments/69708499f6428e7765288252/download/CARFAX_Canada_Vehicle_History_Report.pdf"
+    "carfax": "https://trello.com/1/cards/6970816a3296599295357353/attachments/69708499f6428e7765288252/download/CARFAX_Canada_Vehicle_History_Report.pdf",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "1958a973",
@@ -3990,7 +4523,11 @@
       "https://trello.com/1/cards/6970c11d76b69cc41958a973/attachments/6970c22a2bd94dbe2acdce51/previews/6970c22c2bd94dbe2acdcead/download/photo.webp",
       "https://trello.com/1/cards/6970c11d76b69cc41958a973/attachments/6970c2360fb28b67eca5d3a4/previews/6970c2370fb28b67eca5d410/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Electric"
+    ]
   },
   {
     "id": "062d3c8b",
@@ -4012,7 +4549,11 @@
       "https://trello.com/1/cards/6970e1639904555a062d3c8b/attachments/6970e1c980ca3f7eb37435b6/previews/6970e1ca80ca3f7eb3743622/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=%2FyVNOZL%2FlQbEOYsUW7I%2FneAApFQ3EUFj"
+    "carfax": "https://vhr.carfax.ca/?id=%2FyVNOZL%2FlQbEOYsUW7I%2FneAApFQ3EUFj",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "711d7bd0",
@@ -4032,7 +4573,9 @@
       "https://trello.com/1/cards/6972d015eb6c9fe2711d7bd0/attachments/6972d04f88c9dfee2cb5f45d/previews/6972d05088c9dfee2cb5f4b9/download/photo.webp",
       "https://trello.com/1/cards/6972d015eb6c9fe2711d7bd0/attachments/6972d051a2b1d72e995ae733/previews/6972d052a2b1d72e995ae79f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "39b8faf5",
@@ -4054,7 +4597,9 @@
       "https://trello.com/1/cards/6972d28657634fe139b8faf5/attachments/6972d2a802b2010c170e659a/previews/6972d2a902b2010c170e6616/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=TYrtEfPUSuv445ozMugGUr+IFZBh6bYH"
+    "carfax": "https://vhr.carfax.ca/?id=TYrtEfPUSuv445ozMugGUr+IFZBh6bYH",
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "2b8c41e1",
@@ -4076,7 +4621,12 @@
       "https://trello.com/1/cards/6974211c641dae462b8c41e1/attachments/6974216c606cd42793482776/previews/6974216f606cd427934827f2/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=EN9YKm0Smq6vK8sRX5bqirIu08uTGwE4"
+    "carfax": "https://vhr.carfax.ca/?id=EN9YKm0Smq6vK8sRX5bqirIu08uTGwE4",
+    "b": "Sedan",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "e7f24e53",
@@ -4098,7 +4648,9 @@
       "https://trello.com/1/cards/697421422a884ee4e7f24e53/attachments/697421a68489b12deb3da85c/previews/697421a98489b12deb3da8c8/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=coI6PURevCuvmWdop5I0ZWfINAPBe2O7"
+    "carfax": "https://vhr.carfax.ca/?id=coI6PURevCuvmWdop5I0ZWfINAPBe2O7",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f9bb15b4",
@@ -4111,7 +4663,9 @@
     "photos": [
       "https://trello.com/1/cards/69742197adb5741af9bb15b4/attachments/6974321d01338d6e136bc432/previews/6974322301338d6e136bcea6/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "532b7143",
@@ -4131,7 +4685,9 @@
       "https://trello.com/1/cards/6974332d21db74b8532b7143/attachments/6974334a405c0caae43cb45b/previews/6974334b405c0caae43cb4b7/download/photo.webp",
       "https://trello.com/1/cards/6974332d21db74b8532b7143/attachments/6974334c96b467b30d2d3551/previews/6974334d96b467b30d2d35bd/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "fcfd4f57",
@@ -4150,7 +4706,9 @@
       "https://trello.com/1/cards/6974335548e6c67afcfd4f57/attachments/6974337aa6075824d593c32c/previews/6974337ba6075824d593c388/download/photo.webp",
       "https://trello.com/1/cards/6974335548e6c67afcfd4f57/attachments/6974337cded07ccfa80fbc6b/previews/6974337dded07ccfa80fbcd7/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "535ee01a",
@@ -4170,7 +4728,12 @@
       "https://trello.com/1/cards/6974351a23fc0181535ee01a/attachments/69743552c8ac16deb873cd8b/previews/69743554c8ac16deb873cdf9/download/photo.webp",
       "https://trello.com/1/cards/6974351a23fc0181535ee01a/attachments/69743555d1f2b56b02000aa8/previews/69743556d1f2b56b02000b24/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "962d4bec",
@@ -4190,7 +4753,9 @@
       "https://trello.com/1/cards/6974356618b94b80962d4bec/attachments/6974359031fc06f1a24d9ff4/previews/6974359131fc06f1a24da050/download/photo.webp",
       "https://trello.com/1/cards/6974356618b94b80962d4bec/attachments/6974359389adda0a2a4a8d26/previews/6974359489adda0a2a4a8d92/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "57fdb70b",
@@ -4211,7 +4776,9 @@
       "https://trello.com/1/cards/6976d217b050a88657fdb70b/attachments/6976d2658f2b418d4190e616/previews/6976d2668f2b418d4190e845/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=w9GxoPbI7xAYWPBXBuIDOflfwFjNkRaG"
+    "carfax": "https://vhr.carfax.ca/?id=w9GxoPbI7xAYWPBXBuIDOflfwFjNkRaG",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "1309a2f0",
@@ -4231,7 +4798,11 @@
       "https://trello.com/1/cards/69781422154c45ba1309a2f0/attachments/6978146952eb59f65f469637/previews/6978146d52eb59f65f469f9e/download/photo.webp",
       "https://trello.com/1/cards/69781422154c45ba1309a2f0/attachments/6978146fd1b581277192db02/previews/69781474d1b581277192db70/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "955c199a",
@@ -4251,7 +4822,9 @@
       "https://trello.com/1/cards/697819b8ba33943f955c199a/attachments/697da7c21ce1b8a781951464/previews/697da7c71ce1b8a7819514a2/download/DSC03416.webp",
       "https://trello.com/1/cards/697819b8ba33943f955c199a/attachments/697da7c20e6b49e1201fc5b6/previews/697da7c70e6b49e1201fc5f2/download/DSC03444.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "50470193",
@@ -4266,7 +4839,11 @@
       "https://trello.com/1/cards/69781b2773fba46e50470193/attachments/69781b2887a20364ebf85c0d/previews/69781b2987a20364ebf85c1b/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=y7C7N44k9EcohCbFJK%2FyjvhiSktFj%2Ffj#accident-damage-section"
+    "carfax": "https://vhr.carfax.ca/?id=y7C7N44k9EcohCbFJK%2FyjvhiSktFj%2Ffj#accident-damage-section",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "4e884743",
@@ -4286,7 +4863,9 @@
       "https://trello.com/1/cards/697d892179f802c14e884743/attachments/697d892179f802c14e8847ac/previews/697d892179f802c14e8847a9/download/photo.webp",
       "https://trello.com/1/cards/697d892179f802c14e884743/attachments/697d892179f802c14e8847b5/previews/697d892179f802c14e8847b2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "8ef6a9ba",
@@ -4306,7 +4885,9 @@
       "https://trello.com/1/cards/697ff691f9abe0348ef6a9ba/attachments/697ff6c2cc42894feeb7bd39/previews/697ff6c7cc42894feeb7bda7/download/photo.webp",
       "https://trello.com/1/cards/697ff691f9abe0348ef6a9ba/attachments/697ffc981f5009396a18cb88/previews/697ffc9d1f5009396a18d2e9/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Van",
+    "f": []
   },
   {
     "id": "ae114258",
@@ -4328,7 +4909,9 @@
       "https://trello.com/1/cards/69912aefee0f8573ae114258/attachments/69912b259126e4ca17674f96/previews/69912b269126e4ca17675012/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=dh2c0HVokbOw9qPAdhgPxJ5EUnKIzna2"
+    "carfax": "https://vhr.carfax.ca/?id=dh2c0HVokbOw9qPAdhgPxJ5EUnKIzna2",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "424b47fe",
@@ -4348,7 +4931,9 @@
       "https://trello.com/1/cards/699531cf5e273977424b47fe/attachments/699532172862089470ce252d/previews/699532192862089470ce2599/download/image.webp",
       "https://trello.com/1/cards/699531cf5e273977424b47fe/attachments/6995321f6d872c0aa7e167b1/previews/699532216d872c0aa7e16830/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "81d0d8e5",
@@ -4366,7 +4951,9 @@
       "https://trello.com/1/cards/699fa9c3aa6bf48481d0d8e5/attachments/699faa0f9a1fffe8cba987e8/previews/699faa119a1fffe8cba98e41/download/photo.webp",
       "https://trello.com/1/cards/699fa9c3aa6bf48481d0d8e5/attachments/699faa125b706dce2c42bb26/previews/699faa155b706dce2c42bba2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "693647fe",
@@ -4386,7 +4973,9 @@
       "https://trello.com/1/cards/699530f2bd657016693647fe/attachments/6995314d06cd603c8efee144/previews/6995315006cd603c8efee1b0/download/image.webp",
       "https://trello.com/1/cards/699530f2bd657016693647fe/attachments/6995315181eabde9b8be4a14/previews/6995315481eabde9b8be5483/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3818477e",
@@ -4408,7 +4997,9 @@
       "https://trello.com/1/cards/69ae3216d8dd84b63818477e/attachments/69ae32607ec2633be0140558/previews/69ae32657ec2633be01405d6/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=I%2F6QJQJqVFgiPebY1Rkq2c7CRLBayBbx"
+    "carfax": "https://vhr.carfax.ca/?id=I%2F6QJQJqVFgiPebY1Rkq2c7CRLBayBbx",
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "fe6b93c9",
@@ -4431,7 +5022,9 @@
       "https://trello.com/1/cards/69ae0c6c133e9ce9fe6b93c9/attachments/69ae196c9578bd52b30974c1/previews/69ae196f9578bd52b309753f/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=HOvDJQbWehGTA4SkGi+aBS5nDtBVuSIL"
+    "carfax": "https://vhr.carfax.ca/?id=HOvDJQbWehGTA4SkGi+aBS5nDtBVuSIL",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "fede97e7",
@@ -4450,7 +5043,11 @@
       "https://trello.com/1/cards/696f56940250e6c5fede97e7/attachments/696f56da62b17576cb6c8c90/previews/696f56da62b17576cb6c8cce/download/IMG_3379.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=ib94RChBPuedXvbgW8ZhsBrXZmSfzXKp"
+    "carfax": "https://vhr.carfax.ca/?id=ib94RChBPuedXvbgW8ZhsBrXZmSfzXKp",
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "668daf21",
@@ -4471,7 +5068,11 @@
       "https://trello.com/1/cards/696f5e71ffdf9b9e668daf21/attachments/696f5fa11072ee63ed5740c6/previews/696f5fa21072ee63ed574124/download/IMG_7478.webp",
       "https://trello.com/1/cards/696f5e71ffdf9b9e668daf21/attachments/697d3c6e200f6bcaa9a1a674/previews/697d3c73200f6bcaa9a1a6e0/download/DSC03034.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "05a36483",
@@ -4492,7 +5093,9 @@
       "https://trello.com/1/cards/69704c957240010605a36483/attachments/69704d04f39621e3fbb85d79/previews/69704d05f39621e3fbb85df7/download/IMG_5588.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=F4ovQKg8NSn7mep%2BTgCrraspIQ8bkwg%2F"
+    "carfax": "https://vhr.carfax.ca/?id=F4ovQKg8NSn7mep%2BTgCrraspIQ8bkwg%2F",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "a4d36f12",
@@ -4512,7 +5115,9 @@
       "https://trello.com/1/cards/697d89379fa493bca4d36f12/attachments/69ab5261bdf3fdcd9c4fa735/previews/69ab5266bdf3fdcd9c4fa785/download/DSC05664.webp",
       "https://trello.com/1/cards/697d89379fa493bca4d36f12/attachments/69ab5264a194d018a9b8da0e/previews/69ab526ba194d018a9b8ed74/download/DSC05653.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3ac45c06",
@@ -4535,6 +5140,11 @@
     ],
     "videos": [
       "https://trello.com/1/cards/696f66122cd4db6d3ac45c06/attachments/6972c81ca12ccc241b48baaa/download/IMG_2755.mov"
+    ],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
     ]
   },
   {
@@ -4555,7 +5165,11 @@
       "https://trello.com/1/cards/6972de59c3003b76f0180826/attachments/6972dea1561d2f2f81ec91d3/previews/6972dea6561d2f2f81ec9848/download/image.webp",
       "https://trello.com/1/cards/6972de59c3003b76f0180826/attachments/6972e3f236c5230276da7c5e/previews/6972e3f736c5230276da7cda/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "40dba15f",
@@ -4575,7 +5189,11 @@
       "https://trello.com/1/cards/6974216181c0d60340dba15f/attachments/697431e9d3a62d084881f530/previews/697431ecd3a62d084881f59c/download/image.webp",
       "https://trello.com/1/cards/6974216181c0d60340dba15f/attachments/697431ed5b372ab8c9e2499e/previews/697431ef5b372ab8c9e24a1a/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "33e27fba",
@@ -4595,7 +5213,11 @@
       "https://trello.com/1/cards/697435a8890df84633e27fba/attachments/697435dc4901cde08a6e8fc9/previews/697435dd4901cde08a6e9025/download/photo.webp",
       "https://trello.com/1/cards/697435a8890df84633e27fba/attachments/697435de5d7ab930cd408a41/previews/697435df5d7ab930cd408aad/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": [
+      "Diesel"
+    ]
   },
   {
     "id": "84339d53",
@@ -4615,7 +5237,12 @@
       "https://trello.com/1/cards/697bd84ae76f8bf184339d53/attachments/697bd89dd2a2a785e8ab8cfc/previews/697bd89ed2a2a785e8ab8d58/download/photo.webp",
       "https://trello.com/1/cards/697bd84ae76f8bf184339d53/attachments/697bd89fb9ee7c23f8485584/previews/697bd8a0b9ee7c23f8485827/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "27ae88f9",
@@ -4635,7 +5262,12 @@
       "https://trello.com/1/cards/6985229dbd35e52f27ae88f9/attachments/69852887ea1242b5a73e2ea0/previews/6985288aea1242b5a73e2efc/download/photo.webp",
       "https://trello.com/1/cards/6985229dbd35e52f27ae88f9/attachments/6985288b7237d00b54baeff9/previews/6985288e7237d00b54baf065/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "ced2bfd3",
@@ -4655,7 +5287,9 @@
       "https://trello.com/1/cards/6995314bcf2cb8b8ced2bfd3/attachments/699531d0a6ffc608df198e29/previews/699531d3a6ffc608df198e95/download/image.webp",
       "https://trello.com/1/cards/6995314bcf2cb8b8ced2bfd3/attachments/699531d5c08654bb602ba10f/previews/699531d7c08654bb602ba18b/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "52e95eb0",
@@ -4677,7 +5311,11 @@
       "https://trello.com/1/cards/699fa99bbf8ac66152e95eb0/attachments/699fa9d68d6870abdd3dbdfe/previews/699fa9d88d6870abdd3dbe7a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=C5%2F6qszw6NZrAYStXjLDEU+ZKb9G+Xfk"
+    "carfax": "https://vhr.carfax.ca/?id=C5%2F6qszw6NZrAYStXjLDEU+ZKb9G+Xfk",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "75687076",
@@ -4697,7 +5335,9 @@
       "https://trello.com/1/cards/69a8d7ee51926eb675687076/attachments/69a8d92467cbc993193fcbd1/previews/69a8d92667cbc993193fcc3f/download/image.webp",
       "https://trello.com/1/cards/69a8d7ee51926eb675687076/attachments/69a8d927a015979f6cc9237b/previews/69a8d92aa015979f6cc92561/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "b209c4ba",
@@ -4717,7 +5357,12 @@
       "https://trello.com/1/cards/69a8d9847b690a64b209c4ba/attachments/69a8da4f185846e81a7ba0d7/previews/69a8da54185846e81a7ba139/download/photo.webp",
       "https://trello.com/1/cards/69a8d9847b690a64b209c4ba/attachments/69a8da5795d0895c9d8286b0/previews/69a8da5c95d0895c9d828720/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "a82af702",
@@ -4737,7 +5382,12 @@
       "https://trello.com/1/cards/69a8d9d3229146d3a82af702/attachments/69a8dad9f958552ae6e3cbc5/previews/69a8dadcf958552ae6e3d51d/download/photo.webp",
       "https://trello.com/1/cards/69a8d9d3229146d3a82af702/attachments/69a8dadd68429cd58c3c57b3/previews/69a8dae068429cd58c3c5835/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "5eb24aee",
@@ -4759,7 +5409,9 @@
       "https://trello.com/1/cards/69ab57f2e829fc1d5eb24aee/attachments/69ab58513e68c29b71b36be5/previews/69ab58563e68c29b71b36c05/download/DSC05419.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=mmSoK%2FEOFr9unwWvyA6HhCRv9fPd10LB"
+    "carfax": "https://vhr.carfax.ca/?id=mmSoK%2FEOFr9unwWvyA6HhCRv9fPd10LB",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "6b9a38af",
@@ -4780,7 +5432,9 @@
       "https://trello.com/1/cards/69b4a7fee34e4c976b9a38af/attachments/69b4a841c54b0e1a25b5cfe9/previews/69b4a844c54b0e1a25b5d057/download/image.webp",
       "https://trello.com/1/cards/69b4a7fee34e4c976b9a38af/attachments/69b4a846b7923fcebe12d356/previews/69b4a848b7923fcebe12dac9/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "4505e27f",
@@ -4801,7 +5455,9 @@
       "https://trello.com/1/cards/69b4a83ca2c06b814505e27f/attachments/69b4ac213ae519bae8511295/previews/69b4ac243ae519bae8511307/download/photo.webp",
       "https://trello.com/1/cards/69b4a83ca2c06b814505e27f/attachments/69b4ac266eb903682c9f8c13/previews/69b4ac286eb903682c9f8c91/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "54e328b2",
@@ -4821,7 +5477,12 @@
       "https://trello.com/1/cards/69c1bfa4e0fd9f1654e328b2/attachments/69c1c0108f3e5c726511ee38/previews/69c1c0138f3e5c726511eea6/download/photo.webp",
       "https://trello.com/1/cards/69c1bfa4e0fd9f1654e328b2/attachments/69c1c01456a824db5fa06109/previews/69c1c01756a824db5fa06187/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "bb65910b",
@@ -4841,7 +5502,9 @@
       "https://trello.com/1/cards/69c1da58a721b390bb65910b/attachments/69c1dbdfbadf6b6fd60c724e/previews/69c1dbe2badf6b6fd60c72bc/download/image.webp",
       "https://trello.com/1/cards/69c1da58a721b390bb65910b/attachments/69c1dbe4fe380499c21922ca/previews/69c1dbe7fe380499c2192348/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "0e0040a1",
@@ -4861,7 +5524,11 @@
       "https://trello.com/1/cards/6970c0785eea1cc70e0040a1/attachments/6970c0f062e80f28d65794ae/previews/6970c0f162e80f28d657951a/download/photo.webp",
       "https://trello.com/1/cards/6970c0785eea1cc70e0040a1/attachments/6970c0f27647db12bdee187f/previews/6970c0f47647db12bdee18fb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "34e7337d",
@@ -4884,7 +5551,11 @@
       "https://trello.com/1/cards/69d75352f5ef96cb34e7337d/attachments/69d7537e72dbade54e90559d/previews/69d7538072dbade54e90560b/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=%2FeuIIBzFH9j%2FpU6UXQW+1SFIyYyZliMg"
+    "carfax": "https://vhr.carfax.ca/?id=%2FeuIIBzFH9j%2FpU6UXQW+1SFIyYyZliMg",
+    "b": "Coupe",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "610c99f9",
@@ -4905,7 +5576,9 @@
       "https://trello.com/1/cards/69d7553f3d33d49d610c99f9/attachments/69d75a676d5434595bda9d8d/previews/69d75a6b6d5434595bda9dfb/download/photo.webp",
       "https://trello.com/1/cards/69d7553f3d33d49d610c99f9/attachments/69d75a6d2d3e266df23ad5f4/previews/69d75a722d3e266df23ae70c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "d1f50ad4",
@@ -4928,7 +5601,12 @@
       "https://trello.com/1/cards/696f579ad4a5e550d1f50ad4/attachments/69d8a4358652865abb50eb58/previews/69d8a4368652865abb50ebc8/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=sAfSyp0nq7l03Zqq34kBLrKTJxf8HpB6"
+    "carfax": "https://vhr.carfax.ca/?id=sAfSyp0nq7l03Zqq34kBLrKTJxf8HpB6",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "09e5bacc",
@@ -4949,7 +5627,9 @@
       "https://trello.com/1/cards/6976c6e4fe376c4709e5bacc/attachments/6976c735cad54097d4dc0bcb/previews/6976c736cad54097d4dc0c27/download/photo.webp",
       "https://trello.com/1/cards/6976c6e4fe376c4709e5bacc/attachments/6976c737f2560e1e76b1e059/previews/6976c738f2560e1e76b1e0c5/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "b5369309",
@@ -4972,7 +5652,11 @@
       "https://trello.com/1/cards/6976d2ee2213025db5369309/attachments/6976d31e47376758d5431893/previews/6976d31f47376758d543190f/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=SIaWJm3Rd%2FmWPzW46JIdF1htclqQlTpx"
+    "carfax": "https://vhr.carfax.ca/?id=SIaWJm3Rd%2FmWPzW46JIdF1htclqQlTpx",
+    "b": "Truck",
+    "f": [
+      "Diesel"
+    ]
   },
   {
     "id": "e6f6378f",
@@ -4993,7 +5677,12 @@
       "https://trello.com/1/cards/69781abb668dd03ee6f6378f/attachments/69781af8cf907768b6fa8c01/previews/69781af9cf907768b6fa8c5d/download/image.webp",
       "https://trello.com/1/cards/69781abb668dd03ee6f6378f/attachments/69781afa07fe3242740d641a/previews/69781afb07fe3242740d6487/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid",
+      "Brand New"
+    ]
   },
   {
     "id": "19379600",
@@ -5014,7 +5703,11 @@
       "https://trello.com/1/cards/69781b27deda0fb619379600/attachments/6978230b912544a4cb8117f5/previews/6978230c912544a4cb811851/download/photo.webp",
       "https://trello.com/1/cards/69781b27deda0fb619379600/attachments/6978230defb85dd359235d52/previews/6978230defb85dd359235dbe/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "aed1492d",
@@ -5035,7 +5728,9 @@
       "https://trello.com/1/cards/697d8977719cfe3faed1492d/attachments/697d8977719cfe3faed1498d/previews/697d8977719cfe3faed1498a/download/IMG_8211.webp",
       "https://trello.com/1/cards/697d8977719cfe3faed1492d/attachments/697d8977719cfe3faed14996/previews/697d8977719cfe3faed14993/download/IMG_8200.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "ed6b5629",
@@ -5056,7 +5751,11 @@
       "https://trello.com/1/cards/698e9ac100375187ed6b5629/attachments/698e9ac100375187ed6b56a2/previews/698e9ac100375187ed6b569f/download/photo.webp",
       "https://trello.com/1/cards/698e9ac100375187ed6b5629/attachments/698e9ac100375187ed6b56ab/previews/698e9ac100375187ed6b56a8/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "877090cc",
@@ -5079,7 +5778,9 @@
       "https://trello.com/1/cards/69ae196d6d89c103877090cc/attachments/69ae19ad867fc4377316e707/previews/69ae19b0867fc4377316ee9a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=L2yryovetsEpRRLJ0b%2FbLuPzDoIUaV2L"
+    "carfax": "https://vhr.carfax.ca/?id=L2yryovetsEpRRLJ0b%2FbLuPzDoIUaV2L",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "86a55897",
@@ -5102,7 +5803,11 @@
       "https://trello.com/1/cards/69ae199e31ae13eb86a55897/attachments/69ae19f789bc37e3ea2f4182/previews/69ae19fb89bc37e3ea2f48d0/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=WtTNuIQrDk%2BNkxSaqSRcPpr5jlTZr5bA"
+    "carfax": "https://vhr.carfax.ca/?id=WtTNuIQrDk%2BNkxSaqSRcPpr5jlTZr5bA",
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "0a5b64fa",
@@ -5125,7 +5830,9 @@
       "https://trello.com/1/cards/69b4a74f54b686e70a5b64fa/attachments/69b4a80754b686e70a5bf97d/previews/69b4a80a54b686e70a5bf9fb/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=pQk4SNCJGV4J0k6cuAFgTAvGdXMAQMLW"
+    "carfax": "https://vhr.carfax.ca/?id=pQk4SNCJGV4J0k6cuAFgTAvGdXMAQMLW",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "a052189c",
@@ -5146,7 +5853,11 @@
       "https://trello.com/1/cards/69b4a85df16588c4a052189c/attachments/69b4ace9e7a0683a935d6cf6/previews/69b4acece7a0683a935d6d54/download/photo.webp",
       "https://trello.com/1/cards/69b4a85df16588c4a052189c/attachments/69b4aceee9d2dc33930c061a/previews/69b4acf0e9d2dc33930c068c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "a6c5332c",
@@ -5167,7 +5878,9 @@
       "https://trello.com/1/cards/69d083cb6710ed24a6c5332c/attachments/69d0875b5eb0b6b7d296b874/previews/69d0875d5eb0b6b7d296b8d6/download/photo.webp",
       "https://trello.com/1/cards/69d083cb6710ed24a6c5332c/attachments/69d0875fa72dd458b81bc348/previews/69d08762a72dd458b81bc94f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "30a1af02",
@@ -5188,7 +5901,11 @@
       "https://trello.com/1/cards/69d178e18782eaf730a1af02/attachments/69d17973f21c30fc34947ffd/previews/69d17979f21c30fc34948b6e/download/DSC08549.webp",
       "https://trello.com/1/cards/69d178e18782eaf730a1af02/attachments/69d17981b7b9ffcc38ba9621/previews/69d17986b7b9ffcc38ba969f/download/DSC08551.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "e6a8d284",
@@ -5209,7 +5926,9 @@
       "https://trello.com/1/cards/69e2c47f038a4777e6a8d284/attachments/69e2c549427b02b305fd4f5d/previews/69e2c54e427b02b305fd4fcd/download/DSC08845.webp",
       "https://trello.com/1/cards/69e2c47f038a4777e6a8d284/attachments/69e2c5520292e69530fdfd38/previews/69e2c5580292e69530fdfdbb/download/DSC08847.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "841d963d",
@@ -5230,7 +5949,9 @@
       "https://trello.com/1/cards/69d0878f7d3fa382841d963d/attachments/69d087c83446fbef8823837d/previews/69d087cb3446fbef882383eb/download/image.webp",
       "https://trello.com/1/cards/69d0878f7d3fa382841d963d/attachments/69d087cd5fde85c2f5273d3d/previews/69d087d15fde85c2f5273dbb/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "6c041534",
@@ -5250,7 +5971,12 @@
       "https://trello.com/1/cards/69a8d9a73c23b2246c041534/attachments/69a8da9789ac2071149a403d/previews/69a8da9a89ac2071149a4d89/download/photo.webp",
       "https://trello.com/1/cards/69a8d9a73c23b2246c041534/attachments/69a8da9b0766e06313909038/previews/69a8da9e0766e063139090b6/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "9c15a78f",
@@ -5273,7 +5999,9 @@
       "https://trello.com/1/cards/69e3ef3169de0ad09c15a78f/attachments/69e3ef923ebcb815015ed1d4/previews/69e3ef973ebcb815015ed8a8/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=fgnmgSwv4FJyiSMmAoGTCse1udPZy82j"
+    "carfax": "https://vhr.carfax.ca/?id=fgnmgSwv4FJyiSMmAoGTCse1udPZy82j",
+    "b": "Van",
+    "f": []
   },
   {
     "id": "d719e82d",
@@ -5296,7 +6024,12 @@
       "https://trello.com/1/cards/6972dcb84da3b941d719e82d/attachments/6972dd02c0554a1ca86813ad/previews/6972dd03c0554a1ca868141b/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=g05hf2akwSZTQ0nx2mSmRmb9A10TnKOl"
+    "carfax": "https://vhr.carfax.ca/?id=g05hf2akwSZTQ0nx2mSmRmb9A10TnKOl",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "4a1619b4",
@@ -5317,7 +6050,11 @@
       "https://trello.com/1/cards/696f63de2bf1ff754a1619b4/attachments/6970bb074d4aa1e483f4f90a/previews/6970bb084d4aa1e483f4f966/download/image.webp",
       "https://trello.com/1/cards/696f63de2bf1ff754a1619b4/attachments/6970bb09425fc5b3ee888f6d/previews/6970bb0a425fc5b3ee888fdb/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "a65efa33",
@@ -5331,7 +6068,9 @@
     "photos": [
       "https://trello.com/1/cards/69ed5a06cf3b0fb4a65efa33/attachments/69ed5a07870b2552b3bdcfc8/previews/69ed5a08870b2552b3bdcfd8/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "437bc88f",
@@ -5352,7 +6091,9 @@
       "https://trello.com/1/cards/69d7537c6be28582437bc88f/attachments/69d75513734db19710aa351a/previews/69d75516734db19710aa3597/download/image.webp",
       "https://trello.com/1/cards/69d7537c6be28582437bc88f/attachments/69d75517bd86b7ac751e6a57/previews/69d7551abd86b7ac751e6ad5/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "d9cb3888",
@@ -5373,7 +6114,9 @@
       "https://trello.com/1/cards/69e016d78a232f3ad9cb3888/attachments/69e0173316a23a5bc0304505/previews/69e0173616a23a5bc0304b6e/download/image.webp",
       "https://trello.com/1/cards/69e016d78a232f3ad9cb3888/attachments/69e0173938cea24bda4dc0f0/previews/69e0173b38cea24bda4dc15e/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "fa531716",
@@ -5394,7 +6137,9 @@
       "https://trello.com/1/cards/69e2e26a30191663fa531716/attachments/69e2e2c6be9709835de3cff1/previews/69e2e2cbbe9709835de3d7e6/download/DSC08691.webp",
       "https://trello.com/1/cards/69e2e26a30191663fa531716/attachments/69e2e2d07e4633b3d152eb5a/previews/69e2e2d57e4633b3d152ebd8/download/DSC08693.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "7adc244c",
@@ -5415,7 +6160,9 @@
       "https://trello.com/1/cards/69e3ef48cfa4b5c47adc244c/attachments/69e3f27f2c776735c24975a0/previews/69e3f2842c776735c2497614/download/photo.webp",
       "https://trello.com/1/cards/69e3ef48cfa4b5c47adc244c/attachments/69e3f28748df9a2fe423adfe/previews/69e3f28c48df9a2fe423ae7e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "71340581",
@@ -5436,7 +6183,9 @@
       "https://trello.com/1/cards/69d7551d070a0a9371340581/attachments/69d75667adc9bef48fc07743/previews/69d7566cadc9bef48fc077b1/download/photo.webp",
       "https://trello.com/1/cards/69d7551d070a0a9371340581/attachments/69d7566f050a527bbfac7453/previews/69d75674050a527bbfac74d5/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "dd6989bb",
@@ -5450,7 +6199,9 @@
     "photos": [
       "https://trello.com/1/cards/69e6d9914262d152dd6989bb/attachments/69e6d9937224a618d6e666ae/previews/69e6d9987224a618d6e67852/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "f024c992",
@@ -5473,7 +6224,11 @@
       "https://trello.com/1/cards/69ed59638d290aa0f024c992/attachments/69ed5983975291fbfc413c77/previews/69ed5984975291fbfc413cf7/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=3skbCGI4TqDMh9WwwXouTeOLDlwZmE7c"
+    "carfax": "https://vhr.carfax.ca/?id=3skbCGI4TqDMh9WwwXouTeOLDlwZmE7c",
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "d1211957",
@@ -5496,7 +6251,9 @@
       "https://trello.com/1/cards/69d083aed5b309ebd1211957/attachments/69d084f177e83d4e64ad0fb9/previews/69d084f377e83d4e64ad1027/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=kQfRmD02VY%2FXrr2D29oezIe0CtcdRlXf"
+    "carfax": "https://vhr.carfax.ca/?id=kQfRmD02VY%2FXrr2D29oezIe0CtcdRlXf",
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "994031a8",
@@ -5519,7 +6276,9 @@
       "https://trello.com/1/cards/69d755009ea867e8994031a8/attachments/69d7556d9fe5192ec305b0c8/previews/69d755719fe5192ec305b14a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=vJZOBTb+iCQGHSNq43aKMML6Tnowq%2F6C"
+    "carfax": "https://vhr.carfax.ca/?id=vJZOBTb+iCQGHSNq43aKMML6Tnowq%2F6C",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "1d67250f",
@@ -5542,7 +6301,9 @@
       "https://trello.com/1/cards/69e0179525a910d31d67250f/attachments/69e019635cb6521a4c265ed0/previews/69e019675cb6521a4c2665ad/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/en/?id=jMM1QRbRu%2B%2F5omZ0%2Bsg1kC4fjoJ6eetT"
+    "carfax": "https://vhr.carfax.ca/en/?id=jMM1QRbRu%2B%2F5omZ0%2Bsg1kC4fjoJ6eetT",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "eea06a06",
@@ -5565,7 +6326,12 @@
       "https://trello.com/1/cards/69e6d9ea7bf824c9eea06a06/attachments/69e6daf82c774f00853ec5ba/previews/69e6dafc2c774f00853ec63a/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=SAHhLrBI9N1X0Iiq%2FWvK%2FTfwBoKbVsE9"
+    "carfax": "https://vhr.carfax.ca/?id=SAHhLrBI9N1X0Iiq%2FWvK%2FTfwBoKbVsE9",
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "bf8e0253",
@@ -5586,7 +6352,9 @@
       "https://trello.com/1/cards/69e6dbafd54a8e4cbf8e0253/attachments/69e78a1702e44cab91f8d14a/previews/69e78a1b02e44cab91f8d1ba/download/photo.webp",
       "https://trello.com/1/cards/69e6dbafd54a8e4cbf8e0253/attachments/69e78a1cfb14e223a67d2efd/previews/69e78a20fb14e223a67d37d3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "5684c41a",
@@ -5609,7 +6377,9 @@
       "https://trello.com/1/cards/69e968d4b82a93b85684c41a/attachments/69e973412f3be1e5f944b2bf/previews/69e973452f3be1e5f944bb9c/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=mn%2BcBv%2BpDBkkn2%2FLeusdjxcAzcYrlU28"
+    "carfax": "https://vhr.carfax.ca/?id=mn%2BcBv%2BpDBkkn2%2FLeusdjxcAzcYrlU28",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "4661a9e6",
@@ -5627,7 +6397,9 @@
       "https://trello.com/1/cards/69f274692f1c25be4661a9e6/attachments/69f27cea04a0ce48b572009f/previews/69f27cef04a0ce48b5720111/download/photo.webp",
       "https://trello.com/1/cards/69f274692f1c25be4661a9e6/attachments/69f285be1723db9ba4f24c6c/previews/69f285c21723db9ba4f24cec/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "d0a5e5f7",
@@ -5648,7 +6420,9 @@
       "https://trello.com/1/cards/69fdc2fbd75a45ead0a5e5f7/attachments/69fdc3b0462f664e604304f8/previews/69fdc3b5462f664e60430566/download/photo.webp",
       "https://trello.com/1/cards/69fdc2fbd75a45ead0a5e5f7/attachments/69fdc3b8835fed87997aea07/previews/69fdc3bc835fed87997aea85/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "8dc85591",
@@ -5666,7 +6440,9 @@
       "https://trello.com/1/cards/69fdc3a7a9c192508dc85591/attachments/69fe8e740798927df5db76a1/previews/69fe8e790798927df5db7713/download/photo.webp",
       "https://trello.com/1/cards/69fdc3a7a9c192508dc85591/attachments/69fe8e7a2e45f413371ca95b/previews/69fe8e7e2e45f413371ca9d9/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "87ab60c7",
@@ -5687,7 +6463,9 @@
       "https://trello.com/1/cards/6a1391b94675937787ab60c7/attachments/6a13bcfb0c8961c11e737843/previews/6a13bd010c8961c11e738c9c/download/photo.webp",
       "https://trello.com/1/cards/6a1391b94675937787ab60c7/attachments/6a13bd03ff855b45d5638511/previews/6a13bd08ff855b45d5638593/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "cc17ce64",
@@ -5708,7 +6486,9 @@
       "https://trello.com/1/cards/69d0836db96e2207cc17ce64/attachments/69d083a6a2ebdc46d88de210/previews/69d083a8a2ebdc46d88de280/download/photo.webp",
       "https://trello.com/1/cards/69d0836db96e2207cc17ce64/attachments/69d083aa212eec2f3a1ca80b/previews/69d083ac212eec2f3a1cac9b/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "9ab589a4",
@@ -5731,7 +6511,9 @@
       "https://trello.com/1/cards/698fd558454ba2429ab589a4/attachments/698fd56d1f8e005d1ca73e3a/previews/698fd56e1f8e005d1ca73eb6/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=J0WwVwbzQX6XpnlPQzeIYY26qIOzQtPv"
+    "carfax": "https://vhr.carfax.ca/?id=J0WwVwbzQX6XpnlPQzeIYY26qIOzQtPv",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "db88f5f9",
@@ -5754,7 +6536,13 @@
       "https://trello.com/1/cards/69a8d9403533c82fdb88f5f9/attachments/69a8d9ba983a7e616814456c/previews/69a8d9bf983a7e61681445e8/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=kijGkWnjvssB9XMiApntsAaqIWt5gO%2Fk"
+    "carfax": "https://vhr.carfax.ca/?id=kijGkWnjvssB9XMiApntsAaqIWt5gO%2Fk",
+    "b": "Offroad",
+    "f": [
+      "Hybrid",
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "80ac0ae6",
@@ -5775,7 +6563,11 @@
       "https://trello.com/1/cards/69ae0bf55744833080ac0ae6/attachments/69ae0c6769acb077a009bfef/previews/69ae0c6c69acb077a009c053/download/photo.webp",
       "https://trello.com/1/cards/69ae0bf55744833080ac0ae6/attachments/69ae0c6fec6f778383a575be/previews/69ae0c76ec6f778383a58e5d/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "d58ead7a",
@@ -5796,7 +6588,9 @@
       "https://trello.com/1/cards/69c1d9326cdb84d4d58ead7a/attachments/69c1d96769e77f0d3e74603e/previews/69c1d96c69e77f0d3e7460ac/download/image.webp",
       "https://trello.com/1/cards/69c1d9326cdb84d4d58ead7a/attachments/69c1d96d30449d21824aa743/previews/69c1d97130449d21824aa7c3/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "2ecb22ff",
@@ -5817,7 +6611,9 @@
       "https://trello.com/1/cards/69c1d94b1f0b90362ecb22ff/attachments/69c1da822126af424f9a4db3/previews/69c1da852126af424f9a4e21/download/image.webp",
       "https://trello.com/1/cards/69c1d94b1f0b90362ecb22ff/attachments/69c1da862ec582bea0a77b4b/previews/69c1da892ec582bea0a77bc9/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "2fe475db",
@@ -5838,7 +6634,9 @@
       "https://trello.com/1/cards/69a8d9f587e38deb2fe475db/attachments/69a8db1a7c6d73897b154068/previews/69a8db1d7c6d73897b154507/download/photo.webp",
       "https://trello.com/1/cards/69a8d9f587e38deb2fe475db/attachments/69a8db1e97df44e23a11da1b/previews/69a8db2197df44e23a11da9b/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e51acecc",
@@ -5859,7 +6657,11 @@
       "https://trello.com/1/cards/69d17e81fe0cefb5e51acecc/attachments/69d17ef144fb5ac166e74f33/previews/69d17ef844fb5ac166e74fa1/download/DSC08515.webp",
       "https://trello.com/1/cards/69d17e81fe0cefb5e51acecc/attachments/69d17efb607762a6247c46d4/previews/69d17f01607762a6247c4752/download/DSC08517.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "1f5b4b9d",
@@ -5882,7 +6684,9 @@
       "https://trello.com/1/cards/69d17ce0a74b4c991f5b4b9d/attachments/69d17d5c40c7d14d2bd49bd1/previews/69d17d6240c7d14d2bd49c4f/download/DSC08667.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=ufDflFcqUFtjAUF%2B82a0lMAZiS11K7hq"
+    "carfax": "https://vhr.carfax.ca/?id=ufDflFcqUFtjAUF%2B82a0lMAZiS11K7hq",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "951e3bdf",
@@ -5903,7 +6707,9 @@
       "https://trello.com/1/cards/69e2bfd7fdd77ee9951e3bdf/attachments/69e2c052fcd67fbd0e31f71a/previews/69e2c057fcd67fbd0e31f72c/download/DSC09025.webp",
       "https://trello.com/1/cards/69e2bfd7fdd77ee9951e3bdf/attachments/69e2c053fac3f8694e1af2f1/previews/69e2c058fac3f8694e1af303/download/DSC09021.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "a487691c",
@@ -5924,7 +6730,11 @@
       "https://trello.com/1/cards/69e2c10f53e55fe7a487691c/attachments/69e2c1be306fbbe63c736f71/previews/69e2c1c4306fbbe63c736f86/download/DSC09253.webp",
       "https://trello.com/1/cards/69e2c10f53e55fe7a487691c/attachments/69e2c1bf733ec4cb25e14bf0/previews/69e2c1c4733ec4cb25e14c02/download/DSC09255.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "9fa491f8",
@@ -5947,7 +6757,9 @@
       "https://trello.com/1/cards/69e2d0b2e29f36119fa491f8/attachments/69e2d513202f6b9bf9f62b59/previews/69e2d518202f6b9bf9f62bd7/download/DSC08879.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=7pCkwnEgsUb%2BOwwHaFkMaKov3ymQYzgz"
+    "carfax": "https://vhr.carfax.ca/?id=7pCkwnEgsUb%2BOwwHaFkMaKov3ymQYzgz",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "154065c2",
@@ -5971,7 +6783,12 @@
       "https://trello.com/1/cards/69e3ef5415a336f8154065c2/attachments/69e3f2f35f09a69e54b34496/previews/69e3f2f85f09a69e54b34514/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=cVEff+O9HKOt+L6Z%2FpZsaS5mFYeyN67t"
+    "carfax": "https://vhr.carfax.ca/?id=cVEff+O9HKOt+L6Z%2FpZsaS5mFYeyN67t",
+    "b": "Sedan",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "0d7ffa21",
@@ -5991,7 +6808,9 @@
       "https://trello.com/1/cards/69e3efa9f4532d880d7ffa21/attachments/69e3f34c6f247072778d45f6/previews/69e3f3506f247072778d4666/download/photo.webp",
       "https://trello.com/1/cards/69e3efa9f4532d880d7ffa21/attachments/69e3f3522710945ef53e82c6/previews/69e3f3572710945ef53e8348/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "66d24405",
@@ -6014,7 +6833,9 @@
       "https://trello.com/1/cards/69e412c65a8fed5c66d24405/attachments/69e418fd847da65379fb2fa7/previews/69e41902847da65379fb3029/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=FxWX1m6KI4IN70UqPyy5%2BSshnm2Ktugq"
+    "carfax": "https://vhr.carfax.ca/?id=FxWX1m6KI4IN70UqPyy5%2BSshnm2Ktugq",
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "3ea84515",
@@ -6036,7 +6857,9 @@
       "https://trello.com/1/cards/69e4192b2d81216f3ea84515/attachments/69e41a3c8632beb1d5abb4aa/previews/69e41a3f8632beb1d5abb51c/download/image.webp",
       "https://trello.com/1/cards/69e4192b2d81216f3ea84515/attachments/69e41a40e695cae707472965/previews/69e41a43e695cae7074729e5/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "ca306b63",
@@ -6059,7 +6882,9 @@
       "https://trello.com/1/cards/69e80cbdd6bbf792ca306b63/attachments/69e8185b8f6d1124e27f75b4/previews/69e8185e8f6d1124e27f7d6b/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=ecVhpW%2BS8z1Ez%2F5PS7DnmSjsP5EthqDz"
+    "carfax": "https://vhr.carfax.ca/?id=ecVhpW%2BS8z1Ez%2F5PS7DnmSjsP5EthqDz",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "a27b43e1",
@@ -6078,7 +6903,9 @@
       "https://trello.com/1/cards/69ed5aa4b70483f2a27b43e1/attachments/69ed5ab824f3223f048ed061/previews/69ed5ab924f3223f048ed306/download/photo.webp",
       "https://trello.com/1/cards/69ed5aa4b70483f2a27b43e1/attachments/69ed5aba7a6c267dbe9c802f/previews/69ed5abb7a6c267dbe9c808d/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "2d9797ad",
@@ -6101,7 +6928,9 @@
       "https://trello.com/1/cards/69f1399f3c0314652d9797ad/attachments/69f13a3def3606d9ad376293/previews/69f13a41ef3606d9ad376313/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=gJY5kGgYeb33VWLZsdjaICBMJas0b1c0"
+    "carfax": "https://vhr.carfax.ca/?id=gJY5kGgYeb33VWLZsdjaICBMJas0b1c0",
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "f2c6c26d",
@@ -6119,7 +6948,11 @@
       "https://trello.com/1/cards/69f14421232b40e9f2c6c26d/attachments/69f1449f39cb9eed3e8572d0/previews/69f144a439cb9eed3e857340/download/photo.webp",
       "https://trello.com/1/cards/69f14421232b40e9f2c6c26d/attachments/69f144a6d8f6ded1c9edbda4/previews/69f144aad8f6ded1c9edbe22/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "5991c449",
@@ -6143,7 +6976,11 @@
       "https://trello.com/1/cards/69f144aea8b6e9905991c449/attachments/69f265876190696af9149349/previews/69f2658d6190696af91493cb/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=33mDJxFMRkQJR%2FMo%2B0edulxFC5FW38OT"
+    "carfax": "https://vhr.carfax.ca/?id=33mDJxFMRkQJR%2FMo%2B0edulxFC5FW38OT",
+    "b": "Sedan",
+    "f": [
+      "Brand New"
+    ]
   },
   {
     "id": "989cb5bc",
@@ -6165,7 +7002,9 @@
       "https://trello.com/1/cards/69f144e634a437de989cb5bc/attachments/69f1453836dd6aca0c90e3ce/previews/69f1453e36dd6aca0c90e440/download/photo.webp",
       "https://trello.com/1/cards/69f144e634a437de989cb5bc/attachments/69f1453f5f378e273534ade0/previews/69f145435f378e273534ae5e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e9ef43de",
@@ -6187,7 +7026,9 @@
       "https://trello.com/1/cards/69f1451c24e2c324e9ef43de/attachments/69f1459a6448ada9dc2e0bd0/previews/69f1459f6448ada9dc2e0c40/download/photo.webp",
       "https://trello.com/1/cards/69f1451c24e2c324e9ef43de/attachments/69f25f79a6cc0f8e10b2c31d/previews/69f25f7da6cc0f8e10b2c39f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "bc17afbc",
@@ -6209,7 +7050,11 @@
       "https://trello.com/1/cards/69f2743f5f7648d6bc17afbc/attachments/69f274823b3bdf1e5ffe8443/previews/69f274863b3bdf1e5ffe84b1/download/photo.webp",
       "https://trello.com/1/cards/69f2743f5f7648d6bc17afbc/attachments/69f2748938e20ef4399bba58/previews/69f2748e38e20ef4399bbada/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "53ba4fbe",
@@ -6230,7 +7075,9 @@
       "https://trello.com/1/cards/69f1455b4275203053ba4fbe/attachments/69f26062a5c4e6f4ba1cb1ad/previews/69f26066a5c4e6f4ba1cc3f4/download/photo.webp",
       "https://trello.com/1/cards/69f1455b4275203053ba4fbe/attachments/69f2606991eda41bab233648/previews/69f2606d91eda41bab2336c8/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "dc1dc2ee",
@@ -6251,7 +7098,9 @@
       "https://trello.com/1/cards/6a0e898c1b07f1a4dc1dc2ee/attachments/6a0e89dcdb90080ed96b40f3/previews/6a0e89e0db90080ed96b4371/download/photo.webp",
       "https://trello.com/1/cards/6a0e898c1b07f1a4dc1dc2ee/attachments/6a0e89e2b323cfbed9d6a39c/previews/6a0e89e6b323cfbed9d6a41a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "771fc8c6",
@@ -6271,7 +7120,9 @@
       "https://trello.com/1/cards/6a0fb34ecf3a8ea0771fc8c6/attachments/6a0fb38f79299e410d88585c/previews/6a0fb39379299e410d8858ca/download/photo.webp",
       "https://trello.com/1/cards/6a0fb34ecf3a8ea0771fc8c6/attachments/6a0fb395f736013ebb104d89/previews/6a0fb399f736013ebb104e07/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "ee81b20c",
@@ -6290,7 +7141,9 @@
       "https://trello.com/1/cards/6a111aa567cd6fb4ee81b20c/attachments/6a111c3ead973afb721edf0d/previews/6a111c42ad973afb721ef4ac/download/photo.webp",
       "https://trello.com/1/cards/6a111aa567cd6fb4ee81b20c/attachments/6a111c470dc48abce8b5d98a/previews/6a111c4b0dc48abce8b5da0c/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "c3c9ee42",
@@ -6312,7 +7165,9 @@
       "https://trello.com/1/cards/6970bd74abf367c5c3c9ee42/attachments/6970bdb125986f819fdf25bf/previews/6970bdb225986f819fdf262e/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://trello.com/1/cards/6970bd74abf367c5c3c9ee42/attachments/6972b9b5b5ae8c3a42e2fe06/download/CARFAX_Canada_Vehicle_History_Report_(3).pdf"
+    "carfax": "https://trello.com/1/cards/6970bd74abf367c5c3c9ee42/attachments/6972b9b5b5ae8c3a42e2fe06/download/CARFAX_Canada_Vehicle_History_Report_(3).pdf",
+    "b": "Offroad",
+    "f": []
   },
   {
     "id": "90e896cb",
@@ -6336,7 +7191,9 @@
       "https://trello.com/1/cards/69f2ab2a307b135390e896cb/attachments/6a0ce3c089f272410ae6d0db/previews/6a0ce3c289f272410ae6d149/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=V3H9+Ul+YsYhqsjp8MUg5D+gLyiz925y"
+    "carfax": "https://vhr.carfax.ca/?id=V3H9+Ul+YsYhqsjp8MUg5D+gLyiz925y",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "fbcd0fb4",
@@ -6358,7 +7215,12 @@
       "https://trello.com/1/cards/6a18d73f76ab2ed6fbcd0fb4/attachments/6a18d776792e52e7e295e175/previews/6a18d77a792e52e7e295e1e3/download/photo.webp",
       "https://trello.com/1/cards/6a18d73f76ab2ed6fbcd0fb4/attachments/6a18d77b0693ad9c9ec36643/previews/6a18d77e0693ad9c9ec366c3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "da88ec04",
@@ -6378,7 +7240,11 @@
       "https://trello.com/1/cards/6a20deeacf7d228bda88ec04/attachments/6a20df3f182f8ec45ea2cfb8/previews/6a20df46182f8ec45ea2d02a/download/photo.webp",
       "https://trello.com/1/cards/6a20deeacf7d228bda88ec04/attachments/6a20df485d8c28d92b895b0a/previews/6a20df4f5d8c28d92b896a3e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "48c58ac2",
@@ -6399,7 +7265,11 @@
       "https://trello.com/1/cards/69f51048393aff2348c58ac2/attachments/69f5105f39fc1e31f65ec472/previews/69f5106039fc1e31f65ec4d0/download/image.webp",
       "https://trello.com/1/cards/69f51048393aff2348c58ac2/attachments/69f510627cb2cce29b351bc5/previews/69f510637cb2cce29b351c33/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "07e2490b",
@@ -6420,7 +7290,9 @@
       "https://trello.com/1/cards/69f844610552afe707e2490b/attachments/69f8447f0f29e56689c042cb/previews/69f844840f29e56689c04e56/download/DSC03740.webp",
       "https://trello.com/1/cards/69f844610552afe707e2490b/attachments/69f8447f1d49d891800f5a56/previews/69f844841d49d891800f5a66/download/DSC03746.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "873eaae4",
@@ -6442,7 +7314,9 @@
       "https://trello.com/1/cards/6a24517926bcf605873eaae4/attachments/6a24517926bcf605873eacf5/previews/6a24517926bcf605873eacf2/download/photo.webp",
       "https://trello.com/1/cards/6a24517926bcf605873eaae4/attachments/6a24517926bcf605873eacfe/previews/6a24517926bcf605873eacfb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "db2f6d68",
@@ -6463,7 +7337,11 @@
       "https://trello.com/1/cards/6a18d7d0628e13cbdb2f6d68/attachments/6a18d9f47bc254364c39bdb9/previews/6a18da027bc254364c39be2b/download/photo.webp",
       "https://trello.com/1/cards/6a18d7d0628e13cbdb2f6d68/attachments/6a18da04730fdeb95f44d81f/previews/6a18da09730fdeb95f44da3b/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "bec47cb8",
@@ -6484,7 +7362,11 @@
       "https://trello.com/1/cards/6a20e36763e7dfdfbec47cb8/attachments/6a20e517fc5f2e2f489ef60c/previews/6a20e519fc5f2e2f489ef66a/download/photo.webp",
       "https://trello.com/1/cards/6a20e36763e7dfdfbec47cb8/attachments/6a20e51ae9c5e961a806aaa3/previews/6a20e51be9c5e961a806b5ea/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "79614d07",
@@ -6511,7 +7393,11 @@
       "https://trello.com/1/cards/6a20df5ed1891b6179614d07/attachments/6a20e00245912ffa1110c2b6/previews/6a20e00845912ffa1110c334/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=wuUjrljuvZ4egwOEL4ZqIW0N6dx3l2qi#service-history-section"
+    "carfax": "https://vhr.carfax.ca/?id=wuUjrljuvZ4egwOEL4ZqIW0N6dx3l2qi#service-history-section",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "9144bf31",
@@ -6538,7 +7424,11 @@
       "https://trello.com/1/cards/6a111a7727c785019144bf31/attachments/6a111ad894d90c7b450fc939/previews/6a111adc94d90c7b450fc9b7/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=W84of4CZYk2sLh6caoAVhLKfH9vRpty7"
+    "carfax": "https://vhr.carfax.ca/?id=W84of4CZYk2sLh6caoAVhLKfH9vRpty7",
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "23f9b4dd",
@@ -6562,7 +7452,11 @@
       "https://trello.com/1/cards/69ed5c55ba789e0d23f9b4dd/attachments/69ed5c805afbbc03756cf4da/previews/69ed5c815afbbc03756cf548/download/photo.webp",
       "https://trello.com/1/cards/69ed5c55ba789e0d23f9b4dd/attachments/69ed5c81797281cb41162109/previews/69ed5c82797281cb41162187/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": [
+      "Diesel"
+    ]
   },
   {
     "id": "e9dc41ec",
@@ -6589,7 +7483,9 @@
       "https://trello.com/1/cards/69f2abf25e35cdece9dc41ec/attachments/69f2ba09b642fc15dbe3ce7c/previews/69f2ba0cb642fc15dbe3cefe/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=TI6GSowfImRoTlCn6pzWQqf%2FZPMpsCrd"
+    "carfax": "https://vhr.carfax.ca/?id=TI6GSowfImRoTlCn6pzWQqf%2FZPMpsCrd",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "fff8aaa1",
@@ -6615,7 +7511,9 @@
       "https://trello.com/1/cards/6a20dfcc59da24dcfff8aaa1/attachments/6a20e485bfe3c9b9dfee9b2b/previews/6a20e48cbfe3c9b9dfee9bab/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/en/?id=HLjcTgdOYiDZDeQM1U2RMzrqSvOpsC6X"
+    "carfax": "https://vhr.carfax.ca/en/?id=HLjcTgdOYiDZDeQM1U2RMzrqSvOpsC6X",
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "5ecd726b",
@@ -6640,7 +7538,9 @@
       "https://trello.com/1/cards/6a2dfc2492edcb6b5ecd726b/attachments/6a2e0b2f650b276dbf7ac525/previews/6a2e0b35650b276dbf7ac593/download/photo.webp",
       "https://trello.com/1/cards/6a2dfc2492edcb6b5ecd726b/attachments/6a2e0b377f94a8ba6746ae5d/previews/6a2e0b3c7f94a8ba6746ba42/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "815279a9",
@@ -6664,7 +7564,9 @@
       "https://trello.com/1/cards/6a30edaa4ed7c8e8815279a9/attachments/6a30edd2fefb02c5bd9570be/previews/6a30edd4fefb02c5bd95713c/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=LyjCfsOyikBCotHO4wVLxN8XsuQx%2FWJB"
+    "carfax": "https://vhr.carfax.ca/?id=LyjCfsOyikBCotHO4wVLxN8XsuQx%2FWJB",
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "c8ea6ffc",
@@ -6689,7 +7591,12 @@
       "https://trello.com/1/cards/6a2e18f5c195572ec8ea6ffc/attachments/6a2e19e8b9a5cc998e6a29e0/previews/6a2e19e9b9a5cc998e6a2a63/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://trello.com/1/cards/6a2e18f5c195572ec8ea6ffc/attachments/6a2f713fd81d6c59e652ed1e/download/2017_C63_CARFAX.pdf"
+    "carfax": "https://trello.com/1/cards/6a2e18f5c195572ec8ea6ffc/attachments/6a2f713fd81d6c59e652ed1e/download/2017_C63_CARFAX.pdf",
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "3db64c77",
@@ -6711,7 +7618,9 @@
       "https://trello.com/1/cards/6a3c616f504936c63db64c77/attachments/6a3c636fd1e2bb3e5b2eb76d/previews/6a3c6376d1e2bb3e5b2ec70f/download/photo.webp",
       "https://trello.com/1/cards/6a3c616f504936c63db64c77/attachments/6a3c637bf7d654c6a5f2eb0d/previews/6a3c6394f7d654c6a5f336f3/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "cf814cb7",
@@ -6737,7 +7646,9 @@
       "https://trello.com/1/cards/6a2dfba0fb6198ffcf814cb7/attachments/6a2dfc140ee3745b7f8ba969/previews/6a2dfc1a0ee3745b7f8bb5c7/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=P%2FcUKM0VM3HuHW8BbdhqPJZaQ9wvZl%2F9"
+    "carfax": "https://vhr.carfax.ca/?id=P%2FcUKM0VM3HuHW8BbdhqPJZaQ9wvZl%2F9",
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e5c459b1",
@@ -6763,7 +7674,9 @@
       "https://trello.com/1/cards/6a30eceea4ce3d6de5c459b1/attachments/6a30ed0a5620e2743932bcaa/previews/6a30ed0b5620e2743932bf6f/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=Vhxgt5LK8A3bBUsACdvAKw6N5Va%2By7rq"
+    "carfax": "https://vhr.carfax.ca/?id=Vhxgt5LK8A3bBUsACdvAKw6N5Va%2By7rq",
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "50b3d5a6",
@@ -6790,7 +7703,9 @@
       "https://trello.com/1/cards/6a2c82c28b1a433550b3d5a6/attachments/6a2c833e32b64722e0e46261/previews/6a2c834332b64722e0e471a9/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=4QfXUhAWdvRp82eBo4zmdbgnYv1cvifY"
+    "carfax": "https://vhr.carfax.ca/?id=4QfXUhAWdvRp82eBo4zmdbgnYv1cvifY",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "6245a26a",
@@ -6812,7 +7727,9 @@
       "https://trello.com/1/cards/6a2451c7b04f68246245a26a/attachments/6a2451c7b04f68246245a3f7/previews/6a2451c7b04f68246245a3f5/download/photo.webp",
       "https://trello.com/1/cards/6a2451c7b04f68246245a26a/attachments/6a2451c7b04f68246245a3ff/previews/6a2451c7b04f68246245a3fd/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "14dc8ab4",
@@ -6840,7 +7757,9 @@
       "https://trello.com/1/cards/69e3ef39053ed10514dc8ab4/attachments/69e3eff5cb2ea86ba91fc04e/previews/69e3eff8cb2ea86ba91fc0cd/download/photo.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=12+5jazATtv%2FZKKGKJ6pUZM%2FY2F31vxf"
+    "carfax": "https://vhr.carfax.ca/?id=12+5jazATtv%2FZKKGKJ6pUZM%2FY2F31vxf",
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "8ed648bc",
@@ -6860,7 +7779,11 @@
       "https://trello.com/1/cards/6a09a78e9b41f60d8ed648bc/attachments/6a09a7a76e161ed93466c0fc/previews/6a09a7a86e161ed93466c152/download/photo.webp",
       "https://trello.com/1/cards/6a09a78e9b41f60d8ed648bc/attachments/6a09a7a9dde7c703221b5ac4/previews/6a09a7a9dde7c703221b5b28/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "16863975",
@@ -6882,7 +7805,12 @@
       "https://trello.com/1/cards/6a32193a5fef335716863975/attachments/6a326dd9851f9465664a97c8/previews/6a326de0851f9465664ab6d5/download/photo.webp",
       "https://trello.com/1/cards/6a32193a5fef335716863975/attachments/6a326de279f9cfbee44a9752/previews/6a326de779f9cfbee44a97d0/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": [
+      "Manual",
+      "Performance"
+    ]
   },
   {
     "id": "ec1b043e",
@@ -6903,7 +7831,9 @@
       "https://trello.com/1/cards/69f50fc0f27724bfec1b043e/attachments/69f50fdbce99e61efbdd61c0/previews/69f50fdcce99e61efbdd621e/download/image.webp",
       "https://trello.com/1/cards/69f50fc0f27724bfec1b043e/attachments/69f50fde160a18d158ff79ec/previews/69f50fdf160a18d158ff7a5a/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "a48923ca",
@@ -6924,7 +7854,11 @@
       "https://trello.com/1/cards/69f844be1f2e22c6a48923ca/attachments/69f844ec391de0c59084db71/previews/69f844f2391de0c59084db81/download/DSC03722.webp",
       "https://trello.com/1/cards/69f844be1f2e22c6a48923ca/attachments/69f844ecaa392022e8329f75/previews/69f844f2aa392022e8329f87/download/DSC03720.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "448f302a",
@@ -6945,7 +7879,9 @@
       "https://trello.com/1/cards/69f845ee85e1dde9448f302a/attachments/69f8470a595ac76e70f992d7/previews/69f84710595ac76e70f9a71c/download/DSC03779.webp",
       "https://trello.com/1/cards/69f845ee85e1dde9448f302a/attachments/69f8470a1f710722c5d94141/previews/69f847101f710722c5d94988/download/DSC03765.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Coupe",
+    "f": []
   },
   {
     "id": "d3fc6760",
@@ -6966,7 +7902,9 @@
       "https://trello.com/1/cards/69f84758f4003cacd3fc6760/attachments/69f847a60d6933e8f0f801be/previews/69f847ab0d6933e8f0f801dc/download/DSC03963.webp",
       "https://trello.com/1/cards/69f84758f4003cacd3fc6760/attachments/69f847a6bacef1c76c4562fe/previews/69f847acbacef1c76c456320/download/DSC03967.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "5cc0823b",
@@ -6987,7 +7925,11 @@
       "https://trello.com/1/cards/69f50f8ee9f2fbd35cc0823b/attachments/69f50fb4a66d93eb3b383ef4/previews/69f50fb5a66d93eb3b383f62/download/photo.webp",
       "https://trello.com/1/cards/69f50f8ee9f2fbd35cc0823b/attachments/69f50fb6c0ff8490e72a5bf1/previews/69f50fb7c0ff8490e72a5e83/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "255e903d",
@@ -7008,7 +7950,9 @@
       "https://trello.com/1/cards/69f510b45476b38d255e903d/attachments/69f510dd7978f54e3b13d14a/previews/69f510de7978f54e3b13d1b8/download/image.webp",
       "https://trello.com/1/cards/69f510b45476b38d255e903d/attachments/69f510df4427655547602583/previews/69f510e04427655547602603/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "82347406",
@@ -7029,7 +7973,11 @@
       "https://trello.com/1/cards/69f510965191ec7882347406/attachments/69f510b1a71fa22f2db64434/previews/69f510b2a71fa22f2db644a2/download/photo.webp",
       "https://trello.com/1/cards/69f510965191ec7882347406/attachments/69f510b36520d5d9587c9f1e/previews/69f510b46520d5d9587c9f9c/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "1b95f30d",
@@ -7050,7 +7998,9 @@
       "https://trello.com/1/cards/69f85177651336481b95f30d/attachments/69f851af6ae2d33a56bf585f/previews/69f851b06ae2d33a56bf5b18/download/bc452324-4d1a-47e5-aa1e-21e0fb8e1711.webp",
       "https://trello.com/1/cards/69f85177651336481b95f30d/attachments/69f852693e983bb0d4261d3e/previews/69f8526a3e983bb0d4261dbc/download/2905e8a5-85c1-454f-95a9-d6e8ecdede0c.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "8f3404ad",
@@ -7070,7 +8020,9 @@
       "https://trello.com/1/cards/69fdc1155172cc3d8f3404ad/attachments/69fdc130d05df1b8724e6b32/previews/69fdc131d05df1b8724e6ba0/download/photo.webp",
       "https://trello.com/1/cards/69fdc1155172cc3d8f3404ad/attachments/69fdc133dc5ff16bd44c0b01/previews/69fdc134dc5ff16bd44c0b7f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "21467847",
@@ -7090,7 +8042,11 @@
       "https://trello.com/1/cards/6a09aa106308ceaa21467847/attachments/6a09aa291b0a3d3c22f10d79/previews/6a09aa2a1b0a3d3c22f10de7/download/photo.webp",
       "https://trello.com/1/cards/6a09aa106308ceaa21467847/attachments/6a09aa2b52c6090b57e7652c/previews/6a09aa2c52c6090b57e765ac/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Hybrid"
+    ]
   },
   {
     "id": "8bdd38fa",
@@ -7111,7 +8067,11 @@
       "https://trello.com/1/cards/6a0f56bb3f3749af8bdd38fa/attachments/6a0f5791c31488a493859912/previews/6a0f5796c31488a493859a12/download/photo.webp",
       "https://trello.com/1/cards/6a0f56bb3f3749af8bdd38fa/attachments/6a0f5799b19facbd2275aac6/previews/6a0f579eb19facbd2275ab44/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "f3934c10",
@@ -7132,7 +8092,11 @@
       "https://trello.com/1/cards/6a433bf6162866b0f3934c10/attachments/6a433c3e6c92dbe850720ee3/previews/6a433c446c92dbe850720f56/download/photo.webp",
       "https://trello.com/1/cards/6a433bf6162866b0f3934c10/attachments/6a433c453818a6b45482a9c6/previews/6a433c4c3818a6b45482aa48/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "2c1f19f4",
@@ -7152,7 +8116,9 @@
       "https://trello.com/1/cards/69fdc14b0f696c332c1f19f4/attachments/69fdc164aa45879fcec71110/previews/69fdc165aa45879fcec71303/download/photo.webp",
       "https://trello.com/1/cards/69fdc14b0f696c332c1f19f4/attachments/69fdc1663b176687674897aa/previews/69fdc1673b17668767489828/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "af714a53",
@@ -7180,7 +8146,11 @@
       "https://trello.com/1/cards/69a8d92574690458af714a53/attachments/69a8d9723a8a2f93c106bd23/previews/69a8d9763a8a2f93c106bd91/download/image.webp"
     ],
     "videos": [],
-    "carfax": "https://vhr.carfax.ca/?id=3AZ9XVm53QEa7ldeEbKc5ek8WJS2TOFY"
+    "carfax": "https://vhr.carfax.ca/?id=3AZ9XVm53QEa7ldeEbKc5ek8WJS2TOFY",
+    "b": "Coupe",
+    "f": [
+      "Performance"
+    ]
   },
   {
     "id": "9c96ea74",
@@ -7191,7 +8161,9 @@
     "photos": [
       "https://trello.com/1/cards/6a235f200037a8439c96ea74/attachments/6a2371305dc6936275a414bb/previews/6a2371345dc6936275a414cd/download/image.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "ff5ede53",
@@ -7212,7 +8184,9 @@
       "https://trello.com/1/cards/6a16c03de0b1c293ff5ede53/attachments/6a16c05820485d0ccc3ccaad/previews/6a16c05920485d0ccc3ccb0b/download/photo.webp",
       "https://trello.com/1/cards/6a16c03de0b1c293ff5ede53/attachments/6a16c05bc47a16c5517c121c/previews/6a16c05cc47a16c5517c128a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "e72f225d",
@@ -7233,7 +8207,9 @@
       "https://trello.com/1/cards/6a235ddfe2edb237e72f225d/attachments/6a235e5fd425de954b69301f/previews/6a235e65d425de954b69308f/download/photo.webp",
       "https://trello.com/1/cards/6a235ddfe2edb237e72f225d/attachments/6a235e6965ff64b6f5073d59/previews/6a235e7165ff64b6f5073ddb/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "1040f6cf",
@@ -7254,7 +8230,9 @@
       "https://trello.com/1/cards/6a16bfcdb48bb5df1040f6cf/attachments/6a16bfeb06a6d5542b3331df/previews/6a16bfeb06a6d5542b333241/download/photo.webp",
       "https://trello.com/1/cards/6a16bfcdb48bb5df1040f6cf/attachments/6a16bfec86e673dab59e0e64/previews/6a16bfed86e673dab59e0ed2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "de1d7b2e",
@@ -7275,7 +8253,9 @@
       "https://trello.com/1/cards/6a16bf7d7e7c0af9de1d7b2e/attachments/6a16bf9ae9dec5a37ea36d13/previews/6a16bf9ce9dec5a37ea37230/download/photo.webp",
       "https://trello.com/1/cards/6a16bf7d7e7c0af9de1d7b2e/attachments/6a16bf9ded5ae6ab212822b2/previews/6a16bf9eed5ae6ab212825b6/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "2b2f975c",
@@ -7296,7 +8276,9 @@
       "https://trello.com/1/cards/6a16bf2a02fc73332b2f975c/attachments/6a16bf4348bac04331e4653f/previews/6a16bf4448bac04331e465ad/download/photo.webp",
       "https://trello.com/1/cards/6a16bf2a02fc73332b2f975c/attachments/6a16bf4517866933b63b8064/previews/6a16bf4617866933b63b80e2/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "929207a3",
@@ -7317,7 +8299,9 @@
       "https://trello.com/1/cards/6a01bed11b41651c929207a3/attachments/6a01bfdbdd0571d50156fe8c/previews/6a01bfdcdd0571d50156ff28/download/photo.webp",
       "https://trello.com/1/cards/6a01bed11b41651c929207a3/attachments/6a01bfdc3775d47beb253106/previews/6a01bfdd3775d47beb253168/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "839eb16f",
@@ -7338,7 +8322,9 @@
       "https://trello.com/1/cards/69ff1b5f31e3474f839eb16f/attachments/69ff1b7f99d502b8b5321423/previews/69ff1b8099d502b8b5321479/download/photo.webp",
       "https://trello.com/1/cards/69ff1b5f31e3474f839eb16f/attachments/69ff1b80363d49c336ff4415/previews/69ff1b81363d49c336ff4477/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Truck",
+    "f": []
   },
   {
     "id": "0a77d600",
@@ -7359,7 +8345,12 @@
       "https://trello.com/1/cards/69ff1df3a36d5a340a77d600/attachments/69ff1e104f404fae43dce00f/previews/69ff1e104f404fae43dce05c/download/photo.webp",
       "https://trello.com/1/cards/69ff1df3a36d5a340a77d600/attachments/69ff1e11243cb0d0837bb9d3/previews/69ff1e12243cb0d0837bba2a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Electric",
+      "Luxury"
+    ]
   },
   {
     "id": "4549fbd5",
@@ -7380,7 +8371,9 @@
       "https://trello.com/1/cards/6a002fab136bb7234549fbd5/attachments/6a002fc19a8548d9684e27f4/previews/6a002fc29a8548d9684e284a/download/photo.webp",
       "https://trello.com/1/cards/6a002fab136bb7234549fbd5/attachments/6a002fc306e206bf5f937702/previews/6a002fc406e206bf5f937764/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "8865e5ac",
@@ -7401,7 +8394,9 @@
       "https://trello.com/1/cards/6a01bafad90c09e78865e5ac/attachments/6a01bb148fd0b9726dd6d475/previews/6a01bb148fd0b9726dd6d4cb/download/photo.webp",
       "https://trello.com/1/cards/6a01bafad90c09e78865e5ac/attachments/6a01bb15f86ff880bc2c1448/previews/6a01bb16f86ff880bc2c14aa/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "ec77e8db",
@@ -7422,7 +8417,9 @@
       "https://trello.com/1/cards/6a01bc9e1576326eec77e8db/attachments/6a01bcaf942d62e60e4e2a95/previews/6a01bcb0942d62e60e4e2de9/download/photo.webp",
       "https://trello.com/1/cards/6a01bc9e1576326eec77e8db/attachments/6a01bcb0328f848ed207206d/previews/6a01bcb1328f848ed20720cf/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "dd779b3c",
@@ -7443,7 +8440,9 @@
       "https://trello.com/1/cards/6a01c03f7ff0862edd779b3c/attachments/6a01c059a0eada17e21b1469/previews/6a01c059a0eada17e21b1576/download/photo.webp",
       "https://trello.com/1/cards/6a01c03f7ff0862edd779b3c/attachments/6a01c05ac9a4c6d3f9146514/previews/6a01c05bc9a4c6d3f914657a/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": []
   },
   {
     "id": "f25ef878",
@@ -7463,7 +8462,9 @@
       "https://trello.com/1/cards/6a01c23c0e6a9375f25ef878/attachments/6a01c24e2640976392f9a569/previews/6a01c24f2640976392f9a7bc/download/photo.webp",
       "https://trello.com/1/cards/6a01c23c0e6a9375f25ef878/attachments/6a01c250ecb1c405ce11aacc/previews/6a01c250ecb1c405ce11ab2e/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": []
   },
   {
     "id": "3866d573",
@@ -7488,7 +8489,11 @@
       "https://trello.com/1/cards/6a123c1cd5ed32533866d573/attachments/6a126b4e22f3407fa4bc152f/previews/6a126b4f22f3407fa4bc16e1/download/photo.webp",
       "https://trello.com/1/cards/6a123c1cd5ed32533866d573/attachments/6a126b50692620cc38966073/previews/6a126b51692620cc389660f1/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Luxury"
+    ]
   },
   {
     "id": "4883622f",
@@ -7512,7 +8517,12 @@
       "https://trello.com/1/cards/6a4f101d4b2561214883622f/attachments/6a4f1036877b51f032ea8111/previews/6a4f1037877b51f032ea8177/download/photo.webp",
       "https://trello.com/1/cards/6a4f101d4b2561214883622f/attachments/6a4f1038c144578128bdc661/previews/6a4f1039c144578128bdc7b5/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "Sedan",
+    "f": [
+      "Performance",
+      "Luxury"
+    ]
   },
   {
     "id": "07090c20",
@@ -7534,6 +8544,10 @@
       "https://trello.com/1/cards/697d8941dd0fe51507090c20/attachments/697d8941dd0fe51507090c89/previews/697d8941dd0fe51507090c86/download/photo.webp",
       "https://trello.com/1/cards/697d8941dd0fe51507090c20/attachments/697d8941dd0fe51507090c92/previews/697d8941dd0fe51507090c8f/download/photo.webp"
     ],
-    "videos": []
+    "videos": [],
+    "b": "SUV",
+    "f": [
+      "Hybrid"
+    ]
   }
 ]
