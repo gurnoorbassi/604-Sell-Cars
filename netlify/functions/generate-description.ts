@@ -1,16 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Config, Context } from "@netlify/functions";
 
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), {
-  status,
-  headers: {
-    "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store",
-  },
-});
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
+  });
+}
 
-const clean = (value: unknown, max = 500) => String(value || "").trim().slice(0, max);
+function clean(value: unknown, max = 500) {
+  return String(value || "").trim().slice(0, max);
+}
 
-export default async (request: Request) => {
+export default async (request: Request, _context: Context) => {
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
 
   const anthropicKey = Netlify.env.get("ANTHROPIC_API_KEY");
@@ -104,6 +109,6 @@ ${details}`;
   return json({ description });
 };
 
-export const config = {
+export const config: Config = {
   path: "/api/generate-description",
 };
