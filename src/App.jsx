@@ -563,6 +563,24 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
   const [descriptionError, setDescriptionError] = useState("");
   const [descriptionNotice, setDescriptionNotice] = useState("");
   const [fileError, setFileError] = useState("");
+  const [filePreviews, setFilePreviews] = useState([]);
+
+  useEffect(() => {
+    const previews = (form.uploadFiles || []).map((file) => ({
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setFilePreviews(previews);
+    return () => previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+  }, [form.uploadFiles]);
+
+  const removeUpload = (removeIndex) => {
+    setForm((current) => ({
+      ...current,
+      uploadFiles: (current.uploadFiles || []).filter((_, index) => index !== removeIndex),
+    }));
+  };
+
   const generateDescription = async () => {
     if (!form.title.trim() || generatingDescription) return;
     setGeneratingDescription(true);
@@ -697,15 +715,42 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
           <F label="Upload photos or videos">
             <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white">
               <Upload className="h-4 w-4" />
-              {form.uploadFiles?.length ? `${form.uploadFiles.length} file(s) selected` : "Choose files from this device"}
+              {form.uploadFiles?.length ? "Add more photos or videos" : "Choose files from this device"}
               <input className="hidden" type="file" accept="image/*,video/mp4,video/quicktime" multiple
                 onChange={(event) => {
                   const selectedFiles = Array.from(event.target.files || []);
                   const oversizedFiles = selectedFiles.filter((file) => file.size > 10 * 1024 * 1024);
+                  const validFiles = selectedFiles.filter((file) => file.size <= 10 * 1024 * 1024);
                   setFileError(oversizedFiles.length ? `${oversizedFiles.map((file) => file.name).join(", ")} exceeded 10 MB and was not selected.` : "");
-                  setForm({ ...form, uploadFiles: selectedFiles.filter((file) => file.size <= 10 * 1024 * 1024) });
+                  setForm((current) => {
+                    const existingFiles = current.uploadFiles || [];
+                    const existingKeys = new Set(existingFiles.map((file) => `${file.name}:${file.size}:${file.lastModified}`));
+                    const newFiles = validFiles.filter((file) => !existingKeys.has(`${file.name}:${file.size}:${file.lastModified}`));
+                    return { ...current, uploadFiles: [...existingFiles, ...newFiles] };
+                  });
+                  event.target.value = "";
                 }} />
             </label>
+            {filePreviews.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {filePreviews.map(({ file, url }, index) => (
+                  <div key={`${file.name}:${file.size}:${file.lastModified}`} className="group relative overflow-hidden rounded-xl border border-neutral-700 bg-neutral-950">
+                    {file.type.startsWith("video/") ? (
+                      <video src={url} controls preload="metadata" className="aspect-[4/3] w-full bg-black object-cover" />
+                    ) : (
+                      <img src={url} alt={`Selected upload: ${file.name}`} className="aspect-[4/3] w-full object-cover" />
+                    )}
+                    <button type="button" onClick={() => removeUpload(index)} aria-label={`Remove ${file.name}`}
+                      className="absolute right-1.5 top-1.5 rounded-full bg-black/75 p-1 text-white shadow hover:bg-red-600">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-2 pb-1.5 pt-6">
+                      <p className="truncate text-[10px] font-medium text-white">{file.name}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit in the app. Maximum 10 MB per photo or video.</p>
             {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
