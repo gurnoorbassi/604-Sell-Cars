@@ -50,6 +50,7 @@ for (const record of seed) {
   const card = byUrl.get(record.t) || byName.get(normalize(record.t));
   if (!card) continue;
   matched += 1;
+  record.t = card.name;
   record.trelloUrl = card.shortUrl;
 
   const attachmentUrls = card.attachments?.map((item) => item.url) || [];

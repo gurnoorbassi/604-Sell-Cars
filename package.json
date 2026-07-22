@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "import:trello": "node scripts/import-trello.mjs"
+    "import:trello": "node --env-file-if-exists=.env scripts/import-trello.mjs",
+    "import:trello-export": "node scripts/import-trello-export.mjs",
+    "migrate:media": "node --env-file-if-exists=.env scripts/migrate-media-to-supabase.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.110.8",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",
     "lucide-react": "latest",
@@ -18,6 +21,5 @@
     "react-dom": "latest",
     "tailwindcss": "^3.4.17",
     "vite": "latest"
-  },
-  "devDependencies": {}
+  }
 }

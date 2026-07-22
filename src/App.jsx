@@ -1,29 +1,50 @@
 import React, { useState, useEffect } from "react";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
-  RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink,
+  RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload,
 } from "lucide-react";
-import SEED from "./data/seed.json";
+import AuthScreen from "./AuthScreen";
+import { supabase } from "./lib/supabase";
 
-const expand = (s) => ({
-  id: s.id,
-  title: s.t,
-  stock: s.sk || "",
-  price: s.p || "",
-  kms: s.k || "",
-  dealership: s.d || "",
-  bodyType: s.b || "",
-  fuelTags: s.f || [],
-  labels: s.l || [],
-  description: s.de || "",
-  carfax: s.carfax || (s.cx ? "on-file" : ""),
-  trelloUrl: s.trelloUrl || (/^https:\/\/trello\.com\/c\//.test(s.t) ? s.t : ""),
-  photoCount: s.pc || 0,
-  photos: s.photos || [],
-  videos: s.videos || [],
-  hot: !!s.h,
-  isNew: !!s.n,
-  status: s.s ? "sold" : "live",
+const rowToCar = (row, signedUrls) => {
+  const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
+  const photos = media.filter((item) => item.kind === "image").map((item) =>
+    item.storage_path ? signedUrls.get(item.storage_path) : item.source_url,
+  ).filter(Boolean);
+  const videos = media.filter((item) => item.kind === "video").map((item) =>
+    item.storage_path ? signedUrls.get(item.storage_path) : item.source_url,
+  ).filter(Boolean);
+  return {
+    id: row.id, title: row.title, stock: row.stock, price: row.price, kms: row.kms,
+    dealership: row.dealership, bodyType: row.body_type, fuelTags: row.fuel_tags || [],
+    labels: row.labels || [], description: row.description, carfax: row.carfax_url,
+    trelloUrl: row.trello_url, photoCount: row.photo_count, photos, videos,
+    manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
+    storagePaths: media.map((item) => item.storage_path).filter(Boolean),
+    storedMediaCount: media.filter((item) => item.storage_path).length,
+    hot: row.hot, isNew: row.is_new, status: row.status,
+  };
+};
+
+const carToRow = (car, userId) => ({
+  id: car.id,
+  title: car.title.trim(),
+  stock: car.stock || "",
+  price: car.price || "",
+  kms: car.kms || "",
+  dealership: car.dealership || "",
+  body_type: car.bodyType || "",
+  fuel_tags: car.fuelTags || [],
+  labels: car.labels || [],
+  description: car.description || "",
+  carfax_url: car.carfax === "on-file" ? "" : (car.carfax || ""),
+  trello_url: car.trelloUrl || "",
+  photo_count: Number(car.photoCount) || 0,
+  hot: !!car.hot,
+  is_new: !!car.isNew,
+  status: car.status || "live",
+  updated_at: new Date().toISOString(),
+  updated_by: userId,
 });
 
 const DEALERSHIPS = ["Karma Autos", "SkyHigh Auto", "Mainland Motors", "Lougheed Hyundai"];
@@ -45,18 +66,22 @@ const tierFor = (p) => {
   return "High End";
 };
 const TIERS = ["<$10K", "<$20K", "<$30K", "$30-50K", "$50-100K", "High End"];
-
-const STORAGE_KEY = "sellscars-board-v4";
 const emptyForm = {
   id: null, title: "", stock: "", price: "", kms: "",
   dealership: "", bodyType: "", fuelTags: [], labels: [],
   description: "", carfax: "", trelloUrl: "", photoCount: 0, photos: [], videos: [],
+  manualPhotos: [], uploadFiles: [], storedMediaCount: 0,
   hot: false, isNew: false, status: "live",
 };
 
 export default function SellsCarsBoard() {
+  const [session, setSession] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [accessDenied, setAccessDenied] = useState(false);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [appError, setAppError] = useState("");
   const [tab, setTab] = useState("live");
   const [f, setF] = useState({ dealership: null, body: null, fuel: null, tier: null, flag: null });
   const [search, setSearch] = useState("");
@@ -65,28 +90,68 @@ export default function SellsCarsBoard() {
   const [detail, setDetail] = useState(null);
 
   useEffect(() => {
-    (() => {
-      let loaded = null;
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) loaded = JSON.parse(stored);
-      } catch (e) { console.warn("Saved inventory could not be read; loading the seed instead.", e); }
-      if (loaded && loaded.length) {
-        setCars(loaded);
-      } else {
-        const seeded = SEED.map(expand);
-        setCars(seeded);
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); } catch (e) { console.warn("Seed could not be cached.", e); }
-      }
-      setLoading(false);
-    })();
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthReady(true);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setAuthReady(true);
+    });
+    return () => listener.subscription.unsubscribe();
   }, []);
 
-  const persist = (next) => {
-    setCars(next);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); }
-    catch (e) { console.error("Save failed:", e); }
+  const loadCars = async () => {
+    if (!session) return;
+    setLoading(true);
+    setAppError("");
+
+    const { data: membership, error: membershipError } = await supabase
+      .from("team_members")
+      .select("role")
+      .maybeSingle();
+    if (membershipError || !membership) {
+      setAccessDenied(true);
+      setLoading(false);
+      return;
+    }
+    setAccessDenied(false);
+
+    const { data: rows, error } = await supabase
+      .from("inventory")
+      .select("*, vehicle_media(*)")
+      .order("updated_at", { ascending: false });
+    if (error) {
+      setAppError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    const storagePaths = rows.flatMap((row) => row.vehicle_media || [])
+      .map((item) => item.storage_path)
+      .filter(Boolean);
+    const signedUrls = new Map();
+    if (storagePaths.length) {
+      const { data: signed, error: signingError } = await supabase.storage
+        .from("vehicle-media")
+        .createSignedUrls(storagePaths, 3600);
+      if (signingError) setAppError(signingError.message);
+      (signed || []).forEach((item) => {
+        if (item.signedUrl) signedUrls.set(item.path, item.signedUrl);
+      });
+    }
+    setCars(rows.map((row) => rowToCar(row, signedUrls)));
+    setLoading(false);
   };
+
+  useEffect(() => {
+    if (session) loadCars();
+    else {
+      setCars([]);
+      setLoading(false);
+      setAccessDenied(false);
+    }
+  }, [session]);
 
   const visible = cars.filter((c) => {
     if (tab === "sold" ? c.status !== "sold" : c.status !== "live") return false;
@@ -104,21 +169,116 @@ export default function SellsCarsBoard() {
   const soldCount = cars.filter((c) => c.status === "sold").length;
   const activeFilters = Object.values(f).filter(Boolean).length;
 
-  const markSold = (id) => {
-    persist(cars.map((c) => c.id === id ? { ...c, status: "sold", hot: false, isNew: false } : c));
+  const updateStatus = async (id, values) => {
+    const { error } = await supabase.from("inventory").update({
+      ...values,
+      updated_at: new Date().toISOString(),
+      updated_by: session.user.id,
+    }).eq("id", id);
+    if (error) setAppError(error.message);
+    else {
+      const uiValues = { ...values };
+      if (Object.hasOwn(uiValues, "is_new")) {
+        uiValues.isNew = uiValues.is_new;
+        delete uiValues.is_new;
+      }
+      setCars((current) => current.map((car) => car.id === id ? { ...car, ...uiValues } : car));
+    }
+  };
+
+  const markSold = async (id) => {
+    await updateStatus(id, { status: "sold", hot: false, is_new: false });
     setDetail(null);
   };
-  const relist = (id) => { persist(cars.map((c) => c.id === id ? { ...c, status: "live" } : c)); setDetail(null); };
-  const remove = (id) => { persist(cars.filter((c) => c.id !== id)); setDetail(null); };
+  const relist = async (id) => { await updateStatus(id, { status: "live" }); setDetail(null); };
+  const remove = async (id) => {
+    const car = cars.find((item) => item.id === id);
+    if (car?.storagePaths?.length) {
+      const { error: storageError } = await supabase.storage.from("vehicle-media")
+        .remove(car.storagePaths);
+      if (storageError) {
+        setAppError(storageError.message);
+        return;
+      }
+    }
+    const { error } = await supabase.from("inventory").delete().eq("id", id);
+    if (error) setAppError(error.message);
+    else setCars((current) => current.filter((car) => car.id !== id));
+    setDetail(null);
+  };
 
-  const openAdd = () => { setForm(emptyForm); setModalOpen(true); };
-  const openEdit = (car) => { setForm({ ...car }); setDetail(null); setModalOpen(true); };
-  const saveCar = () => {
+  const openAdd = () => { setForm({ ...emptyForm, uploadFiles: [] }); setModalOpen(true); };
+  const openEdit = (car) => { setForm({ ...car, uploadFiles: [] }); setDetail(null); setModalOpen(true); };
+  const saveCar = async () => {
     if (!form.title.trim()) return;
-    const next = form.id
-      ? cars.map((c) => (c.id === form.id ? { ...form } : c))
-      : [{ ...form, id: Date.now().toString(), isNew: true }, ...cars];
-    persist(next);
+    setSaving(true);
+    setAppError("");
+    const id = form.id || crypto.randomUUID();
+    const manualPhotos = form.manualPhotos || [];
+    const uploadFiles = form.uploadFiles || [];
+    const record = {
+      ...form,
+      id,
+      isNew: form.id ? form.isNew : true,
+      photoCount: (form.storedMediaCount || 0) + manualPhotos.length + uploadFiles.length,
+    };
+    const { error: saveError } = await supabase.from("inventory").upsert(carToRow(record, session.user.id));
+    if (saveError) {
+      setAppError(saveError.message);
+      setSaving(false);
+      return;
+    }
+
+    const { error: deleteMediaError } = await supabase.from("vehicle_media")
+      .delete().eq("vehicle_id", id).is("storage_path", null);
+    if (deleteMediaError) {
+      setAppError(deleteMediaError.message);
+      setSaving(false);
+      return;
+    }
+    if (manualPhotos.length) {
+      const { error: mediaError } = await supabase.from("vehicle_media").insert(
+        manualPhotos.map((sourceUrl, index) => ({
+          vehicle_id: id,
+          kind: "image",
+          source_url: sourceUrl,
+          sort_order: (form.storedMediaCount || 0) + index,
+        })),
+      );
+      if (mediaError) {
+        setAppError(mediaError.message);
+        setSaving(false);
+        return;
+      }
+    }
+
+    for (const [index, file] of uploadFiles.entries()) {
+      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const storagePath = `${id}/${crypto.randomUUID()}.${extension}`;
+      const { error: uploadError } = await supabase.storage.from("vehicle-media")
+        .upload(storagePath, file, { contentType: file.type || "image/jpeg", upsert: false });
+      if (uploadError) {
+        setAppError(uploadError.message);
+        setSaving(false);
+        return;
+      }
+      const { error: mediaRowError } = await supabase.from("vehicle_media").insert({
+        vehicle_id: id,
+        kind: file.type.startsWith("video/") ? "video" : "image",
+        storage_path: storagePath,
+        source_url: "",
+        sort_order: (form.storedMediaCount || 0) + manualPhotos.length + index,
+        mime_type: file.type || null,
+      });
+      if (mediaRowError) {
+        setAppError(mediaRowError.message);
+        setSaving(false);
+        return;
+      }
+    }
+
+    await loadCars();
+    setSaving(false);
     setModalOpen(false);
   };
   const toggleIn = (key, val) =>
@@ -126,6 +286,18 @@ export default function SellsCarsBoard() {
       ...fm,
       [key]: fm[key].includes(val) ? fm[key].filter((x) => x !== val) : [...fm[key], val],
     }));
+
+  if (!authReady) return <div className="min-h-screen bg-neutral-950 grid place-items-center text-sm text-neutral-500">Connecting securely…</div>;
+  if (!session) return <AuthScreen />;
+  if (accessDenied) return (
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 grid place-items-center p-5">
+      <section className="max-w-md rounded-2xl border border-amber-500/30 bg-neutral-900 p-6 text-center">
+        <h1 className="text-lg font-bold">This email is not approved</h1>
+        <p className="mt-2 text-sm text-neutral-400">Ask the inventory owner to add {session.user.email} to the team allowlist.</p>
+        <button onClick={() => supabase.auth.signOut()} className="mt-5 rounded-lg bg-neutral-800 px-4 py-2 text-sm font-semibold">Sign out</button>
+      </section>
+    </main>
+  );
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans">
@@ -159,6 +331,10 @@ export default function SellsCarsBoard() {
             className="bg-red-600 hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> Add car
           </button>
+          <button onClick={() => supabase.auth.signOut()} title={`Sign out ${session.user.email}`}
+            className="rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-neutral-400 hover:text-white">
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 pb-2.5 space-y-1.5">
@@ -188,8 +364,9 @@ export default function SellsCarsBoard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-5">
+        {appError && <p className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{appError}</p>}
         {loading ? (
-          <p className="text-neutral-500 text-sm text-center py-24">Loading {SEED.length} cars…</p>
+          <p className="text-neutral-500 text-sm text-center py-24">Loading shared inventory…</p>
         ) : visible.length === 0 ? (
           <div className="text-center py-24">
             <p className="font-medium text-neutral-300">No cars match.</p>
@@ -214,7 +391,7 @@ export default function SellsCarsBoard() {
       )}
       {modalOpen && (
         <EditModal form={form} setForm={setForm} toggleIn={toggleIn}
-          onSave={saveCar} onClose={() => setModalOpen(false)} />
+          saving={saving} onSave={saveCar} onClose={() => setModalOpen(false)} />
       )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
     </div>
@@ -374,7 +551,7 @@ function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
   );
 }
 
-function EditModal({ form, setForm, toggleIn, onSave, onClose }) {
+function EditModal({ form, setForm, toggleIn, saving, onSave, onClose }) {
   const tier = tierFor(form.price);
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4 overflow-y-auto">
@@ -450,16 +627,32 @@ function EditModal({ form, setForm, toggleIn, onSave, onClose }) {
               placeholder="https://vhr.carfax.ca/..."
               onChange={(e) => setForm({ ...form, carfax: e.target.value })} />
           </F>
+          <F label="Photo URLs (one per line)">
+            <textarea className="inp resize-none" rows={4} value={(form.manualPhotos || []).join("\n")}
+              placeholder={"https://your-storage.com/car/front.jpg\nhttps://your-storage.com/car/interior.jpg"}
+              onChange={(e) => {
+                const manualPhotos = e.target.value.split("\n").map((url) => url.trim()).filter(Boolean);
+                setForm({ ...form, manualPhotos });
+              }} />
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Existing Trello previews remain attached until they are migrated into permanent storage.</p>
+          </F>
+          <F label="Upload photos or videos">
+            <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white">
+              <Upload className="h-4 w-4" />
+              {form.uploadFiles?.length ? `${form.uploadFiles.length} file(s) selected` : "Choose files from this device"}
+              <input className="hidden" type="file" accept="image/*,video/mp4,video/quicktime" multiple
+                onChange={(event) => setForm({ ...form, uploadFiles: Array.from(event.target.files || []) })} />
+            </label>
+          </F>
         </div>
         <div className="flex gap-2 px-5 py-4 border-t border-neutral-800">
           <button onClick={onClose} className="flex-1 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium">Cancel</button>
-          <button onClick={onSave} disabled={!form.title.trim()}
+          <button onClick={onSave} disabled={saving || !form.title.trim()}
             className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-sm font-bold">
-            {form.id ? "Save changes" : "Add to board"}
+            {saving ? "Saving…" : form.id ? "Save changes" : "Add to board"}
           </button>
         </div>
       </div>
-      <style>{`.inp{width:100%;margin-top:4px;background:#171717;border:1px solid #333;border-radius:8px;padding:8px 12px;font-size:14px;color:#f5f5f5;outline:none}.inp:focus{border-color:#666}`}</style>
     </div>
   );
 }
