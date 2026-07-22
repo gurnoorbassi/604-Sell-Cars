@@ -30,6 +30,8 @@ The app requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in an i
 
 AI description generation runs through the authenticated Netlify Function at `/api/generate-description`, so the Anthropic key never enters the browser bundle. Add `ANTHROPIC_API_KEY` in **Netlify → Site configuration → Environment variables**, then redeploy. For local function testing, add the same key to the ignored `.env` file and run `npx netlify dev`.
 
+AI generation is server-limited to one request per signed-in user per minute and 10 requests per user per UTC day. Each response is capped at 400 output tokens, and failed rapid/daily-limit requests do not call Anthropic.
+
 ## Migrate Trello media to Supabase
 
 Being signed in to Trello in a browser does not automatically authenticate a Node script. Create a read-only Trello API token, copy `.env.example` to `.env`, and set:

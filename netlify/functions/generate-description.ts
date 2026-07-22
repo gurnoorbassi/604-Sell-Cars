@@ -15,6 +15,8 @@ function clean(value: unknown, max = 500) {
   return String(value || "").trim().slice(0, max);
 }
 
+const DAILY_GENERATION_LIMIT = 10;
+
 export default async (request: Request, _context: Context) => {
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
 
@@ -51,6 +53,32 @@ export default async (request: Request, _context: Context) => {
   const title = clean(input.title, 180);
   if (!title) return json({ error: "Enter the vehicle year, make, and model first." }, 400);
 
+  const now = new Date();
+  const rateBucket = new Date(Math.floor(now.getTime() / 60_000) * 60_000).toISOString();
+  const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
+  const { error: usageInsertError } = await supabase.from("ai_generation_usage").insert({
+    user_id: userData.user.id,
+    rate_bucket: rateBucket,
+  });
+  if (usageInsertError?.code === "23505") {
+    return json({ error: "Please wait one minute before generating another description." }, 429);
+  }
+  if (usageInsertError) {
+    return json({ error: "AI usage limits could not be checked. Please try again." }, 503);
+  }
+
+  const { count: dailyUsage, error: usageCountError } = await supabase
+    .from("ai_generation_usage")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userData.user.id)
+    .gte("requested_at", dayStart);
+  if (usageCountError || dailyUsage === null) {
+    return json({ error: "AI usage limits could not be checked. Please try again." }, 503);
+  }
+  if (dailyUsage > DAILY_GENERATION_LIMIT) {
+    return json({ error: `Daily AI limit reached (${DAILY_GENERATION_LIMIT} descriptions). Try again tomorrow.` }, 429);
+  }
+
   const details = [
     `Vehicle: ${title}`,
     `Price: ${clean(input.price) || "Not provided"}`,
@@ -86,7 +114,7 @@ ${details}`;
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1000,
+        max_tokens: 400,
         messages: [{ role: "user", content: prompt }],
       }),
     });
@@ -106,7 +134,7 @@ ${details}`;
     : "";
   if (!description) return json({ error: "The AI returned an empty description. Please try again." }, 502);
 
-  return json({ description });
+  return json({ description, remainingToday: Math.max(0, DAILY_GENERATION_LIMIT - dailyUsage) });
 };
 
 export const config: Config = {
