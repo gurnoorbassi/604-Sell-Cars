@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
-  RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload,
+  RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
 } from "lucide-react";
 import AuthScreen from "./AuthScreen";
 import { supabase } from "./lib/supabase";
@@ -216,6 +216,12 @@ export default function SellsCarsBoard() {
     const id = form.id || crypto.randomUUID();
     const manualPhotos = form.manualPhotos || [];
     const uploadFiles = form.uploadFiles || [];
+    const oversizedFile = uploadFiles.find((file) => file.size > 10 * 1024 * 1024);
+    if (oversizedFile) {
+      setAppError(`${oversizedFile.name} is larger than the 10 MB per-file upload limit.`);
+      setSaving(false);
+      return;
+    }
     const record = {
       ...form,
       id,
@@ -390,7 +396,7 @@ export default function SellsCarsBoard() {
           onEdit={() => openEdit(detail)} onDelete={() => remove(detail.id)} />
       )}
       {modalOpen && (
-        <EditModal form={form} setForm={setForm} toggleIn={toggleIn}
+        <EditModal form={form} setForm={setForm} toggleIn={toggleIn} session={session}
           saving={saving} onSave={saveCar} onClose={() => setModalOpen(false)} />
       )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
@@ -551,8 +557,42 @@ function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
   );
 }
 
-function EditModal({ form, setForm, toggleIn, saving, onSave, onClose }) {
+function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }) {
   const tier = tierFor(form.price);
+  const [generatingDescription, setGeneratingDescription] = useState(false);
+  const [descriptionError, setDescriptionError] = useState("");
+  const [fileError, setFileError] = useState("");
+  const generateDescription = async () => {
+    if (!form.title.trim() || generatingDescription) return;
+    setGeneratingDescription(true);
+    setDescriptionError("");
+    try {
+      const response = await fetch("/api/generate-description", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          title: form.title,
+          price: form.price,
+          kms: form.kms,
+          bodyType: form.bodyType,
+          fuelTags: form.fuelTags,
+          notes: form.description,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || typeof result.description !== "string" || !result.description.trim()) {
+        throw new Error(result.error || "Description generation failed. Please try again.");
+      }
+      setForm((current) => ({ ...current, description: result.description }));
+    } catch (error) {
+      setDescriptionError(error.message || "Description generation failed. Please try again.");
+    } finally {
+      setGeneratingDescription(false);
+    }
+  };
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4 overflow-y-auto">
       <div className="bg-neutral-900 border border-neutral-700 rounded-2xl w-full max-w-xl my-8">
@@ -618,10 +658,21 @@ function EditModal({ form, setForm, toggleIn, saving, onSave, onClose }) {
             <Toggle on={form.hot} onClick={() => setForm({ ...form, hot: !form.hot })} icon={<Flame className="w-3.5 h-3.5" />}>Hot sell</Toggle>
             <Toggle on={form.isNew} onClick={() => setForm({ ...form, isNew: !form.isNew })} icon={<Sparkles className="w-3.5 h-3.5" />}>New arrival</Toggle>
           </div>
-          <F label="Description / ad copy">
-            <textarea className="inp resize-none" rows={4} value={form.description}
+          <div>
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-xs text-neutral-400 font-medium">Description / ad copy</label>
+              <button type="button" onClick={generateDescription}
+                disabled={!form.title.trim() || generatingDescription}
+                className="flex items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-2.5 py-1.5 text-[11px] font-semibold text-violet-200 hover:bg-violet-500/20 disabled:cursor-not-allowed disabled:opacity-40">
+                {generatingDescription ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                {generatingDescription ? "Generating..." : "Generate Description with AI"}
+              </button>
+            </div>
+            <textarea className="inp mt-1 resize-none" rows={4} value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          </F>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Add key features or notes here first; AI uses the existing text as source material and replaces it with editable ad copy.</p>
+            {descriptionError && <p className="mt-1.5 text-xs text-red-300">{descriptionError}</p>}
+          </div>
           <F label="CARFAX report URL">
             <input className="inp" value={form.carfax === "on-file" ? "" : form.carfax}
               placeholder="https://vhr.carfax.ca/..."
@@ -641,8 +692,15 @@ function EditModal({ form, setForm, toggleIn, saving, onSave, onClose }) {
               <Upload className="h-4 w-4" />
               {form.uploadFiles?.length ? `${form.uploadFiles.length} file(s) selected` : "Choose files from this device"}
               <input className="hidden" type="file" accept="image/*,video/mp4,video/quicktime" multiple
-                onChange={(event) => setForm({ ...form, uploadFiles: Array.from(event.target.files || []) })} />
+                onChange={(event) => {
+                  const selectedFiles = Array.from(event.target.files || []);
+                  const oversizedFiles = selectedFiles.filter((file) => file.size > 10 * 1024 * 1024);
+                  setFileError(oversizedFiles.length ? `${oversizedFiles.map((file) => file.name).join(", ")} exceeded 10 MB and was not selected.` : "");
+                  setForm({ ...form, uploadFiles: selectedFiles.filter((file) => file.size <= 10 * 1024 * 1024) });
+                }} />
             </label>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit in the app. Maximum 10 MB per photo or video.</p>
+            {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
         </div>
         <div className="flex gap-2 px-5 py-4 border-t border-neutral-800">
