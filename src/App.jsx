@@ -561,11 +561,13 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
   const tier = tierFor(form.price);
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [descriptionError, setDescriptionError] = useState("");
+  const [descriptionNotice, setDescriptionNotice] = useState("");
   const [fileError, setFileError] = useState("");
   const generateDescription = async () => {
     if (!form.title.trim() || generatingDescription) return;
     setGeneratingDescription(true);
     setDescriptionError("");
+    setDescriptionNotice("");
     try {
       const response = await fetch("/api/generate-description", {
         method: "POST",
@@ -588,6 +590,9 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
         throw new Error(result.error || "Description generation failed. Please try again.");
       }
       setForm((current) => ({ ...current, description: result.description }));
+      if (Number.isInteger(result.remainingToday)) {
+        setDescriptionNotice(`AI description generated. ${result.remainingToday} of 10 left today.`);
+      }
     } catch (error) {
       setDescriptionError(error.message || "Description generation failed. Please try again.");
     } finally {
@@ -672,6 +677,7 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
             <textarea className="inp mt-1 resize-none" rows={4} value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })} />
             <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Add key features or notes here first; AI uses the existing text as source material and replaces it with editable ad copy.</p>
+            {descriptionNotice && <p className="mt-1.5 text-xs text-emerald-300">{descriptionNotice}</p>}
             {descriptionError && <p className="mt-1.5 text-xs text-red-300">{descriptionError}</p>}
           </div>
           <F label="CARFAX report URL">
