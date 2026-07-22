@@ -1,10 +1,41 @@
 import React, { useState, useEffect } from "react";
+import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
 } from "lucide-react";
 import AuthScreen from "./AuthScreen";
-import { supabase, supabasePublishableKey } from "./lib/supabase";
+import { supabase, supabasePublishableKey, supabaseUrl } from "./lib/supabase";
+
+const MAX_UPLOAD_MB = 50;
+const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
+const RESUMABLE_UPLOAD_THRESHOLD = 6 * 1024 * 1024;
+const SUPABASE_PROJECT_REF = new URL(supabaseUrl).hostname.split(".")[0];
+
+const uploadResumableFile = (file, storagePath, session, onProgress) => new Promise((resolve, reject) => {
+  const upload = new tus.Upload(file, {
+    endpoint: `https://${SUPABASE_PROJECT_REF}.storage.supabase.co/storage/v1/upload/resumable`,
+    retryDelays: [0, 3000, 5000, 10000],
+    headers: { authorization: `Bearer ${session.access_token}` },
+    uploadDataDuringCreation: true,
+    removeFingerprintOnSuccess: true,
+    chunkSize: 6 * 1024 * 1024,
+    metadata: {
+      bucketName: "vehicle-media",
+      objectName: storagePath,
+      contentType: file.type || "application/octet-stream",
+      cacheControl: "3600",
+    },
+    onError: reject,
+    onProgress: (bytesUploaded, bytesTotal) => onProgress(bytesTotal ? bytesUploaded / bytesTotal : 0),
+    onSuccess: resolve,
+  });
+
+  upload.findPreviousUploads().then((previousUploads) => {
+    if (previousUploads.length) upload.resumeFromPreviousUpload(previousUploads[0]);
+    upload.start();
+  }).catch(reject);
+});
 
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
@@ -81,6 +112,7 @@ export default function SellsCarsBoard() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
   const [appError, setAppError] = useState("");
   const [tab, setTab] = useState("live");
   const [f, setF] = useState({ dealership: null, body: null, fuel: null, tier: null, flag: null });
@@ -212,13 +244,14 @@ export default function SellsCarsBoard() {
   const saveCar = async () => {
     if (!form.title.trim()) return;
     setSaving(true);
+    setUploadProgress(null);
     setAppError("");
     const id = form.id || crypto.randomUUID();
     const manualPhotos = form.manualPhotos || [];
     const uploadFiles = form.uploadFiles || [];
-    const oversizedFile = uploadFiles.find((file) => file.size > 10 * 1024 * 1024);
+    const oversizedFile = uploadFiles.find((file) => file.size > MAX_UPLOAD_BYTES);
     if (oversizedFile) {
-      setAppError(`${oversizedFile.name} is larger than the 10 MB per-file upload limit.`);
+      setAppError(`${oversizedFile.name} is larger than the ${MAX_UPLOAD_MB} MB per-file upload limit.`);
       setSaving(false);
       return;
     }
@@ -261,10 +294,20 @@ export default function SellsCarsBoard() {
     for (const [index, file] of uploadFiles.entries()) {
       const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
       const storagePath = `${id}/${crypto.randomUUID()}.${extension}`;
-      const { error: uploadError } = await supabase.storage.from("vehicle-media")
-        .upload(storagePath, file, { contentType: file.type || "image/jpeg", upsert: false });
-      if (uploadError) {
-        setAppError(uploadError.message);
+      try {
+        if (file.size > RESUMABLE_UPLOAD_THRESHOLD) {
+          await uploadResumableFile(file, storagePath, session, (fileProgress) => {
+            setUploadProgress(Math.round(((index + fileProgress) / uploadFiles.length) * 100));
+          });
+        } else {
+          const { error: uploadError } = await supabase.storage.from("vehicle-media")
+            .upload(storagePath, file, { contentType: file.type || "image/jpeg", upsert: false });
+          if (uploadError) throw uploadError;
+          setUploadProgress(Math.round(((index + 1) / uploadFiles.length) * 100));
+        }
+      } catch (uploadError) {
+        setAppError(uploadError.message || `Could not upload ${file.name}.`);
+        setUploadProgress(null);
         setSaving(false);
         return;
       }
@@ -278,12 +321,14 @@ export default function SellsCarsBoard() {
       });
       if (mediaRowError) {
         setAppError(mediaRowError.message);
+        setUploadProgress(null);
         setSaving(false);
         return;
       }
     }
 
     await loadCars();
+    setUploadProgress(null);
     setSaving(false);
     setModalOpen(false);
   };
@@ -397,7 +442,7 @@ export default function SellsCarsBoard() {
       )}
       {modalOpen && (
         <EditModal form={form} setForm={setForm} toggleIn={toggleIn} session={session}
-          saving={saving} onSave={saveCar} onClose={() => setModalOpen(false)} />
+          saving={saving} uploadProgress={uploadProgress} onSave={saveCar} onClose={() => setModalOpen(false)} />
       )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
     </div>
@@ -557,7 +602,7 @@ function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
   );
 }
 
-function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }) {
+function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, onSave, onClose }) {
   const tier = tierFor(form.price);
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [descriptionError, setDescriptionError] = useState("");
@@ -719,9 +764,9 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
               <input className="hidden" type="file" accept="image/*,video/mp4,video/quicktime" multiple
                 onChange={(event) => {
                   const selectedFiles = Array.from(event.target.files || []);
-                  const oversizedFiles = selectedFiles.filter((file) => file.size > 10 * 1024 * 1024);
-                  const validFiles = selectedFiles.filter((file) => file.size <= 10 * 1024 * 1024);
-                  setFileError(oversizedFiles.length ? `${oversizedFiles.map((file) => file.name).join(", ")} exceeded 10 MB and was not selected.` : "");
+                  const oversizedFiles = selectedFiles.filter((file) => file.size > MAX_UPLOAD_BYTES);
+                  const validFiles = selectedFiles.filter((file) => file.size <= MAX_UPLOAD_BYTES);
+                  setFileError(oversizedFiles.length ? `${oversizedFiles.map((file) => file.name).join(", ")} exceeded ${MAX_UPLOAD_MB} MB and was not selected.` : "");
                   setForm((current) => {
                     const existingFiles = current.uploadFiles || [];
                     const existingKeys = new Set(existingFiles.map((file) => `${file.name}:${file.size}:${file.lastModified}`));
@@ -751,15 +796,15 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
                 ))}
               </div>
             )}
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit in the app. Maximum 10 MB per photo or video.</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit in the app. Maximum {MAX_UPLOAD_MB} MB per photo or video. Large files upload in resumable chunks.</p>
             {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
         </div>
         <div className="flex gap-2 px-5 py-4 border-t border-neutral-800">
-          <button onClick={onClose} className="flex-1 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium">Cancel</button>
+          <button onClick={onClose} disabled={saving} className="flex-1 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-40 text-sm font-medium">Cancel</button>
           <button onClick={onSave} disabled={saving || !form.title.trim()}
             className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-sm font-bold">
-            {saving ? "Saving…" : form.id ? "Save changes" : "Add to board"}
+            {uploadProgress !== null ? `Uploading ${uploadProgress}%` : saving ? "Saving…" : form.id ? "Save changes" : "Add to board"}
           </button>
         </div>
       </div>

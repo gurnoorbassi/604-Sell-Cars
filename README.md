@@ -34,6 +34,10 @@ AI generation is server-limited to one request per signed-in user per minute and
 
 ## Migrate Trello media to Supabase
 
+New uploads are stored permanently in the private Supabase Storage bucket named `vehicle-media`. The app accepts files up to 50 MB each and uses resumable 6 MB chunks for larger uploads. Existing Trello attachment URLs remain external until the migration below is run.
+
+Manage the stored files in **Supabase Dashboard → Storage → vehicle-media**. Supabase's Free plan has a 50 MB global per-file ceiling; raising the app above 50 MB also requires a higher global Storage limit on a paid Supabase plan.
+
 Being signed in to Trello in a browser does not automatically authenticate a Node script. Create a read-only Trello API token, copy `.env.example` to `.env`, and set:
 
 ```text
