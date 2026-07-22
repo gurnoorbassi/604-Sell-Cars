@@ -19,8 +19,8 @@ export default async (request: Request, _context: Context) => {
   if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
 
   const anthropicKey = Netlify.env.get("ANTHROPIC_API_KEY");
-  const supabaseUrl = Netlify.env.get("VITE_SUPABASE_URL");
-  const supabaseKey = Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY");
+  const supabaseUrl = "https://uduartuijwldxhgpmwks.supabase.co";
+  const supabaseKey = Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") || request.headers.get("x-supabase-publishable-key");
   if (!anthropicKey) return json({ error: "AI generation is not configured yet." }, 503);
   if (!supabaseUrl || !supabaseKey) return json({ error: "Server authentication is not configured." }, 503);
 

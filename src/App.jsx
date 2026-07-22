@@ -4,7 +4,7 @@ import {
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
 } from "lucide-react";
 import AuthScreen from "./AuthScreen";
-import { supabase } from "./lib/supabase";
+import { supabase, supabasePublishableKey } from "./lib/supabase";
 
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
@@ -572,6 +572,7 @@ function EditModal({ form, setForm, toggleIn, session, saving, onSave, onClose }
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
+          "X-Supabase-Publishable-Key": supabasePublishableKey,
         },
         body: JSON.stringify({
           title: form.title,

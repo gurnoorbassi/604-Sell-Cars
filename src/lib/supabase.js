@@ -14,3 +14,5 @@ export const supabase = createClient(supabaseUrl, publishableKey, {
     detectSessionInUrl: true,
   },
 });
+
+export const supabasePublishableKey = publishableKey;
