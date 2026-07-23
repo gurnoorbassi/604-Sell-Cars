@@ -6,6 +6,12 @@
 - GitHub Actions checks production hourly and opens one alert issue if Netlify or Supabase Auth is unavailable.
 - Review Netlify Function logs when the health workflow fails.
 
+## Deployment
+
+- Netlify is connected to the GitHub repository and deploys the `main` branch.
+- Pull requests run the GitHub CI workflow before merge.
+- Production changes should be merged to `main`; avoid manual production deploys so each release stays traceable to a Git commit.
+
 ## Backups
 
 Supabase provides platform backups, but an off-platform export should also be kept periodically.
