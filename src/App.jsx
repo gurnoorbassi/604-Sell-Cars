@@ -3,7 +3,7 @@ import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
-  ShieldCheck, Users,
+  ShieldCheck, Users, Download,
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
 import { chunkArray, tierFor } from "./lib/inventory";
@@ -13,6 +13,91 @@ const MAX_UPLOAD_MB = 50;
 const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
 const RESUMABLE_UPLOAD_THRESHOLD = 6 * 1024 * 1024;
 const SUPABASE_PROJECT_REF = new URL(supabaseUrl).hostname.split(".")[0];
+const IMAGE_DOWNLOAD_CONCURRENCY = 4;
+
+const safeFilename = (value) => value
+  .replace(/[^a-z0-9]+/gi, "-")
+  .replace(/^-+|-+$/g, "")
+  .slice(0, 80) || "vehicle";
+
+const imageExtension = (contentType, sourceUrl) => {
+  const typeExtensions = {
+    "image/avif": "avif",
+    "image/bmp": "bmp",
+    "image/gif": "gif",
+    "image/heic": "heic",
+    "image/heif": "heif",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/svg+xml": "svg",
+    "image/tiff": "tiff",
+    "image/webp": "webp",
+  };
+  const normalizedType = contentType?.split(";")[0].trim().toLowerCase();
+  if (typeExtensions[normalizedType]) return typeExtensions[normalizedType];
+  try {
+    const match = new URL(sourceUrl).pathname.match(/\.([a-z0-9]{2,5})$/i);
+    if (match) return match[1].toLowerCase();
+  } catch {
+    // The response MIME type normally determines the extension.
+  }
+  return "jpg";
+};
+
+const downloadCarPictures = async (car, onProgress) => {
+  const { default: JSZip } = await import("jszip");
+  const zip = new JSZip();
+  const failed = [];
+  let completed = 0;
+  let saved = 0;
+  const total = car.photos.length;
+  const width = String(total).length;
+
+  for (const photoBatch of chunkArray(car.photos.map((url, index) => ({ url, index })), IMAGE_DOWNLOAD_CONCURRENCY)) {
+    await Promise.all(photoBatch.map(async ({ url, index }) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const blob = await response.blob();
+        if (!blob.type.startsWith("image/")) throw new Error("The server did not return an image");
+        const extension = imageExtension(blob.type, url);
+        zip.file(`${String(index + 1).padStart(width, "0")}.${extension}`, blob);
+        saved += 1;
+      } catch (error) {
+        failed.push(`Picture ${index + 1}: ${error.message || "download failed"}`);
+      } finally {
+        completed += 1;
+        onProgress({ phase: "downloading", completed, total });
+      }
+    }));
+  }
+
+  if (!saved) throw new Error("None of this car's pictures could be downloaded.");
+  if (failed.length) {
+    zip.file("download-errors.txt", [
+      `${failed.length} of ${total} pictures could not be downloaded.`,
+      "Try refreshing the inventory and downloading again.",
+      "",
+      ...failed,
+    ].join("\n"));
+  }
+
+  onProgress({ phase: "zipping", completed: 0, total: 100 });
+  const archive = await zip.generateAsync(
+    { type: "blob", compression: "STORE" },
+    ({ percent }) => onProgress({ phase: "zipping", completed: Math.round(percent), total: 100 }),
+  );
+  const downloadUrl = URL.createObjectURL(archive);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = `${safeFilename(`${car.title}-${car.stock || car.id}`)}-pictures.zip`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+
+  return { failed: failed.length, saved };
+};
 
 const uploadResumableFile = (file, storagePath, session, onProgress) => new Promise((resolve, reject) => {
   const upload = new tus.Upload(file, {
@@ -883,6 +968,30 @@ const Tag = ({ children }) => (
 
 function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete }) {
   const sold = car.status === "sold";
+  const [pictureDownload, setPictureDownload] = useState(null);
+  const [pictureDownloadMessage, setPictureDownloadMessage] = useState("");
+
+  const saveAllPictures = async () => {
+    setPictureDownloadMessage("");
+    setPictureDownload({ phase: "downloading", completed: 0, total: car.photos.length });
+    try {
+      const result = await downloadCarPictures(car, setPictureDownload);
+      setPictureDownloadMessage(result.failed
+        ? `Saved ${result.saved} pictures. ${result.failed} could not be downloaded; details are inside the ZIP.`
+        : `Saved all ${result.saved} pictures.`);
+    } catch (error) {
+      setPictureDownloadMessage(error.message || "Pictures could not be saved. Please try again.");
+    } finally {
+      setPictureDownload(null);
+    }
+  };
+
+  const pictureDownloadLabel = pictureDownload?.phase === "zipping"
+    ? `Creating ZIP ${pictureDownload.completed}%`
+    : pictureDownload
+      ? `Downloading ${pictureDownload.completed}/${pictureDownload.total}`
+      : `Save all pictures (${car.photos?.length || 0})`;
+
   return (
     <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex justify-end" onClick={onClose}>
       <div className="bg-neutral-900 w-full max-w-md h-full overflow-y-auto border-l border-neutral-800" onClick={(e) => e.stopPropagation()}>
@@ -910,13 +1019,31 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
             {car.photoCount > 0 && <Tag>{car.photoCount} media files</Tag>}
           </div>
           {car.photos?.length > 0 && (
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              {car.photos.map((photo, index) => (
-                <a key={photo} href={photo} target="_blank" rel="noreferrer" className="block">
-                  <VehicleImage src={photo} alt={`${car.title} photo ${index + 1}`}
-                    className="w-full aspect-[4/3] object-cover rounded-lg bg-neutral-800" />
-                </a>
-              ))}
+            <div className="mt-4">
+              <button type="button" onClick={saveAllPictures} disabled={Boolean(pictureDownload)}
+                className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800/80 px-3 py-2.5 text-sm font-semibold text-neutral-100 hover:border-neutral-500 hover:bg-neutral-800 disabled:cursor-wait disabled:opacity-60">
+                {pictureDownload
+                  ? <LoaderCircle className="h-4 w-4 animate-spin" />
+                  : <Download className="h-4 w-4" />}
+                {pictureDownloadLabel}
+              </button>
+              {pictureDownloadMessage && (
+                <p role="status" className={`mb-3 rounded-lg border px-3 py-2 text-xs ${
+                  pictureDownloadMessage.startsWith("Saved")
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
+                    : "border-red-500/30 bg-red-500/10 text-red-200"
+                }`}>
+                  {pictureDownloadMessage}
+                </p>
+              )}
+              <div className="grid grid-cols-2 gap-2">
+                {car.photos.map((photo, index) => (
+                  <a key={photo} href={photo} target="_blank" rel="noreferrer" className="block">
+                    <VehicleImage src={photo} alt={`${car.title} photo ${index + 1}`}
+                      className="w-full aspect-[4/3] object-cover rounded-lg bg-neutral-800" />
+                  </a>
+                ))}
+              </div>
             </div>
           )}
           {car.videos?.length > 0 && (
