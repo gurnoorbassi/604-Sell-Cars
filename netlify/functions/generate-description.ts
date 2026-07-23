@@ -35,13 +35,18 @@ export default async (request: Request, _context: Context) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data: userData, error: userError } = await supabase.auth.getUser(token);
-  if (userError || !userData.user) return json({ error: "Your session expired. Please sign in again." }, 401);
+  if (userError || !userData.user?.email) return json({ error: "Your session expired. Please sign in again." }, 401);
 
   const { data: membership, error: membershipError } = await supabase
     .from("team_members")
-    .select("role")
+    .select("role, active")
+    .eq("email", userData.user.email.toLowerCase())
+    .eq("active", true)
     .maybeSingle();
-  if (membershipError || !membership || !["owner", "admin"].includes(membership.role)) {
+  if (membershipError) {
+    return json({ error: "Your account permissions could not be checked. Please try again." }, 503);
+  }
+  if (!membership || !["owner", "admin"].includes(membership.role)) {
     return json({ error: "This account has view-only access and cannot generate descriptions." }, 403);
   }
 
