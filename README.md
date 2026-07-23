@@ -34,7 +34,7 @@ AI generation is server-limited to one request per signed-in user per minute and
 
 ## Migrate Trello media to Supabase
 
-New uploads are stored permanently in the private Supabase Storage bucket named `vehicle-media`. The app accepts files up to 50 MB each and uses resumable 6 MB chunks for larger uploads. Existing Trello attachment URLs remain external until the migration below is run.
+New uploads are stored permanently in the private Supabase Storage bucket named `vehicle-media`. The app accepts files up to 50 MB each and uses resumable 6 MB chunks for larger uploads. Existing Trello attachment URLs are delivered through the authenticated `/api/trello-media` function so they work on phones without a Trello browser session; the migration below still moves them into permanent Supabase storage.
 
 Manage the stored files in **Supabase Dashboard → Storage → vehicle-media**. Supabase's Free plan has a 50 MB global per-file ceiling; raising the app above 50 MB also requires a higher global Storage limit on a paid Supabase plan.
 
@@ -54,6 +54,8 @@ npm run migrate:media
 ```
 
 The resumable migration downloads the imported Trello image previews with your authorized API token, uploads them to the private `vehicle-media` bucket, and updates each database record. Never commit `.env`, passwords, or Trello tokens.
+
+The deployed app's Trello media function requires `TRELLO_API_KEY`, `TRELLO_API_TOKEN`, and `TRELLO_MEDIA_SIGNING_SECRET` as encrypted Netlify environment variables. It returns short-lived signed media URLs only to active team accounts.
 
 The older `npm run import:trello` command is still available when you need a fresh API import directly from a board.
 

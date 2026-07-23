@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Car, LogIn, UserPlus } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
+const PRODUCTION_APP_URL = "https://dealership-inventory-board.netlify.app";
+
 export default function AuthScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +17,9 @@ export default function AuthScreen() {
     const { data, error } = mode === "signup"
       ? await supabase.auth.signUp({
         ...credentials,
-        options: { emailRedirectTo: window.location.origin },
+        options: {
+          emailRedirectTo: import.meta.env.PROD ? PRODUCTION_APP_URL : window.location.origin,
+        },
       })
       : await supabase.auth.signInWithPassword(credentials);
     setBusy(false);

@@ -41,10 +41,10 @@ const uploadResumableFile = (file, storagePath, session, onProgress) => new Prom
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
   const photos = media.filter((item) => item.kind === "image").map((item) =>
-    item.storage_path ? signedUrls.get(item.storage_path) : item.source_url,
+    item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
   ).filter(Boolean);
   const videos = media.filter((item) => item.kind === "video").map((item) =>
-    item.storage_path ? signedUrls.get(item.storage_path) : item.source_url,
+    item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
   ).filter(Boolean);
   return {
     id: row.id, title: row.title, stock: row.stock, price: row.price, kms: row.kms,
@@ -184,6 +184,31 @@ export default function SellsCarsBoard() {
         if (item.signedUrl) signedUrls.set(item.path, item.signedUrl);
       });
     }
+
+    const trelloUrls = [...new Set(rows.flatMap((row) => row.vehicle_media || [])
+      .filter((item) => !item.storage_path && item.source_url?.startsWith("https://trello.com/"))
+      .map((item) => item.source_url))];
+    if (trelloUrls.length) {
+      try {
+        const mediaResponse = await fetch("/api/trello-media", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+            "x-supabase-publishable-key": supabasePublishableKey,
+          },
+          body: JSON.stringify({ urls: trelloUrls }),
+        });
+        const mediaResult = await mediaResponse.json();
+        if (!mediaResponse.ok) throw new Error(mediaResult.error || "Trello media could not be authorized.");
+        Object.entries(mediaResult.urls || {}).forEach(([sourceUrl, proxyUrl]) => {
+          signedUrls.set(sourceUrl, proxyUrl);
+        });
+      } catch (mediaError) {
+        setAppError(mediaError.message || "Trello photos are temporarily unavailable.");
+      }
+    }
+
     setCars(rows.map((row) => rowToCar(row, signedUrls)));
     setLoading(false);
   };
@@ -628,6 +653,33 @@ const FilterRow = ({ label, options, value, onPick, inline }) => (
   </div>
 );
 
+function VehicleImage({ src, alt, className }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
+    return (
+      <div className={`${className} flex flex-col items-center justify-center gap-1.5 text-center text-neutral-500`}>
+        <ImageIcon className="h-6 w-6" />
+        <span className="px-2 text-[10px] font-medium">Photo unavailable — Trello access needs reconnecting</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      onError={() => setFailed(true)}
+      className={className}
+    />
+  );
+}
+
 function CarCard({ car, canEdit, onOpen, onSold }) {
   const sold = car.status === "sold";
   const tier = tierFor(car.price);
@@ -635,7 +687,7 @@ function CarCard({ car, canEdit, onOpen, onSold }) {
     <div className="bg-neutral-900 rounded-xl border border-neutral-800 hover:border-neutral-600 overflow-hidden transition-colors flex flex-col">
       <button onClick={onOpen} className="text-left flex-1">
         {car.photos?.[0] && (
-          <img src={car.photos[0]} alt="" loading="lazy" className="w-full aspect-[4/3] object-cover bg-neutral-800" />
+          <VehicleImage src={car.photos[0]} alt="" className="w-full aspect-[4/3] object-cover bg-neutral-800" />
         )}
         <div className="p-2.5">
           <div className="flex items-start gap-1.5">
@@ -720,7 +772,7 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
             <div className="grid grid-cols-2 gap-2 mt-4">
               {car.photos.slice(0, 8).map((photo, index) => (
                 <a key={photo} href={photo} target="_blank" rel="noreferrer" className="block">
-                  <img src={photo} alt={`${car.title} photo ${index + 1}`} loading="lazy"
+                  <VehicleImage src={photo} alt={`${car.title} photo ${index + 1}`}
                     className="w-full aspect-[4/3] object-cover rounded-lg bg-neutral-800" />
                 </a>
               ))}
