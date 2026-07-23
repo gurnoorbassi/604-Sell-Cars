@@ -423,8 +423,8 @@ export default function SellsCarsBoard() {
   if (accessDenied) return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 grid place-items-center p-5">
       <section className="max-w-md rounded-2xl border border-amber-500/30 bg-neutral-900 p-6 text-center">
-        <h1 className="text-lg font-bold">This email is not approved</h1>
-        <p className="mt-2 text-sm text-neutral-400">Ask the inventory owner to add {session.user.email} to the team allowlist.</p>
+        <h1 className="text-lg font-bold">Account access is disabled</h1>
+        <p className="mt-2 text-sm text-neutral-400">Ask the inventory owner to restore BDC access for {session.user.email}.</p>
         <button onClick={() => supabase.auth.signOut()} className="mt-5 rounded-lg bg-neutral-800 px-4 py-2 text-sm font-semibold">Sign out</button>
       </section>
     </main>
@@ -559,7 +559,7 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
         </header>
 
         <div className="border-b border-neutral-800 p-5">
-          <label htmlFor="team-email" className="text-xs font-medium text-neutral-400">Approve a team email</label>
+          <label htmlFor="team-email" className="text-xs font-medium text-neutral-400">Pre-add a BDC email (optional)</label>
           <div className="mt-1.5 flex gap-2">
             <input id="team-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)}
               onKeyDown={(event) => { if (event.key === "Enter") onAdd(); }}
@@ -569,7 +569,7 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
               Add as BDC
             </button>
           </div>
-          <p className="mt-2 text-[11px] text-neutral-500">They use this exact email to create their approved account on the sign-in screen.</p>
+          <p className="mt-2 text-[11px] text-neutral-500">New signups appear here automatically as BDC. Pre-adding is only needed if you want their row ready before they register.</p>
           {error && <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">{error}</p>}
         </div>
 

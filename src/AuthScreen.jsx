@@ -12,7 +12,7 @@ export default function AuthScreen() {
     setBusy(true);
     setMessage("");
     const credentials = { email: email.trim().toLowerCase(), password };
-    const { error } = mode === "signup"
+    const { data, error } = mode === "signup"
       ? await supabase.auth.signUp({
         ...credentials,
         options: { emailRedirectTo: window.location.origin },
@@ -20,7 +20,7 @@ export default function AuthScreen() {
       : await supabase.auth.signInWithPassword(credentials);
     setBusy(false);
     if (error) setMessage(error.message);
-    else if (mode === "signup") setMessage("Check your email to confirm the account, then sign in.");
+    else if (mode === "signup" && !data.session) setMessage("Check your email to confirm the account, then sign in. Your account will start as BDC.");
   };
 
   return (
@@ -30,11 +30,11 @@ export default function AuthScreen() {
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-red-600"><Car className="h-6 w-6" /></div>
           <div><h1 className="font-extrabold tracking-tight">604SELLSCARS</h1><p className="text-xs text-neutral-500">Team inventory access</p></div>
         </div>
-        <label className="text-xs font-medium text-neutral-400">Email</label>
-        <input className="inp mb-4" type="email" autoComplete="email" value={email}
+        <label htmlFor="auth-email" className="text-xs font-medium text-neutral-400">Email</label>
+        <input id="auth-email" className="inp mb-4" type="email" autoComplete="email" value={email}
           onChange={(event) => setEmail(event.target.value)} placeholder="you@dealership.com" />
-        <label className="text-xs font-medium text-neutral-400">Password</label>
-        <input className="inp" type="password" autoComplete="current-password" value={password}
+        <label htmlFor="auth-password" className="text-xs font-medium text-neutral-400">Password</label>
+        <input id="auth-password" className="inp" type="password" autoComplete="current-password" value={password}
           onChange={(event) => setPassword(event.target.value)} placeholder="Your password" />
         {message && <p className="mt-3 rounded-lg bg-neutral-800 px-3 py-2 text-xs text-amber-200">{message}</p>}
         <button disabled={busy || !email || password.length < 6} onClick={() => authenticate("signin")}
@@ -43,9 +43,9 @@ export default function AuthScreen() {
         </button>
         <button disabled={busy || !email || password.length < 6} onClick={() => authenticate("signup")}
           className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 py-2.5 text-sm font-semibold text-neutral-300 hover:bg-neutral-800 disabled:opacity-40">
-          <UserPlus className="h-4 w-4" /> Create approved account
+          <UserPlus className="h-4 w-4" /> Create BDC account
         </button>
-        <p className="mt-4 text-center text-[11px] leading-relaxed text-neutral-500">Only pre-approved team emails can access inventory after signing in.</p>
+        <p className="mt-4 text-center text-[11px] leading-relaxed text-neutral-500">Anyone with this app link can create an account. New accounts start with view-only BDC access.</p>
       </section>
     </main>
   );
