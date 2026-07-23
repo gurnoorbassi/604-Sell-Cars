@@ -10,6 +10,7 @@
 
 - Netlify is connected to the GitHub repository and deploys the `main` branch.
 - Pull requests run the GitHub CI workflow before merge.
+- The public Supabase frontend URL and publishable key are configured in Netlify for every deploy context.
 - Production changes should be merged to `main`; avoid manual production deploys so each release stays traceable to a Git commit.
 
 ## Backups
