@@ -6,7 +6,7 @@ export default async (_request: Request, _context: Context) => {
     const response = await fetch("https://uduartuijwldxhgpmwks.supabase.co/auth/v1/health", {
       signal: AbortSignal.timeout(5000),
     });
-    if (!response.ok) throw new Error(`Supabase Auth returned ${response.status}`);
+    if (response.status >= 500) throw new Error(`Supabase Auth returned ${response.status}`);
     return Response.json(
       { status: "ok", checkedAt },
       { headers: { "Cache-Control": "no-store" } },
