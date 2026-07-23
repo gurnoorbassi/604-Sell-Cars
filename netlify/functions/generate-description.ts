@@ -61,17 +61,21 @@ export default async (request: Request, _context: Context) => {
   if (!title) return json({ error: "Enter the vehicle year, make, and model first." }, 400);
 
   const now = new Date();
-  const rateBucket = new Date(Math.floor(now.getTime() / 60_000) * 60_000).toISOString();
   const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString();
-  const { error: usageInsertError } = await supabase.from("ai_generation_usage").insert({
+  const { data: usageRecord, error: usageInsertError } = await supabase.from("ai_generation_usage").insert({
     user_id: userData.user.id,
-    rate_bucket: rateBucket,
-  });
+    rate_bucket: now.toISOString(),
+  }).select("id").single();
   if (usageInsertError?.code === "23505") {
     return json({ error: "Please wait one minute before generating another description." }, 429);
   }
   if (usageInsertError) {
-    return json({ error: "AI usage limits could not be checked. Please try again." }, 503);
+    const limitMessage = usageInsertError.message.includes("Daily personal")
+      ? `Daily AI limit reached (${DAILY_GENERATION_LIMIT} descriptions). Try again tomorrow.`
+      : usageInsertError.message.includes("Daily dealership")
+        ? "The dealership-wide daily AI limit has been reached. Try again tomorrow."
+        : "AI usage limits could not be checked. Please try again.";
+    return json({ error: limitMessage }, usageInsertError.message.includes("Daily") ? 429 : 503);
   }
 
   const { count: dailyUsage, error: usageCountError } = await supabase
@@ -80,11 +84,10 @@ export default async (request: Request, _context: Context) => {
     .eq("user_id", userData.user.id)
     .gte("requested_at", dayStart);
   if (usageCountError || dailyUsage === null) {
+    await supabase.from("ai_generation_usage").delete().eq("id", usageRecord.id);
     return json({ error: "AI usage limits could not be checked. Please try again." }, 503);
   }
-  if (dailyUsage > DAILY_GENERATION_LIMIT) {
-    return json({ error: `Daily AI limit reached (${DAILY_GENERATION_LIMIT} descriptions). Try again tomorrow.` }, 429);
-  }
+  const releaseUsage = () => supabase.from("ai_generation_usage").delete().eq("id", usageRecord.id);
 
   const details = [
     `Vehicle: ${title}`,
@@ -130,10 +133,12 @@ ${details}`;
       }),
     });
   } catch {
+    await releaseUsage();
     return json({ error: "The AI service could not be reached. Please try again." }, 502);
   }
 
   if (!anthropicResponse.ok) {
+    await releaseUsage();
     if (anthropicResponse.status === 429) return json({ error: "The AI service is busy. Please wait a moment and try again." }, 429);
     if (anthropicResponse.status === 401 || anthropicResponse.status === 403) return json({ error: "The Anthropic API key needs to be checked." }, 502);
     return json({ error: "Description generation failed. Please try again." }, 502);
@@ -143,7 +148,10 @@ ${details}`;
   const description = Array.isArray(result.content)
     ? result.content.filter((block: { type?: string; text?: string }) => block.type === "text").map((block: { text?: string }) => block.text || "").join("\n").trim()
     : "";
-  if (!description) return json({ error: "The AI returned an empty description. Please try again." }, 502);
+  if (!description) {
+    await releaseUsage();
+    return json({ error: "The AI returned an empty description. Please try again." }, 502);
+  }
 
   return json({ description, remainingToday: Math.max(0, DAILY_GENERATION_LIMIT - dailyUsage) });
 };

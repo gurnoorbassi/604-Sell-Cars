@@ -5,7 +5,8 @@ import {
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
   ShieldCheck, Users,
 } from "lucide-react";
-import AuthScreen from "./AuthScreen";
+import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
+import { chunkArray, tierFor } from "./lib/inventory";
 import { supabase, supabasePublishableKey, supabaseUrl } from "./lib/supabase";
 
 const MAX_UPLOAD_MB = 50;
@@ -57,6 +58,9 @@ const rowToCar = (row, signedUrls) => {
     manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
     storagePaths: media.map((item) => item.storage_path).filter(Boolean),
     storedMediaCount: media.filter((item) => item.storage_path).length,
+    failedMediaCount: media.filter((item) => item.migration_error).length,
+    updatedAt: row.updated_at,
+    version: row.version || 1,
     hot: row.hot, isNew: row.is_new, status: row.status,
   };
 };
@@ -83,22 +87,12 @@ const carToRow = (car, userId) => ({
 });
 
 const DEALERSHIPS = ["Karma Autos", "SkyHigh Auto", "Mainland Motors", "Lougheed Hyundai"];
-const BODY_TYPES = ["Sedan", "SUV", "Coupe", "Truck", "Van", "Offroad"];
-const FUEL_TAGS = ["Hybrid", "Electric", "Diesel", "Manual", "Performance", "Luxury", "Brand New"];
+const BODY_TYPES = ["Sedan", "SUV", "Coupe", "Truck", "Van", "Minivan", "Hatchback", "Wagon", "Convertible", "Offroad"];
+const FUEL_TAGS = ["Gasoline", "Hybrid", "Electric", "Diesel", "Automatic", "Manual", "AWD", "4WD", "FWD", "Performance", "Luxury", "Brand New"];
 const LABELS = ["BONUS PAY", "PARTNER LOT", "GOOD MEDIA", "HAS CARFAX"];
 const LABEL_COLORS = {
   "BONUS PAY": "bg-green-600", "PARTNER LOT": "bg-yellow-600",
   "GOOD MEDIA": "bg-blue-600", "HAS CARFAX": "bg-teal-600",
-};
-const tierFor = (p) => {
-  const n = parseFloat(String(p).replace(/[^0-9.]/g, ""));
-  if (!n) return null;
-  if (n < 10000) return "<$10K";
-  if (n < 20000) return "<$20K";
-  if (n < 30000) return "<$30K";
-  if (n < 50000) return "$30-50K";
-  if (n < 100000) return "$50-100K";
-  return "High End";
 };
 const TIERS = ["<$10K", "<$20K", "<$30K", "$30-50K", "$50-100K", "High End"];
 const emptyForm = {
@@ -106,12 +100,14 @@ const emptyForm = {
   dealership: "", bodyType: "", fuelTags: [], labels: [],
   description: "", carfax: "", trelloUrl: "", photoCount: 0, photos: [], videos: [],
   manualPhotos: [], uploadFiles: [], storedMediaCount: 0,
+  updatedAt: null, version: 1,
   hot: false, isNew: false, status: "live",
 };
 
 export default function SellsCarsBoard() {
   const [session, setSession] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
   const [membershipRole, setMembershipRole] = useState(null);
   const [cars, setCars] = useState([]);
@@ -130,6 +126,10 @@ export default function SellsCarsBoard() {
   const [teamEmail, setTeamEmail] = useState("");
   const [teamLoading, setTeamLoading] = useState(false);
   const [teamError, setTeamError] = useState("");
+  const [teamNotice, setTeamNotice] = useState("");
+  const [migrationStatus, setMigrationStatus] = useState(null);
+  const [migrationStarting, setMigrationStarting] = useState(false);
+  const [displayLimit, setDisplayLimit] = useState(48);
   const isOwner = membershipRole === "owner";
   const canEdit = membershipRole === "owner" || membershipRole === "admin";
 
@@ -138,9 +138,10 @@ export default function SellsCarsBoard() {
       setSession(data.session);
       setAuthReady(true);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       setAuthReady(true);
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -179,13 +180,15 @@ export default function SellsCarsBoard() {
       .filter(Boolean);
     const signedUrls = new Map();
     if (storagePaths.length) {
-      const { data: signed, error: signingError } = await supabase.storage
-        .from("vehicle-media")
-        .createSignedUrls(storagePaths, 3600);
-      if (signingError) setAppError(signingError.message);
-      (signed || []).forEach((item) => {
-        if (item.signedUrl) signedUrls.set(item.path, item.signedUrl);
-      });
+      const signingResults = await Promise.all(chunkArray(storagePaths, 250).map((pathBatch) =>
+        supabase.storage.from("vehicle-media").createSignedUrls(pathBatch, 3600),
+      ));
+      for (const { data: signed, error: signingError } of signingResults) {
+        if (signingError) setAppError(signingError.message);
+        (signed || []).forEach((item) => {
+          if (item.signedUrl) signedUrls.set(item.path, item.signedUrl);
+        });
+      }
     }
 
     const trelloUrls = [...new Set(rows.flatMap((row) => row.vehicle_media || [])
@@ -193,20 +196,22 @@ export default function SellsCarsBoard() {
       .map((item) => item.source_url))];
     if (trelloUrls.length) {
       try {
-        const mediaResponse = await fetch("/api/trello-media", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-            "x-supabase-publishable-key": supabasePublishableKey,
-          },
-          body: JSON.stringify({ urls: trelloUrls }),
-        });
-        const mediaResult = await mediaResponse.json();
-        if (!mediaResponse.ok) throw new Error(mediaResult.error || "Trello media could not be authorized.");
-        Object.entries(mediaResult.urls || {}).forEach(([sourceUrl, proxyUrl]) => {
-          signedUrls.set(sourceUrl, proxyUrl);
-        });
+        for (const urlBatch of chunkArray(trelloUrls, 250)) {
+          const mediaResponse = await fetch("/api/trello-media", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+              "x-supabase-publishable-key": supabasePublishableKey,
+            },
+            body: JSON.stringify({ urls: urlBatch }),
+          });
+          const mediaResult = await mediaResponse.json();
+          if (!mediaResponse.ok) throw new Error(mediaResult.error || "Trello media could not be authorized.");
+          Object.entries(mediaResult.urls || {}).forEach(([sourceUrl, proxyUrl]) => {
+            signedUrls.set(sourceUrl, proxyUrl);
+          });
+        }
       } catch (mediaError) {
         setAppError(mediaError.message || "Trello photos are temporarily unavailable.");
       }
@@ -226,6 +231,28 @@ export default function SellsCarsBoard() {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (!session || !membershipRole) return undefined;
+    let refreshTimer;
+    const scheduleRefresh = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => loadCars(), 500);
+    };
+    const channel = supabase
+      .channel("inventory-board-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "vehicle_media" }, scheduleRefresh)
+      .subscribe();
+    return () => {
+      clearTimeout(refreshTimer);
+      supabase.removeChannel(channel);
+    };
+  }, [session, membershipRole]);
+
+  useEffect(() => {
+    setDisplayLimit(48);
+  }, [tab, search, f.dealership, f.body, f.fuel, f.tier, f.flag]);
+
   const visible = cars.filter((c) => {
     if (tab === "sold" ? c.status !== "sold" : c.status !== "live") return false;
     if (f.dealership && c.dealership !== f.dealership) return false;
@@ -241,25 +268,41 @@ export default function SellsCarsBoard() {
   const liveCount = cars.filter((c) => c.status === "live").length;
   const soldCount = cars.filter((c) => c.status === "sold").length;
   const activeFilters = Object.values(f).filter(Boolean).length;
+  const stockCounts = cars.reduce((counts, car) => {
+    if (car.stock) counts.set(car.stock, (counts.get(car.stock) || 0) + 1);
+    return counts;
+  }, new Map());
+  const qualityStatus = {
+    missingStock: cars.filter((car) => !car.stock).length,
+    missingDealership: cars.filter((car) => !car.dealership).length,
+    missingKms: cars.filter((car) => !car.kms).length,
+    missingPrice: cars.filter((car) => !car.price).length,
+    missingCarfax: cars.filter((car) => !car.carfax).length,
+    duplicateStocks: [...stockCounts.values()].filter((count) => count > 1).length,
+  };
 
   const updateStatus = async (id, values) => {
     if (!canEdit) {
       setAppError("BDC accounts have view-only access.");
       return;
     }
-    const { error } = await supabase.from("inventory").update({
+    const currentCar = cars.find((car) => car.id === id);
+    const { data: updated, error } = await supabase.from("inventory").update({
       ...values,
       updated_at: new Date().toISOString(),
       updated_by: session.user.id,
-    }).eq("id", id);
+    }).eq("id", id).eq("version", currentCar?.version || 1).select("version, updated_at").maybeSingle();
     if (error) setAppError(error.message);
+    else if (!updated) setAppError("This car was changed by another admin. Refresh and try again.");
     else {
       const uiValues = { ...values };
       if (Object.hasOwn(uiValues, "is_new")) {
         uiValues.isNew = uiValues.is_new;
         delete uiValues.is_new;
       }
-      setCars((current) => current.map((car) => car.id === id ? { ...car, ...uiValues } : car));
+      setCars((current) => current.map((car) => car.id === id
+        ? { ...car, ...uiValues, version: updated.version, updatedAt: updated.updated_at }
+        : car));
     }
   };
 
@@ -274,6 +317,7 @@ export default function SellsCarsBoard() {
       return;
     }
     const car = cars.find((item) => item.id === id);
+    if (!window.confirm(`Delete "${car?.title || "this vehicle"}"? This removes its stored media and cannot be undone.`)) return;
     if (car?.storagePaths?.length) {
       const { error: storageError } = await supabase.storage.from("vehicle-media")
         .remove(car.storagePaths);
@@ -323,9 +367,18 @@ export default function SellsCarsBoard() {
       isNew: form.id ? form.isNew : true,
       photoCount: (form.storedMediaCount || 0) + manualPhotos.length + uploadFiles.length,
     };
-    const { error: saveError } = await supabase.from("inventory").upsert(carToRow(record, session.user.id));
+    const row = carToRow(record, session.user.id);
+    const saveQuery = form.id
+      ? supabase.from("inventory").update(row).eq("id", id).eq("version", form.version || 1).select("id").maybeSingle()
+      : supabase.from("inventory").insert(row).select("id").single();
+    const { data: savedRow, error: saveError } = await saveQuery;
     if (saveError) {
       setAppError(saveError.message);
+      setSaving(false);
+      return;
+    }
+    if (!savedRow) {
+      setAppError("This car was changed by another admin. Close the form, refresh, and try again.");
       setSaving(false);
       return;
     }
@@ -382,6 +435,7 @@ export default function SellsCarsBoard() {
         mime_type: file.type || null,
       });
       if (mediaRowError) {
+        await supabase.storage.from("vehicle-media").remove([storagePath]);
         setAppError(mediaRowError.message);
         setUploadProgress(null);
         setSaving(false);
@@ -417,7 +471,7 @@ export default function SellsCarsBoard() {
   const openTeam = async () => {
     if (!isOwner) return;
     setTeamOpen(true);
-    await loadTeam();
+    await Promise.all([loadTeam(), loadMigrationStatus()]);
   };
 
   const addTeamMember = async () => {
@@ -446,13 +500,47 @@ export default function SellsCarsBoard() {
     else await loadTeam();
   };
 
+  const loadMigrationStatus = async () => {
+    if (!isOwner) return;
+    const [{ count: remaining }, { count: migrated }, { count: failed }] = await Promise.all([
+      supabase.from("vehicle_media").select("id", { count: "exact", head: true }).is("storage_path", null),
+      supabase.from("vehicle_media").select("id", { count: "exact", head: true }).not("storage_path", "is", null),
+      supabase.from("vehicle_media").select("id", { count: "exact", head: true }).not("migration_error", "is", null),
+    ]);
+    setMigrationStatus({ remaining: remaining || 0, migrated: migrated || 0, failed: failed || 0 });
+  };
+
+  const startMediaMigration = async () => {
+    if (!isOwner || migrationStarting) return;
+    setMigrationStarting(true);
+    setTeamError("");
+    setTeamNotice("");
+    try {
+      const response = await fetch("/.netlify/functions/migrate-trello-media-background", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "x-supabase-publishable-key": supabasePublishableKey,
+        },
+      });
+      if (!response.ok && response.status !== 202) throw new Error("The migration could not be started.");
+      setTeamNotice("Permanent media migration started. You can close this panel; progress continues in the background.");
+      setTimeout(loadMigrationStatus, 5000);
+    } catch (error) {
+      setTeamError(error.message || "The migration could not be started.");
+    } finally {
+      setMigrationStarting(false);
+    }
+  };
+
   if (!authReady) return <div className="min-h-screen bg-neutral-950 grid place-items-center text-sm text-neutral-500">Connecting securely…</div>;
   if (!session) return <AuthScreen />;
+  if (passwordRecovery) return <PasswordUpdateScreen onDone={() => setPasswordRecovery(false)} />;
   if (accessDenied) return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 grid place-items-center p-5">
       <section className="max-w-md rounded-2xl border border-amber-500/30 bg-neutral-900 p-6 text-center">
-        <h1 className="text-lg font-bold">Account access is disabled</h1>
-        <p className="mt-2 text-sm text-neutral-400">Ask the inventory owner to restore BDC access for {session.user.email}.</p>
+        <h1 className="text-lg font-bold">Waiting for owner approval</h1>
+        <p className="mt-2 text-sm text-neutral-400">Your account was created, but {session.user.email} cannot view inventory until the owner enables BDC access.</p>
         <button onClick={() => supabase.auth.signOut()} className="mt-5 rounded-lg bg-neutral-800 px-4 py-2 text-sm font-semibold">Sign out</button>
       </section>
     </main>
@@ -545,11 +633,17 @@ export default function SellsCarsBoard() {
           <>
             <p className="text-xs text-neutral-500 mb-3">{visible.length} car{visible.length !== 1 ? "s" : ""}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
-              {visible.map((car) => (
+              {visible.slice(0, displayLimit).map((car) => (
                 <CarCard key={car.id} car={car} canEdit={canEdit}
                   onOpen={() => setDetail(car)} onSold={() => markSold(car.id)} />
               ))}
             </div>
+            {visible.length > displayLimit && (
+              <button onClick={() => setDisplayLimit((limit) => limit + 48)}
+                className="mx-auto mt-6 block rounded-lg border border-neutral-700 bg-neutral-900 px-5 py-2 text-sm font-semibold text-neutral-300 hover:border-neutral-500">
+                Load 48 more
+              </button>
+            )}
           </>
         )}
       </main>
@@ -566,14 +660,21 @@ export default function SellsCarsBoard() {
       {teamOpen && isOwner && (
         <TeamPanel members={teamMembers} email={teamEmail} setEmail={setTeamEmail}
           loading={teamLoading} error={teamError} onAdd={addTeamMember}
-          onUpdate={updateTeamMember} onClose={() => setTeamOpen(false)} />
+          notice={teamNotice}
+          onUpdate={updateTeamMember} onClose={() => setTeamOpen(false)}
+          migrationStatus={migrationStatus} migrationStarting={migrationStarting}
+          onStartMigration={startMediaMigration} onRefreshMigration={loadMigrationStatus}
+          qualityStatus={qualityStatus} />
       )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
     </div>
   );
 }
 
-function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, onClose }) {
+function TeamPanel({
+  members, email, setEmail, loading, error, notice, onAdd, onUpdate, onClose,
+  migrationStatus, migrationStarting, onStartMigration, onRefreshMigration, qualityStatus,
+}) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm">
       <section role="dialog" aria-modal="true" aria-labelledby="team-access-title"
@@ -581,7 +682,7 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
         <header className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
           <div>
             <h2 id="team-access-title" className="flex items-center gap-2 font-bold"><Users className="h-4 w-4 text-amber-300" /> Team access</h2>
-            <p className="mt-1 text-xs text-neutral-500">New people start as BDC. Only you can change access.</p>
+            <p className="mt-1 text-xs text-neutral-500">New people wait for your approval. Only you can change access.</p>
           </div>
           <button onClick={onClose} aria-label="Close team access" className="text-neutral-500 hover:text-white"><X className="h-5 w-5" /></button>
         </header>
@@ -597,8 +698,45 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
               Add as BDC
             </button>
           </div>
-          <p className="mt-2 text-[11px] text-neutral-500">New signups appear here automatically as BDC. Pre-adding is only needed if you want their row ready before they register.</p>
+          <p className="mt-2 text-[11px] text-neutral-500">New signups appear here as disabled BDC accounts. Enable only people you recognize.</p>
           {error && <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">{error}</p>}
+          {notice && <p className="mt-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">{notice}</p>}
+        </div>
+
+        <div className="border-b border-neutral-800 p-5">
+          <p className="text-sm font-semibold text-neutral-200">Data cleanup queue</p>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-neutral-400 sm:grid-cols-3">
+            <span>{qualityStatus.missingStock} missing stock #</span>
+            <span>{qualityStatus.missingDealership} missing lot</span>
+            <span>{qualityStatus.missingKms} missing KMs</span>
+            <span>{qualityStatus.missingPrice} missing price</span>
+            <span>{qualityStatus.missingCarfax} missing CARFAX</span>
+            <span>{qualityStatus.duplicateStocks} duplicate stock group</span>
+          </div>
+          <p className="mt-2 text-[11px] text-neutral-500">These require real dealership data; the app will not invent missing values.</p>
+        </div>
+
+        <div className="border-b border-neutral-800 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-neutral-200">Permanent media storage</p>
+              <p className="mt-1 text-xs text-neutral-500">
+                {migrationStatus
+                  ? `${migrationStatus.migrated} migrated · ${migrationStatus.remaining} remaining · ${migrationStatus.failed} need attention`
+                  : "Checking migration status…"}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={onRefreshMigration}
+                className="rounded-lg border border-neutral-700 px-3 py-2 text-xs font-semibold text-neutral-300 hover:border-neutral-500">
+                Refresh
+              </button>
+              <button onClick={onStartMigration} disabled={migrationStarting || !migrationStatus?.remaining}
+                className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500 disabled:opacity-40">
+                {migrationStarting ? "Starting…" : "Migrate Trello media"}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="max-h-[55vh] overflow-y-auto p-3">
@@ -610,7 +748,7 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
               <div key={member.email} className="flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-800/60">
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-neutral-200">{member.email}</p>
-                  <p className="mt-0.5 text-[11px] text-neutral-500">{owner ? "Protected owner account" : member.active ? "Access active" : "Access disabled"}</p>
+                  <p className="mt-0.5 text-[11px] text-neutral-500">{owner ? "Protected owner account" : member.active ? "Access active" : "Pending or disabled"}</p>
                 </div>
                 {owner ? (
                   <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-200">Owner</span>
@@ -626,7 +764,7 @@ function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, 
                     </div>
                     <button onClick={() => onUpdate(member.email, { active: !member.active })}
                       className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${member.active ? "border-neutral-700 text-neutral-400 hover:border-red-500/50 hover:text-red-300" : "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"}`}>
-                      {member.active ? "Disable" : "Enable"}
+                      {member.active ? "Disable" : "Approve"}
                     </button>
                   </>
                 )}
@@ -667,7 +805,7 @@ function VehicleImage({ src, alt, className }) {
     return (
       <div className={`${className} flex flex-col items-center justify-center gap-1.5 text-center text-neutral-500`}>
         <ImageIcon className="h-6 w-6" />
-        <span className="px-2 text-[10px] font-medium">Photo unavailable — Trello access needs reconnecting</span>
+        <span className="px-2 text-[10px] font-medium">Photo unavailable</span>
       </div>
     );
   }
@@ -769,17 +907,31 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
             {car.dealership && <Tag>{car.dealership}</Tag>}
             {car.bodyType && <Tag>{car.bodyType}</Tag>}
             {car.fuelTags.map((t) => <Tag key={t}>{t}</Tag>)}
-            {car.photoCount > 0 && <Tag>{car.photoCount} photos</Tag>}
+            {car.photoCount > 0 && <Tag>{car.photoCount} media files</Tag>}
           </div>
           {car.photos?.length > 0 && (
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {car.photos.slice(0, 8).map((photo, index) => (
+              {car.photos.map((photo, index) => (
                 <a key={photo} href={photo} target="_blank" rel="noreferrer" className="block">
                   <VehicleImage src={photo} alt={`${car.title} photo ${index + 1}`}
                     className="w-full aspect-[4/3] object-cover rounded-lg bg-neutral-800" />
                 </a>
               ))}
             </div>
+          )}
+          {car.videos?.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {car.videos.map((video, index) => (
+                <video key={video} src={video} controls preload="metadata"
+                  aria-label={`${car.title} video ${index + 1}`}
+                  className="w-full rounded-lg bg-black" />
+              ))}
+            </div>
+          )}
+          {car.failedMediaCount > 0 && (
+            <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+              {car.failedMediaCount} media file{car.failedMediaCount === 1 ? "" : "s"} need migration attention.
+            </p>
           )}
           {car.carfax && car.carfax !== "on-file" ? (
             <a href={car.carfax} target="_blank" rel="noreferrer"
@@ -966,7 +1118,7 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                 const manualPhotos = e.target.value.split("\n").map((url) => url.trim()).filter(Boolean);
                 setForm({ ...form, manualPhotos });
               }} />
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Existing Trello previews remain attached until they are migrated into permanent storage.</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Use permanent public image URLs only. Uploaded files are stored privately in Supabase.</p>
           </F>
           <F label="Upload photos or videos">
             <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white">
@@ -1007,7 +1159,7 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                 ))}
               </div>
             )}
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit in the app. Maximum {MAX_UPLOAD_MB} MB per photo or video. Large files upload in resumable chunks.</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit. Supabase Free allows up to {MAX_UPLOAD_MB} MB per file; large files use resumable chunks.</p>
             {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
         </div>
