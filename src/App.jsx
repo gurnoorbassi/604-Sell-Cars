@@ -40,6 +40,9 @@ const uploadResumableFile = (file, storagePath, session, onProgress) => new Prom
 
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
+  const hasCarfaxUrl = Boolean(row.carfax_url?.trim());
+  const labels = (row.labels || []).filter((label) => label !== "HAS CARFAX");
+  if (hasCarfaxUrl) labels.push("HAS CARFAX");
   const photos = media.filter((item) => item.kind === "image").map((item) =>
     item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
   ).filter(Boolean);
@@ -49,7 +52,7 @@ const rowToCar = (row, signedUrls) => {
   return {
     id: row.id, title: row.title, stock: row.stock, price: row.price, kms: row.kms,
     dealership: row.dealership, bodyType: row.body_type, fuelTags: row.fuel_tags || [],
-    labels: row.labels || [], description: row.description, carfax: row.carfax_url,
+    labels, description: row.description, carfax: row.carfax_url,
     trelloUrl: row.trello_url, photoCount: row.photo_count, photos, videos,
     manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
     storagePaths: media.map((item) => item.storage_path).filter(Boolean),
@@ -766,7 +769,7 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
             {car.dealership && <Tag>{car.dealership}</Tag>}
             {car.bodyType && <Tag>{car.bodyType}</Tag>}
             {car.fuelTags.map((t) => <Tag key={t}>{t}</Tag>)}
-            {car.photoCount > 0 && <Tag>{car.photoCount} photos in Trello</Tag>}
+            {car.photoCount > 0 && <Tag>{car.photoCount} photos</Tag>}
           </div>
           {car.photos?.length > 0 && (
             <div className="grid grid-cols-2 gap-2 mt-4">
@@ -783,16 +786,10 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
               className="mt-4 flex items-center gap-2 text-sm text-teal-400 bg-neutral-800/60 hover:bg-neutral-800 rounded-lg px-3 py-2">
               <FileText className="w-4 h-4" /> Open CARFAX report <ExternalLink className="w-3.5 h-3.5 ml-auto" />
             </a>
-          ) : car.carfax ? (
+          ) : (
             <p className="mt-4 flex items-center gap-2 text-sm text-amber-300 bg-neutral-800/60 rounded-lg px-3 py-2">
-              <FileText className="w-4 h-4" /> CARFAX flagged; URL not included in the import
+              <FileText className="w-4 h-4" /> CARFAX report not attached
             </p>
-          ) : null}
-          {car.trelloUrl && (
-            <a href={car.trelloUrl} target="_blank" rel="noreferrer"
-              className="mt-2 flex items-center gap-2 text-sm text-blue-400 bg-neutral-800/60 hover:bg-neutral-800 rounded-lg px-3 py-2">
-              Open Trello source <ExternalLink className="w-3.5 h-3.5 ml-auto" />
-            </a>
           )}
           {car.description && (
             <p className="text-sm text-neutral-300 whitespace-pre-wrap mt-4 leading-relaxed">{car.description}…</p>
