@@ -109,6 +109,7 @@ export default function SellsCarsBoard() {
   const [session, setSession] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [membershipRole, setMembershipRole] = useState(null);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -120,6 +121,7 @@ export default function SellsCarsBoard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [detail, setDetail] = useState(null);
+  const canEdit = membershipRole === "owner" || membershipRole === "member";
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -143,10 +145,12 @@ export default function SellsCarsBoard() {
       .select("role")
       .maybeSingle();
     if (membershipError || !membership) {
+      setMembershipRole(null);
       setAccessDenied(true);
       setLoading(false);
       return;
     }
+    setMembershipRole(membership.role);
     setAccessDenied(false);
 
     const { data: rows, error } = await supabase
@@ -180,6 +184,7 @@ export default function SellsCarsBoard() {
     if (session) loadCars();
     else {
       setCars([]);
+      setMembershipRole(null);
       setLoading(false);
       setAccessDenied(false);
     }
@@ -202,6 +207,10 @@ export default function SellsCarsBoard() {
   const activeFilters = Object.values(f).filter(Boolean).length;
 
   const updateStatus = async (id, values) => {
+    if (!canEdit) {
+      setAppError("BDC accounts have view-only access.");
+      return;
+    }
     const { error } = await supabase.from("inventory").update({
       ...values,
       updated_at: new Date().toISOString(),
@@ -224,6 +233,10 @@ export default function SellsCarsBoard() {
   };
   const relist = async (id) => { await updateStatus(id, { status: "live" }); setDetail(null); };
   const remove = async (id) => {
+    if (!canEdit) {
+      setAppError("BDC accounts have view-only access.");
+      return;
+    }
     const car = cars.find((item) => item.id === id);
     if (car?.storagePaths?.length) {
       const { error: storageError } = await supabase.storage.from("vehicle-media")
@@ -239,9 +252,22 @@ export default function SellsCarsBoard() {
     setDetail(null);
   };
 
-  const openAdd = () => { setForm({ ...emptyForm, uploadFiles: [] }); setModalOpen(true); };
-  const openEdit = (car) => { setForm({ ...car, uploadFiles: [] }); setDetail(null); setModalOpen(true); };
+  const openAdd = () => {
+    if (!canEdit) return;
+    setForm({ ...emptyForm, uploadFiles: [] });
+    setModalOpen(true);
+  };
+  const openEdit = (car) => {
+    if (!canEdit) return;
+    setForm({ ...car, uploadFiles: [] });
+    setDetail(null);
+    setModalOpen(true);
+  };
   const saveCar = async () => {
+    if (!canEdit) {
+      setAppError("BDC accounts have view-only access.");
+      return;
+    }
     if (!form.title.trim()) return;
     setSaving(true);
     setUploadProgress(null);
@@ -360,7 +386,9 @@ export default function SellsCarsBoard() {
             </div>
             <div>
               <h1 className="font-extrabold tracking-tight leading-none">604SELLSCARS</h1>
-              <p className="text-[11px] text-neutral-500 leading-none mt-1">Ad inventory</p>
+              <p className="text-[11px] text-neutral-500 leading-none mt-1">
+                {membershipRole === "bdc" ? "BDC inventory · view only" : "Admin inventory"}
+              </p>
             </div>
           </div>
           <div className="flex bg-neutral-900 rounded-lg p-0.5 border border-neutral-800">
@@ -378,10 +406,12 @@ export default function SellsCarsBoard() {
             <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search or stock #"
               className="bg-neutral-900 border border-neutral-800 rounded-lg pl-9 pr-3 py-2 text-sm w-44 sm:w-56 focus:outline-none focus:border-neutral-600" />
           </div>
-          <button onClick={openAdd}
-            className="bg-red-600 hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-1.5">
-            <Plus className="w-4 h-4" /> Add car
-          </button>
+          {canEdit && (
+            <button onClick={openAdd}
+              className="bg-red-600 hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-1.5">
+              <Plus className="w-4 h-4" /> Add car
+            </button>
+          )}
           <button onClick={() => supabase.auth.signOut()} title={`Sign out ${session.user.email}`}
             className="rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-neutral-400 hover:text-white">
             <LogOut className="h-4 w-4" />
@@ -428,7 +458,8 @@ export default function SellsCarsBoard() {
             <p className="text-xs text-neutral-500 mb-3">{visible.length} car{visible.length !== 1 ? "s" : ""}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
               {visible.map((car) => (
-                <CarCard key={car.id} car={car} onOpen={() => setDetail(car)} onSold={() => markSold(car.id)} />
+                <CarCard key={car.id} car={car} canEdit={canEdit}
+                  onOpen={() => setDetail(car)} onSold={() => markSold(car.id)} />
               ))}
             </div>
           </>
@@ -436,11 +467,11 @@ export default function SellsCarsBoard() {
       </main>
 
       {detail && (
-        <DetailPanel car={detail} onClose={() => setDetail(null)}
+        <DetailPanel car={detail} canEdit={canEdit} onClose={() => setDetail(null)}
           onSold={() => markSold(detail.id)} onRelist={() => relist(detail.id)}
           onEdit={() => openEdit(detail)} onDelete={() => remove(detail.id)} />
       )}
-      {modalOpen && (
+      {modalOpen && canEdit && (
         <EditModal form={form} setForm={setForm} toggleIn={toggleIn} session={session}
           saving={saving} uploadProgress={uploadProgress} onSave={saveCar} onClose={() => setModalOpen(false)} />
       )}
@@ -466,7 +497,7 @@ const FilterRow = ({ label, options, value, onPick, inline }) => (
   </div>
 );
 
-function CarCard({ car, onOpen, onSold }) {
+function CarCard({ car, canEdit, onOpen, onSold }) {
   const sold = car.status === "sold";
   const tier = tierFor(car.price);
   return (
@@ -511,12 +542,12 @@ function CarCard({ car, onOpen, onSold }) {
       <div className="px-2.5 pb-2.5">
         {sold ? (
           <span className="block text-center text-[10px] font-bold text-red-500/70 tracking-widest border border-red-500/20 rounded-md py-1">SOLD</span>
-        ) : (
+        ) : canEdit ? (
           <button onClick={onSold}
             className="w-full text-[11px] font-bold bg-neutral-800 hover:bg-red-600 text-neutral-400 hover:text-white py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors">
             <Check className="w-3 h-3" /> Mark sold
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -526,7 +557,7 @@ const Tag = ({ children }) => (
   <span className="text-[10px] bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded font-medium">{children}</span>
 );
 
-function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
+function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete }) {
   const sold = car.status === "sold";
   return (
     <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex justify-end" onClick={onClose}>
@@ -583,7 +614,7 @@ function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
           {car.description && (
             <p className="text-sm text-neutral-300 whitespace-pre-wrap mt-4 leading-relaxed">{car.description}…</p>
           )}
-          <div className="flex gap-2 mt-6 pb-4">
+          {canEdit && <div className="flex gap-2 mt-6 pb-4">
             {sold ? (
               <button onClick={onRelist} className="flex-1 py-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-semibold flex items-center justify-center gap-1.5">
                 <RotateCcw className="w-4 h-4" /> Relist
@@ -595,7 +626,7 @@ function DetailPanel({ car, onClose, onSold, onRelist, onEdit, onDelete }) {
             )}
             <button onClick={onEdit} className="px-4 rounded-lg bg-neutral-800 hover:bg-neutral-700"><Pencil className="w-4 h-4" /></button>
             <button onClick={onDelete} className="px-4 rounded-lg bg-neutral-800 hover:bg-red-500/20 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

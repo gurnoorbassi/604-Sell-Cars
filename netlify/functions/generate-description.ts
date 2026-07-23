@@ -41,7 +41,9 @@ export default async (request: Request, _context: Context) => {
     .from("team_members")
     .select("role")
     .maybeSingle();
-  if (membershipError || !membership) return json({ error: "This account is not approved for AI generation." }, 403);
+  if (membershipError || !membership || !["owner", "member"].includes(membership.role)) {
+    return json({ error: "This account has view-only access and cannot generate descriptions." }, 403);
+  }
 
   let input: Record<string, unknown>;
   try {

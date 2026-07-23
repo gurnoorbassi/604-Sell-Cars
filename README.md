@@ -69,6 +69,20 @@ This deterministically assigns every vehicle to a body type and adds supported H
 
 Team access is allowlisted in `public.team_members`. Add an email there before that person signs up. Row-level security denies inventory and media access to signed-out or unapproved users.
 
+- `owner` and `member` can add, edit, mark sold, relist, delete, upload media, and generate AI descriptions.
+- `bdc` sees the same inventory, photos, videos, CARFAX links, sold list, search, and filters with no editing access.
+
+Add or change a BDC account in the Supabase SQL editor:
+
+```sql
+insert into public.team_members (email, role, active)
+values ('rep@example.com', 'bdc', true)
+on conflict (email) do update
+set role = excluded.role, active = excluded.active;
+```
+
+Use the representative's real lowercase email. They can then create an account from the app and sign in.
+
 ## Deploy
 
 `netlify.toml` builds the Vite app with Node 22 and applies the SPA redirect and security headers. Add the two public Supabase variables to Netlify, then deploy `dist` with the Netlify CLI or connect the GitHub repository.
