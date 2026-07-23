@@ -69,8 +69,11 @@ This deterministically assigns every vehicle to a body type and adds supported H
 
 Team access is allowlisted in `public.team_members`. Add an email there before that person signs up. Row-level security denies inventory and media access to signed-out or unapproved users.
 
-- `owner` and `member` can add, edit, mark sold, relist, delete, upload media, and generate AI descriptions.
+- `owner` is the protected account that can manage team access and all inventory.
+- `admin` can add, edit, mark sold, relist, delete, upload media, and generate AI descriptions.
 - `bdc` sees the same inventory, photos, videos, CARFAX links, sold list, search, and filters with no editing access.
+
+The owner-only **Admin access** panel approves team emails, adds every new person as BDC, promotes BDC users to Admin, and disables or restores access. The owner cannot be demoted or disabled from the web app.
 
 Add or change a BDC account in the Supabase SQL editor:
 

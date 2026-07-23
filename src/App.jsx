@@ -3,6 +3,7 @@ import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
+  ShieldCheck, Users,
 } from "lucide-react";
 import AuthScreen from "./AuthScreen";
 import { supabase, supabasePublishableKey, supabaseUrl } from "./lib/supabase";
@@ -121,7 +122,13 @@ export default function SellsCarsBoard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [detail, setDetail] = useState(null);
-  const canEdit = membershipRole === "owner" || membershipRole === "member";
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [teamEmail, setTeamEmail] = useState("");
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [teamError, setTeamError] = useState("");
+  const isOwner = membershipRole === "owner";
+  const canEdit = membershipRole === "owner" || membershipRole === "admin";
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -143,6 +150,7 @@ export default function SellsCarsBoard() {
     const { data: membership, error: membershipError } = await supabase
       .from("team_members")
       .select("role")
+      .eq("email", session.user.email.toLowerCase())
       .maybeSingle();
     if (membershipError || !membership) {
       setMembershipRole(null);
@@ -364,6 +372,52 @@ export default function SellsCarsBoard() {
       [key]: fm[key].includes(val) ? fm[key].filter((x) => x !== val) : [...fm[key], val],
     }));
 
+  const loadTeam = async () => {
+    if (!isOwner) return;
+    setTeamLoading(true);
+    setTeamError("");
+    const { data, error } = await supabase
+      .from("team_members")
+      .select("email, role, active, created_at")
+      .order("role")
+      .order("email");
+    if (error) setTeamError(error.message);
+    else setTeamMembers(data || []);
+    setTeamLoading(false);
+  };
+
+  const openTeam = async () => {
+    if (!isOwner) return;
+    setTeamOpen(true);
+    await loadTeam();
+  };
+
+  const addTeamMember = async () => {
+    const email = teamEmail.trim().toLowerCase();
+    if (!email) return;
+    setTeamError("");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setTeamError("Enter a valid team email address.");
+      return;
+    }
+    const { error } = await supabase.from("team_members").upsert(
+      { email, role: "bdc", active: true },
+      { onConflict: "email" },
+    );
+    if (error) setTeamError(error.message);
+    else {
+      setTeamEmail("");
+      await loadTeam();
+    }
+  };
+
+  const updateTeamMember = async (email, values) => {
+    setTeamError("");
+    const { error } = await supabase.from("team_members").update(values).eq("email", email);
+    if (error) setTeamError(error.message);
+    else await loadTeam();
+  };
+
   if (!authReady) return <div className="min-h-screen bg-neutral-950 grid place-items-center text-sm text-neutral-500">Connecting securely…</div>;
   if (!session) return <AuthScreen />;
   if (accessDenied) return (
@@ -387,7 +441,7 @@ export default function SellsCarsBoard() {
             <div>
               <h1 className="font-extrabold tracking-tight leading-none">604SELLSCARS</h1>
               <p className="text-[11px] text-neutral-500 leading-none mt-1">
-                {membershipRole === "bdc" ? "BDC inventory · view only" : "Admin inventory"}
+                {membershipRole === "bdc" ? "BDC inventory · view only" : membershipRole === "admin" ? "Admin inventory" : "Owner inventory"}
               </p>
             </div>
           </div>
@@ -410,6 +464,12 @@ export default function SellsCarsBoard() {
             <button onClick={openAdd}
               className="bg-red-600 hover:bg-red-500 text-white font-semibold text-sm px-4 py-2 rounded-lg flex items-center gap-1.5">
               <Plus className="w-4 h-4" /> Add car
+            </button>
+          )}
+          {isOwner && (
+            <button onClick={openTeam}
+              className="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-500/20">
+              <ShieldCheck className="h-4 w-4" /> Admin access
             </button>
           )}
           <button onClick={() => supabase.auth.signOut()} title={`Sign out ${session.user.email}`}
@@ -475,7 +535,78 @@ export default function SellsCarsBoard() {
         <EditModal form={form} setForm={setForm} toggleIn={toggleIn} session={session}
           saving={saving} uploadProgress={uploadProgress} onSave={saveCar} onClose={() => setModalOpen(false)} />
       )}
+      {teamOpen && isOwner && (
+        <TeamPanel members={teamMembers} email={teamEmail} setEmail={setTeamEmail}
+          loading={teamLoading} error={teamError} onAdd={addTeamMember}
+          onUpdate={updateTeamMember} onClose={() => setTeamOpen(false)} />
+      )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
+    </div>
+  );
+}
+
+function TeamPanel({ members, email, setEmail, loading, error, onAdd, onUpdate, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm">
+      <section role="dialog" aria-modal="true" aria-labelledby="team-access-title"
+        className="my-8 w-full max-w-2xl overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900 shadow-2xl">
+        <header className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
+          <div>
+            <h2 id="team-access-title" className="flex items-center gap-2 font-bold"><Users className="h-4 w-4 text-amber-300" /> Team access</h2>
+            <p className="mt-1 text-xs text-neutral-500">New people start as BDC. Only you can change access.</p>
+          </div>
+          <button onClick={onClose} aria-label="Close team access" className="text-neutral-500 hover:text-white"><X className="h-5 w-5" /></button>
+        </header>
+
+        <div className="border-b border-neutral-800 p-5">
+          <label htmlFor="team-email" className="text-xs font-medium text-neutral-400">Approve a team email</label>
+          <div className="mt-1.5 flex gap-2">
+            <input id="team-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)}
+              onKeyDown={(event) => { if (event.key === "Enter") onAdd(); }}
+              placeholder="rep@dealership.com" className="inp mt-0 flex-1" />
+            <button onClick={onAdd} disabled={!email.trim()}
+              className="rounded-lg bg-red-600 px-4 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-40">
+              Add as BDC
+            </button>
+          </div>
+          <p className="mt-2 text-[11px] text-neutral-500">They use this exact email to create their approved account on the sign-in screen.</p>
+          {error && <p className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">{error}</p>}
+        </div>
+
+        <div className="max-h-[55vh] overflow-y-auto p-3">
+          {loading ? (
+            <p className="py-10 text-center text-sm text-neutral-500">Loading team…</p>
+          ) : members.map((member) => {
+            const owner = member.role === "owner";
+            return (
+              <div key={member.email} className="flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-800/60">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-neutral-200">{member.email}</p>
+                  <p className="mt-0.5 text-[11px] text-neutral-500">{owner ? "Protected owner account" : member.active ? "Access active" : "Access disabled"}</p>
+                </div>
+                {owner ? (
+                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-200">Owner</span>
+                ) : (
+                  <>
+                    <div className="flex rounded-lg border border-neutral-700 bg-neutral-950 p-0.5">
+                      {['bdc', 'admin'].map((role) => (
+                        <button key={role} onClick={() => onUpdate(member.email, { role })}
+                          className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize ${member.role === role ? "bg-neutral-100 text-neutral-950" : "text-neutral-500 hover:text-white"}`}>
+                          {role.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={() => onUpdate(member.email, { active: !member.active })}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${member.active ? "border-neutral-700 text-neutral-400 hover:border-red-500/50 hover:text-red-300" : "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"}`}>
+                      {member.active ? "Disable" : "Enable"}
+                    </button>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
