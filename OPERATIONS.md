@@ -1,56 +1,38 @@
 # Production operations
 
-The active deployment target is the self-hosted Ubuntu VPS described in `README.md`. Netlify and hosted Supabase files are retained only for migration history.
+## Health and alerts
 
-## Health
-
-```bash
-curl https://YOUR_DOMAIN/health
-pm2 status
-pm2 logs 604-sell-cars --lines 100
-sudo tail -n 100 /var/log/nginx/error.log
-```
-
-## Backups
-
-Back up both PostgreSQL and VPS media:
-
-```bash
-pg_dump "$DATABASE_URL" -Fc > sellcars-$(date +%F).dump
-tar -czf sellcars-media-$(date +%F).tar.gz -C /var/lib/604-sell-cars uploads
-```
-
-Encrypt backups and store them outside the VPS. Run a restore drill quarterly.
+- Production health: `https://dealership-inventory-board.netlify.app/api/health`
+- GitHub Actions checks production hourly and opens one alert issue if Netlify or Supabase Auth is unavailable.
+- Review Netlify Function logs when the health workflow fails.
 
 ## Deployment
 
-```bash
-cd ~/604-Sell-Cars
-git pull --ff-only
-npm ci
-npm run migrate
-npm run build
-npm test
-pm2 reload ecosystem.config.cjs --update-env
-curl http://127.0.0.1:3000/health
-```
+- Netlify is connected to the GitHub repository and deploys the `main` branch.
+- Pull requests run the GitHub CI workflow before merge.
+- The public Supabase frontend URL and publishable key are configured in Netlify for every deploy context.
+- Production changes should be merged to `main`; avoid manual production deploys so each release stays traceable to a Git commit.
 
-## Lead and reminder checks
+## Backups
 
-```sql
-select id, name, phone, car_id, appointment_time, appointment_status,
-       reminder_24h_sent_at, reminder_2h_sent_at
-from leads
-order by created_at desc;
-```
+Supabase provides platform backups, but an off-platform export should also be kept periodically.
 
-Cancelled and passed appointments are never selected by the reminder job.
+1. Create a short-lived Supabase secret/service-role key.
+2. Set it locally as `SUPABASE_SERVICE_ROLE_KEY`; never place it in frontend or committed files.
+3. Run `npm run backup:data -- "D:\secure-backups\inventory-YYYY-MM-DD"`.
+4. Encrypt or otherwise protect the backup directory because it contains team emails and inventory history.
+5. Delete or rotate the short-lived key after the backup.
 
-## Media
+Run a restore drill quarterly in a separate Supabase project before treating backups as proven.
 
-New uploads are stored under `UPLOAD_DIR`. Keep that directory writable by the PM2 user and inaccessible except through the application/Nginx path.
+## Media migration
 
-```bash
-du -sh /var/lib/604-sell-cars/uploads
-find /var/lib/604-sell-cars/uploads -type f | wc -l
-```
+The Owner-only Team access panel starts the background Trello migration and reports migrated, remaining, and failed files. Failed files retain the original source URL and an error message for investigation.
+
+Supabase Free permits files up to 50 MB. Files larger than that must be compressed or require a plan that permits a larger object limit.
+
+## Access recovery
+
+- New signups are pending and cannot read inventory until the Owner approves them.
+- The Owner account must remain protected and should use MFA on Supabase, Netlify, GitHub, and the email account.
+- Password recovery is available from the app sign-in screen.

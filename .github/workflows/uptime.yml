@@ -11,14 +11,13 @@ permissions:
 
 jobs:
   health:
-    if: vars.PRODUCTION_HEALTH_URL != ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Check production
         id: check
         continue-on-error: true
-        run: curl --fail --silent --show-error --max-time 20 "${{ vars.PRODUCTION_HEALTH_URL }}"
+        run: curl --fail --silent --show-error --max-time 20 https://dealership-inventory-board.netlify.app/api/health
       - name: Open one alert issue
         if: steps.check.outcome == 'failure'
         uses: actions/github-script@v9
@@ -36,7 +35,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title,
-                body: `The hourly production health check failed at ${new Date().toISOString()}.\n\nCheck PM2, Nginx, PostgreSQL, and VPS disk health.`,
+                body: `The hourly production health check failed at ${new Date().toISOString()}.\n\nCheck Netlify Functions and Supabase service health.`,
               });
             }
       - name: Fail workflow

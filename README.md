@@ -1,308 +1,101 @@
-# 604 Sell Cars
+# Dealership Inventory Board
 
-One self-hosted system for the 604 Sell Cars inventory board, public vehicle website, paid-ad landing page, appointment scheduling, lead operations, Twilio follow-up, and VPS media library.
+A shared React inventory web app built from the supplied Trello export. The original compact seed contained 531 rows; 187 were duplicate URL-only pointers, leaving 344 unique vehicle records.
 
-The existing React inventory board has been retained as the frontend foundation. The production runtime is now:
+## Deployment architecture
 
-- React 19, Vite, and Tailwind CSS
-- Node.js 20+ and Express 5
-- One PostgreSQL database
-- VPS filesystem media with Sharp compression and thumbnails
-- Twilio as the only external runtime service
-- PM2 behind Nginx with SSL
+The inventory board remains the single control centre. It writes to the canonical
+PostgreSQL `cars` table, and every customer-facing surface reads from that same
+table through the dedicated API.
 
-Supabase and Netlify files remain only as migration history. They are not required by the self-hosted runtime.
+| Surface | Project directory | Production deployment |
+| --- | --- | --- |
+| Inventory board | repository root | `dealership-inventory-board.netlify.app` |
+| Public vehicle website | `apps/customer-web` (`VITE_SURFACE=site`) | `604-sell-cars-website.netlify.app` |
+| Appointment booking | `apps/customer-web` (`VITE_SURFACE=landing`) | `604-sell-cars-booking.netlify.app` |
+| Lead desk | `apps/customer-web` (`VITE_SURFACE=admin`) | `604-sell-cars-leads.netlify.app` |
+| Shared lead/inventory API | `apps/lead-api` | `604-sell-cars-api.netlify.app` |
 
-## Routes
+These are independent Netlify projects. Updating a car in the inventory board
+updates the shared `cars` row; the website and booking deployment read that
+change on their next request. Vehicles without a verified physical lot address
+remain private until corrected in the board.
 
-- `/site` — public homepage and featured inventory
-- `/site/inventory` — URL-filtered, shareable inventory search
-- `/site/cars/:id` — vehicle gallery, specs, CARFAX, SEO data, and booking
-- `/landing` — mobile paid-ad lead capture and self-scheduling
-- `/admin` — password-protected lead desk and inventory/media editor
-- `/health` — runtime health response
+## What works
 
-## Data rules
+- All 344 unique imported vehicles are seeded into Supabase Postgres.
+- Approved team members share one inventory and sign in with Supabase Auth.
+- New uploads are stored privately in Supabase Storage and displayed with expiring signed URLs.
+- CARFAX URLs are clickable when an actual URL exists.
+- Live/sold status, filters, search, editing, deletion, and new inventory persist for the whole team.
+- The source seed remains in `src/data/seed.json` for repeatable imports; it is not bundled into the app.
 
-- The previous `inventory` table is renamed to `cars`; no duplicate inventory table is created.
-- `cars` is the source for the internal board, public website, and booking form.
-- Legacy rows without verified location data are explicitly marked `LOCATION_REQUIRED` or `ADDRESS REQUIRED` and remain hidden publicly.
-- New and edited vehicles require lot code, lot name, and full street address.
-- Marking a car `sold` removes it from the public APIs immediately.
-- Phone numbers are normalized and unique. A repeated phone updates the same lead.
-- PostgreSQL advisory locks prevent two different people from booking the same lot and time.
-- Appointment location is always derived from the chosen car.
+## Refresh from a Trello JSON export
 
-## Environment configuration
-
-Copy `.env.example` to `.env`:
-
-```dotenv
-DATABASE_URL=postgresql://sellcars_app:YOUR_PASSWORD@127.0.0.1:5432/sellcars
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_PHONE_NUMBER=
-ADMIN_NOTIFY_NUMBER=
-ADMIN_PASSWORD=CREATE_YOUR_OWN_LONG_PASSWORD
-META_PIXEL_ID=
-PORT=3000
-APP_TIMEZONE=America/Vancouver
-NODE_ENV=development
-UPLOAD_DIR=uploads
+```powershell
+npm run import:trello-export -- "C:\path\to\trello-board-export.json"
 ```
 
-You create both the PostgreSQL password and `ADMIN_PASSWORD`; they are not third-party credentials. Twilio values can remain blank until real SMS delivery is needed. `META_PIXEL_ID` can remain blank until ads are configured.
+This matches vehicles by their original Trello card IDs, removes duplicate URL-only pointers, restores card names and descriptions, adds up to eight 600px previews per vehicle, and recovers CARFAX links.
 
-Never commit `.env`.
-
-## Work without credentials
-
-The project can be installed, tested, built, reviewed, and browser-previewed without real credentials:
+## Run locally
 
 ```powershell
 npm install
-npm test
-npm run build
-```
-
-A real running application requires PostgreSQL and a locally chosen admin password. Twilio is optional during development; SMS calls are skipped when it is unconfigured.
-
-## Local PostgreSQL setup
-
-Install PostgreSQL 15 or newer and create an application role:
-
-```sql
-CREATE USER sellcars_app WITH PASSWORD 'choose-a-long-local-password';
-CREATE DATABASE sellcars OWNER sellcars_app;
-```
-
-Set `DATABASE_URL`, then:
-
-```powershell
-npm run migrate
-npm run import:seed
 npm run dev
 ```
 
-The web frontend runs through Vite and proxies API requests to Express. Correct the flagged lot addresses in `/admin?view=inventory` before expecting the imported cars to appear publicly.
+The app requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in an ignored `.env` file. Copy `.env.example` and fill those values before starting it.
 
-## Existing inventory and media
+AI description generation runs through the authenticated Netlify Function at `/api/generate-description`, so the Anthropic key never enters the browser bundle. Add `ANTHROPIC_API_KEY` in **Netlify → Site configuration → Environment variables**, then redeploy. For local function testing, add the same key to the ignored `.env` file and run `npx netlify dev`.
 
-`npm run import:seed` imports the repository’s 344 deduplicated Trello-derived vehicles into `cars`. It never invents street addresses. Imported rows remain private until an admin supplies the correct address.
+AI generation is server-limited to one request per signed-in user per minute and 10 requests per user per UTC day. Each response is capped at 400 output tokens, and failed rapid/daily-limit requests do not call Anthropic.
 
-To localize accessible Trello/external media onto the VPS after configuring the optional Trello migration credentials:
+## Migrate Trello media to Supabase
+
+New uploads are stored permanently in the private Supabase Storage bucket named `vehicle-media`. The app accepts files up to 50 MB each and uses resumable 6 MB chunks for larger uploads. Existing Trello attachment URLs are delivered through the authenticated `/api/trello-media` function so they work on phones without a Trello browser session; the migration below still moves them into permanent Supabase storage.
+
+Manage the stored files in **Supabase Dashboard → Storage → vehicle-media**. Supabase's Free plan has a 50 MB global per-file ceiling; raising the app above 50 MB also requires a higher global Storage limit on a paid Supabase plan.
+
+Being signed in to Trello in a browser does not automatically authenticate a Node script. Create a read-only Trello API token, copy `.env.example` to `.env`, and set:
+
+```text
+TRELLO_API_KEY=your_api_key
+TRELLO_API_TOKEN=your_read_only_token
+SUPABASE_MIGRATION_EMAIL=your_approved_team_email
+SUPABASE_MIGRATION_PASSWORD=your_supabase_password
+```
+
+Then run:
 
 ```powershell
-npm run migrate:media:vps
+npm run migrate:media
 ```
 
-Images are resized to a maximum width of 2200px, converted to WebP, and receive 520×350 thumbnails. Videos are copied into the car’s VPS media directory. Failed sources remain in the database for a later retry.
+The resumable migration downloads the imported Trello image previews with your authorized API token, uploads them to the private `vehicle-media` bucket, and updates each database record. Never commit `.env`, passwords, or Trello tokens.
 
-If the live hosted database contains newer changes than `src/data/seed.json`, export the `inventory`/`cars` and `vehicle_media` data before decommissioning it, then restore it into a temporary PostgreSQL database and run the unified migration. Do not shut down the old board until row counts and media have been reconciled.
+The deployed app's Trello media function requires `TRELLO_API_KEY`, `TRELLO_API_TOKEN`, and `TRELLO_MEDIA_SIGNING_SECRET` as encrypted Netlify environment variables. It returns short-lived signed media URLs only to active team accounts.
 
-## Tests and verification
+The older `npm run import:trello` command is still available when you need a fresh API import directly from a board.
+
+## Refresh inventory classifications
 
 ```powershell
-npm test
-npm run check
-npm run build
-npm audit
+npm run classify:inventory
 ```
 
-Tests cover the original inventory helpers, phone normalization/upsert behavior, lot collision prevention, 14-day hourly scheduling, and Twilio message content.
+This deterministically assigns every vehicle to a body type and adds supported Hybrid, Electric, Diesel, Manual, Performance, Luxury, and Brand New tags from explicit title and description evidence. It updates `src/data/seed.json` and regenerates `supabase/seed/classified-inventory.sql` for the shared database.
 
-## Ubuntu VPS deployment
+## Team access
 
-These instructions target Ubuntu 24.04. Replace example values with your domain and repository.
+Anyone with the deployed app link can create an email/password account. A database trigger automatically inserts every new account into `public.team_members` as an active `bdc`; users cannot choose or promote their own role. Signed-out users still cannot read inventory or media.
 
-### 1. Install the runtime
+- `owner` is the protected account that can manage team access and all inventory.
+- `admin` can add, edit, mark sold, relist, delete, upload media, and generate AI descriptions.
+- `bdc` sees the same inventory, photos, videos, CARFAX links, sold list, search, and filters with no editing access.
 
-```bash
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y git curl nginx postgresql postgresql-contrib
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
-sudo npm install -g pm2
-```
+The owner-only **Admin access** panel lists signups, promotes BDC users to Admin, and disables or restores access. It can also pre-add a BDC email before registration. The owner cannot be demoted or disabled from the web app.
 
-### 2. Create PostgreSQL
+## Deploy
 
-```bash
-sudo -u postgres psql
-```
-
-```sql
-CREATE USER sellcars_app WITH PASSWORD 'REPLACE_WITH_A_LONG_RANDOM_PASSWORD';
-CREATE DATABASE sellcars OWNER sellcars_app;
-\q
-```
-
-Keep port 5432 private.
-
-### 3. Clone the private repository
-
-Create a read-only GitHub deploy key:
-
-```bash
-ssh-keygen -t ed25519 -C "604-sell-cars-vps" -f ~/.ssh/604_sell_cars
-cat ~/.ssh/604_sell_cars.pub
-```
-
-Add it under the GitHub repository’s **Settings → Deploy keys**, then configure SSH:
-
-```bash
-cat >> ~/.ssh/config <<'EOF'
-Host github-604
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/604_sell_cars
-  IdentitiesOnly yes
-EOF
-chmod 600 ~/.ssh/config
-git clone git@github-604:gurnoorbassi/604-Sell-Cars.git ~/604-Sell-Cars
-cd ~/604-Sell-Cars
-npm ci
-```
-
-### 4. Configure the server
-
-```bash
-cp .env.example .env
-nano .env
-chmod 600 .env
-```
-
-Use:
-
-```dotenv
-DATABASE_URL=postgresql://sellcars_app:URL_ENCODED_PASSWORD@127.0.0.1:5432/sellcars
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_PHONE_NUMBER=
-ADMIN_NOTIFY_NUMBER=
-ADMIN_PASSWORD=YOUR_LONG_RANDOM_PASSWORD
-META_PIXEL_ID=
-PORT=3000
-APP_TIMEZONE=America/Vancouver
-NODE_ENV=production
-UPLOAD_DIR=/var/lib/604-sell-cars/uploads
-```
-
-Create the upload directory:
-
-```bash
-sudo mkdir -p /var/lib/604-sell-cars/uploads
-sudo chown -R "$USER":"$USER" /var/lib/604-sell-cars
-```
-
-### 5. Build and initialize
-
-```bash
-npm run migrate
-npm run import:seed
-npm run build
-npm test
-```
-
-Enter correct lot addresses in admin before production launch. Then migrate media when ready:
-
-```bash
-npm run migrate:media:vps
-```
-
-### 6. Start with PM2
-
-```bash
-pm2 start ecosystem.config.cjs
-pm2 save
-pm2 startup systemd
-```
-
-Run the command printed by `pm2 startup`, then:
-
-```bash
-pm2 save
-curl http://127.0.0.1:3000/health
-```
-
-### 7. Configure Nginx
-
-Create `/etc/nginx/sites-available/604-sell-cars`:
-
-```nginx
-server {
-    listen 80;
-    listen [::]:80;
-    server_name cars.example.com;
-
-    client_max_body_size 260m;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_read_timeout 300s;
-    }
-}
-```
-
-Enable it:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/604-sell-cars /etc/nginx/sites-enabled/604-sell-cars
-sudo nginx -t
-sudo systemctl reload nginx
-sudo ufw allow OpenSSH
-sudo ufw allow 'Nginx Full'
-sudo ufw enable
-```
-
-### 8. Add SSL
-
-```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d cars.example.com
-sudo certbot renew --dry-run
-```
-
-HTTPS is mandatory because `/admin` uses shared-password Basic Authentication.
-
-### 9. Verify before launch
-
-1. Open `/admin` over HTTPS.
-2. Correct each lot’s real name and full street address.
-3. Add or verify vehicle media.
-4. Confirm sold cars disappear from `/site`.
-5. Submit a booking using a phone you control.
-6. Confirm the saved lead, correct lot confirmation, admin SMS, lead SMS, and reminder schedule.
-7. Back up PostgreSQL and `/var/lib/604-sell-cars/uploads`.
-
-After launch, set the GitHub repository variable `PRODUCTION_HEALTH_URL` to the full HTTPS health URL so the hourly uptime workflow monitors the VPS.
-
-## Updating production
-
-```bash
-cd ~/604-Sell-Cars
-git pull --ff-only
-npm ci
-npm run migrate
-npm run build
-pm2 reload ecosystem.config.cjs --update-env
-curl http://127.0.0.1:3000/health
-```
-
-## Git
-
-The repository is already private. Before any push:
-
-```bash
-git status
-git diff --check
-git add .
-git commit -m "Build unified self-hosted 604 Sell Cars system"
-git push -u origin codex/unified-604-sell-cars
-```
+`netlify.toml` builds the Vite app with Node 22 and applies the SPA redirect and security headers. Add the two public Supabase variables to Netlify, then deploy `dist` with the Netlify CLI or connect the GitHub repository.
