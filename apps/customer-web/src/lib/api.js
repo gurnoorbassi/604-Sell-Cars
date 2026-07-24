@@ -1,10 +1,9 @@
-import { supabase } from "./supabase";
-
 export async function api(url, options) {
   const baseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
   const request = { ...(options || {}) };
   const headers = new Headers(request.headers || {});
   if (url.startsWith("/api/admin")) {
+    const { supabase } = await import("./supabase");
     const { data } = await supabase.auth.getSession();
     if (data.session?.access_token) headers.set("Authorization", `Bearer ${data.session.access_token}`);
   }
@@ -23,8 +22,13 @@ const VEHICLE_ACRONYMS = new Set([
 ]);
 
 function titleCaseVehicle(value) {
-  return String(value || "").split(/\s+/).filter(Boolean).map((word) => {
+  const corrected = String(value || "")
+    .replace(/\bchevorlet\b/gi, "Chevrolet")
+    .replace(/\binfinity\b/gi, "Infiniti")
+    .replace(/\bmercedes[\s-]+benz\b/gi, "Mercedes-Benz");
+  return corrected.split(/\s+/).filter(Boolean).map((word) => {
     const plain = word.replace(/[^a-zA-Z0-9/-]/g, "");
+    if (plain.toLowerCase() === "mercedes-benz") return "Mercedes-Benz";
     if (VEHICLE_ACRONYMS.has(plain.toUpperCase())) return word.toUpperCase();
     if (plain.toUpperCase() === "XDRIVE") return "xDrive";
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -33,17 +37,17 @@ function titleCaseVehicle(value) {
 
 export const carName = (car) => {
   const structuredName = [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ");
-  if (car.make || car.model) return titleCaseVehicle(structuredName);
-
-  const raw = String(car.title || "")
+  const raw = String((car.make || car.model ? structuredName : car.title) || structuredName || "")
     .replace(/[*_]/g, "")
     .replace(/\s+/g, " ")
     .trim();
   const withoutSalesCopy = raw
     .split(/\s+[-–—]\s+(?=(?:\d[\d,\sXx]*\s*KM|\$|BRAND NEW|MORE COLOU?RS|[*(]*(?:LEASE|FINANCE)))/i)[0]
+    .replace(/\s+[-–—]\s+\d{1,3}\s*[Kk]\s*KMS?\b.*$/i, "")
     .replace(/\s+\d{1,3}(?:[,\s]\d{3}|\s*[Xx]{3})\s*KMS?\b.*$/i, "")
+    .replace(/\s+(?:fully loaded|with aftermarket rims)\b.*$/i, "")
     .trim();
-  return titleCaseVehicle(withoutSalesCopy || raw || structuredName || "Vehicle");
+  return titleCaseVehicle(withoutSalesCopy || raw || "Vehicle");
 };
 
 export function vehicleMileage(car) {

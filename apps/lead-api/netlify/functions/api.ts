@@ -62,8 +62,32 @@ function normalizedMileage(car: Record<string, any>) {
   return Number.isFinite(stored) && stored > 0 ? stored : null;
 }
 
+function normalizedYear(car: Record<string, any>) {
+  const maximum = DateTime.now().year + 1;
+  const titleMatch = String(car.title || "").match(/\b((?:19|20)\d{2})\b/);
+  const parsed = Number(titleMatch?.[1]);
+  if (Number.isInteger(parsed) && parsed >= 1980 && parsed <= maximum) return parsed;
+  const stored = Number(car.year);
+  return Number.isInteger(stored) && stored >= 1980 && stored <= maximum ? stored : null;
+}
+
+function normalizedMake(value: unknown) {
+  const make = clean(value, 80);
+  const aliases: Record<string, string> = {
+    chevorlet: "Chevrolet",
+    infinity: "Infiniti",
+    "mercedes benz": "Mercedes-Benz",
+  };
+  return aliases[make.toLowerCase()] || make;
+}
+
 function normalizeCar(car: Record<string, any>) {
-  return { ...car, mileage: normalizedMileage(car) };
+  return {
+    ...car,
+    year: normalizedYear(car),
+    make: normalizedMake(car.make),
+    mileage: normalizedMileage(car),
+  };
 }
 
 async function withSignedMedia(supabase: any, cars: Array<Record<string, any>>) {
@@ -161,8 +185,14 @@ async function publicCars(request: Request, supabase: any) {
   if (fuel) rows = rows.filter((car) => car.fuel_type === fuel || (car.fuel_tags || []).includes(fuel));
   const minPrice = Number(url.searchParams.get("minPrice"));
   const maxPrice = Number(url.searchParams.get("maxPrice"));
+  const minYear = Number(url.searchParams.get("minYear"));
+  const maxYear = Number(url.searchParams.get("maxYear"));
+  const maxMileage = Number(url.searchParams.get("maxMileage"));
   if (Number.isFinite(minPrice) && minPrice > 0) rows = rows.filter((car) => Number(car.price_amount) >= minPrice);
   if (Number.isFinite(maxPrice) && maxPrice > 0) rows = rows.filter((car) => Number(car.price_amount) <= maxPrice);
+  if (Number.isFinite(minYear) && minYear > 0) rows = rows.filter((car) => Number(car.year) >= minYear);
+  if (Number.isFinite(maxYear) && maxYear > 0) rows = rows.filter((car) => Number(car.year) <= maxYear);
+  if (Number.isFinite(maxMileage) && maxMileage > 0) rows = rows.filter((car) => Number(car.mileage) <= maxMileage);
   const sort = url.searchParams.get("sort");
   const number = (value: unknown, fallback = Number.MAX_SAFE_INTEGER) =>
     Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -245,12 +275,14 @@ async function submitLead(request: Request, supabase: any) {
 async function filters(supabase: any) {
   const { data, error } = await supabase
     .from("cars")
-    .select("lot, body_type, fuel_type, make, year")
+    .select("title, lot, lot_address, body_type, fuel_type, make, year")
     .eq("status", "available")
-    .neq("lot", "LOCATION_REQUIRED");
+    .neq("lot", "LOCATION_REQUIRED")
+    .neq("lot_address", "ADDRESS REQUIRED");
   if (error) throw error;
+  const normalized = (data || []).map(normalizeCar);
   const unique = (key: string, descending = false) =>
-    [...new Set((data || []).map((row: Record<string, any>) => row[key]).filter(Boolean))]
+    [...new Set(normalized.map((row: Record<string, any>) => row[key]).filter(Boolean))]
       .sort((a: any, b: any) => descending ? Number(b) - Number(a) : String(a).localeCompare(String(b)));
   return json({
     lots: unique("lot"),
