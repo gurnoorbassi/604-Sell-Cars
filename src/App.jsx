@@ -133,6 +133,23 @@ const uploadResumableFile = (file, storagePath, session, onProgress) => new Prom
   }).catch(reject);
 });
 
+const LOT_DETAILS = {
+  "Karma Autos": { name: "Karma Autos", address: "" },
+  "SkyHigh Auto": { name: "SkyHigh Motors", address: "16065 Fraser Hwy, Surrey, BC V4N 0G2" },
+  "Mainland Motors": { name: "Mainland Motors", address: "" },
+  "Lougheed Hyundai": { name: "Lougheed Hyundai", address: "1288 Lougheed Hwy, Coquitlam, BC V3K 6S4" },
+};
+
+const vehicleParts = (title) => {
+  const match = String(title || "").match(/\b((?:19|20)\d{2})\s+([A-Za-z-]+)\s+([A-Za-z0-9-]+)/);
+  return match ? { year: Number(match[1]), make: match[2], model: match[3] } : {};
+};
+
+const numericValue = (value) => {
+  const parsed = Number(String(value || "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+};
+
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
   const hasCarfaxUrl = Boolean(row.carfax_url?.trim());
@@ -147,6 +164,8 @@ const rowToCar = (row, signedUrls) => {
   return {
     id: row.id, title: row.title, stock: row.stock, price: row.price, kms: row.kms,
     dealership: row.dealership, bodyType: row.body_type, fuelTags: row.fuel_tags || [],
+    lot: row.lot, lotName: row.lot_name,
+    lotAddress: row.lot_address === "ADDRESS REQUIRED" ? "" : row.lot_address,
     labels, description: row.description, carfax: row.carfax_url,
     trelloUrl: row.trello_url, photoCount: row.photo_count, photos, videos,
     manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
@@ -155,17 +174,21 @@ const rowToCar = (row, signedUrls) => {
     failedMediaCount: media.filter((item) => item.migration_error).length,
     updatedAt: row.updated_at,
     version: row.version || 1,
-    hot: row.hot, isNew: row.is_new, status: row.status,
+    hot: row.hot, isNew: row.is_new, status: row.status === "available" ? "live" : row.status,
   };
 };
 
-const carToRow = (car, userId) => ({
+const carToRow = (car, userId) => {
+  const dealership = String(car.dealership || "").trim();
+  const knownLot = LOT_DETAILS[dealership] || {};
+  const parts = vehicleParts(car.title);
+  return {
   id: car.id,
   title: car.title.trim(),
   stock: car.stock || "",
   price: car.price || "",
   kms: car.kms || "",
-  dealership: car.dealership || "",
+  dealership,
   body_type: car.bodyType || "",
   fuel_tags: car.fuelTags || [],
   labels: car.labels || [],
@@ -175,12 +198,21 @@ const carToRow = (car, userId) => ({
   photo_count: Number(car.photoCount) || 0,
   hot: !!car.hot,
   is_new: !!car.isNew,
-  status: car.status || "live",
+  status: car.status === "sold" ? "sold" : "available",
+  year: parts.year || null,
+  make: parts.make || null,
+  model: parts.model || null,
+  price_amount: numericValue(car.price),
+  mileage: /x/i.test(car.kms || "") ? null : numericValue(car.kms),
+  lot: car.lot || dealership || "LOCATION_REQUIRED",
+  lot_name: car.lotName || knownLot.name || dealership || "LOCATION REQUIRED",
+  lot_address: String(car.lotAddress || knownLot.address || "ADDRESS REQUIRED").trim(),
   updated_at: new Date().toISOString(),
   updated_by: userId,
-});
+  };
+};
 
-const DEALERSHIPS = ["Karma Autos", "SkyHigh Auto", "Mainland Motors", "Lougheed Hyundai"];
+const DEALERSHIPS = Object.keys(LOT_DETAILS);
 const BODY_TYPES = ["Sedan", "SUV", "Coupe", "Truck", "Van", "Minivan", "Hatchback", "Wagon", "Convertible", "Offroad"];
 const FUEL_TAGS = ["Gasoline", "Hybrid", "Electric", "Diesel", "Automatic", "Manual", "AWD", "4WD", "FWD", "Performance", "Luxury", "Brand New"];
 const LABELS = ["BONUS PAY", "PARTNER LOT", "GOOD MEDIA", "HAS CARFAX"];
@@ -191,7 +223,7 @@ const LABEL_COLORS = {
 const TIERS = ["<$10K", "<$20K", "<$30K", "$30-50K", "$50-100K", "High End"];
 const emptyForm = {
   id: null, title: "", stock: "", price: "", kms: "",
-  dealership: "", bodyType: "", fuelTags: [], labels: [],
+  dealership: "", lot: "", lotName: "", lotAddress: "", bodyType: "", fuelTags: [], labels: [],
   description: "", carfax: "", trelloUrl: "", photoCount: 0, photos: [], videos: [],
   manualPhotos: [], uploadFiles: [], storedMediaCount: 0,
   updatedAt: null, version: 1,
@@ -1193,9 +1225,27 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
             <div className="flex gap-1.5 flex-wrap">
               {DEALERSHIPS.map((d) => (
                 <Choice key={d} on={form.dealership === d}
-                  onClick={() => setForm({ ...form, dealership: form.dealership === d ? "" : d })}>{d}</Choice>
+                  onClick={() => {
+                    const next = form.dealership === d ? "" : d;
+                    const knownLot = LOT_DETAILS[next] || {};
+                    setForm({
+                      ...form,
+                      dealership: next,
+                      lot: next,
+                      lotName: knownLot.name || next,
+                      lotAddress: knownLot.address || form.lotAddress || "",
+                    });
+                  }}>{d}</Choice>
               ))}
             </div>
+          </F>
+          <F label="Exact physical lot address">
+            <input className="inp" value={form.lotAddress || ""}
+              placeholder="Full street address, city, province, postal code"
+              onChange={(e) => setForm({ ...form, lotAddress: e.target.value })} />
+            <p className="text-[11px] text-neutral-500 mt-1.5">
+              Cars without an exact address stay private on the customer website.
+            </p>
           </F>
           <F label="Body type">
             <div className="flex gap-1.5 flex-wrap">
