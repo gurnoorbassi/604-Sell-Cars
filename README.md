@@ -2,6 +2,25 @@
 
 A shared React inventory web app built from the supplied Trello export. The original compact seed contained 531 rows; 187 were duplicate URL-only pointers, leaving 344 unique vehicle records.
 
+## Deployment architecture
+
+The inventory board remains the single control centre. It writes to the canonical
+PostgreSQL `cars` table, and every customer-facing surface reads from that same
+table through the dedicated API.
+
+| Surface | Project directory | Production deployment |
+| --- | --- | --- |
+| Inventory board | repository root | `dealership-inventory-board.netlify.app` |
+| Public vehicle website | `apps/customer-web` (`VITE_SURFACE=site`) | `604-sell-cars-website.netlify.app` |
+| Appointment booking | `apps/customer-web` (`VITE_SURFACE=landing`) | `604-sell-cars-booking.netlify.app` |
+| Lead desk | `apps/customer-web` (`VITE_SURFACE=admin`) | `604-sell-cars-leads.netlify.app` |
+| Shared lead/inventory API | `apps/lead-api` | `604-sell-cars-api.netlify.app` |
+
+These are independent Netlify projects. Updating a car in the inventory board
+updates the shared `cars` row; the website and booking deployment read that
+change on their next request. Vehicles without a verified physical lot address
+remain private until corrected in the board.
+
 ## What works
 
 - All 344 unique imported vehicles are seeded into Supabase Postgres.
