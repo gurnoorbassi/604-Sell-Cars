@@ -44,6 +44,8 @@ export const carName = (car) => {
   const withoutSalesCopy = raw
     .split(/\s+[-–—]\s+(?=(?:\d[\d,\sXx]*\s*KM|\$|BRAND NEW|MORE COLOU?RS|[*(]*(?:LEASE|FINANCE)))/i)[0]
     .replace(/\s+[-–—]\s+\d{1,3}\s*[Kk]\s*KMS?\b.*$/i, "")
+    .replace(/^#[A-Z0-9-]+\s+/i, "")
+    .replace(/\s+\$\d{1,3}(?:[,\s]\d{3})\b.*$/i, "")
     .replace(/\s+\d{1,3}(?:[,\s]\d{3}|\s*[Xx]{3})\s*KMS?\b.*$/i, "")
     .replace(/\s+(?:fully loaded|with aftermarket rims)\b.*$/i, "")
     .trim();
