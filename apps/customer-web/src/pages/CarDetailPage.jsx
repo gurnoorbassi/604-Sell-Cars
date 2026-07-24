@@ -81,14 +81,10 @@ export default function CarDetailPage({ id }) {
 
         <div className="mx-auto grid w-[min(1380px,94vw)] gap-8 py-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:items-start">
           <section>
-            <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-neutral-900 shadow-[0_24px_70px_rgba(0,0,0,.42)]">
+            <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#08090b_75%)] shadow-[0_24px_70px_rgba(0,0,0,.42)]">
               {images[active] ? (
-                <>
-                  <VehicleImage sources={[images[active]]} alt="" loading="eager" aria-hidden="true"
-                    className="absolute inset-0 hidden h-full w-full scale-110 object-cover opacity-25 blur-2xl sm:block" />
-                  <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high"
-                    className="relative h-full w-full object-cover sm:object-contain" />
-                </>
+                <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high"
+                  className="h-full w-full object-cover sm:object-contain" />
               ) : (
                 <div className="grid h-full place-items-center text-sm font-semibold text-neutral-500">Photos coming soon</div>
               )}

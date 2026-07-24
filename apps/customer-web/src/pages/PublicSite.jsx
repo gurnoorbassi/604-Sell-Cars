@@ -32,6 +32,13 @@ function coverImages(car) {
   return [images[1], ...images.filter((_, index) => index !== 1)];
 }
 
+function mediaScore(car) {
+  const labels = (car.labels || []).map((label) => String(label).toUpperCase());
+  const markedGoodMedia = labels.includes("GOOD MEDIA") ? 1000 : 0;
+  const photoCoverage = Math.min(Number(car.photo_count || carImages(car).length || 0), 100);
+  return markedGoodMedia + photoCoverage;
+}
+
 export default function PublicSite() {
   const inventoryPage = window.location.pathname.includes("/inventory");
   const [cars, setCars] = useState([]);
@@ -80,6 +87,10 @@ export default function PublicSite() {
 
 function HomePage({ cars, featured, filters, locations, loading, error }) {
   const featuredImages = featured ? coverImages(featured) : [];
+  const showcaseCars = useMemo(() => cars
+    .filter((car) => car.id !== featured?.id && carImages(car).length)
+    .sort((a, b) => mediaScore(b) - mediaScore(a))
+    .slice(0, 6), [cars, featured?.id]);
   const categories = filters.body_types.filter(Boolean).slice(0, 7);
   return (
     <main>
@@ -130,9 +141,7 @@ function HomePage({ cars, featured, filters, locations, loading, error }) {
       {featured && (
         <section className="border-b border-white/10 bg-[#0d0f12]">
           <div className="mx-auto grid w-[min(1320px,92vw)] lg:grid-cols-[1.35fr_.65fr]">
-            <a href={`/cars/${featured.id}`} className="group relative block min-h-[340px] overflow-hidden border-x border-white/10 sm:min-h-[430px] lg:border-r-0">
-              <VehicleImage sources={featuredImages} alt="" loading="eager" aria-hidden="true"
-                className="absolute inset-0 hidden h-full w-full scale-110 object-cover opacity-25 blur-2xl lg:block" />
+            <a href={`/cars/${featured.id}`} className="group relative block min-h-[340px] overflow-hidden border-x border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#08090b_74%)] sm:min-h-[430px] lg:border-r-0">
               <VehicleImage sources={featuredImages} alt={carName(featured)} loading="eager" fetchPriority="high"
                 fallbackLabel="Vehicle photo coming soon"
                 className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.015] lg:object-contain" />
@@ -159,7 +168,7 @@ function HomePage({ cars, featured, filters, locations, loading, error }) {
       )}
 
       <section className="mx-auto w-[min(1320px,92vw)] py-16 sm:py-20">
-        <SectionHeader kicker="Available now" title="Recently added vehicles"
+        <SectionHeader kicker="Available now" title="Explore more inventory"
           text={loading ? "Loading current inventory…" : `Browse ${cars.length} vehicles across ${locations.length} dealership locations.`}>
           <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.13em] text-white">
             View all inventory <ArrowRight size={15} className="text-[#ff5a50]" />
@@ -168,7 +177,7 @@ function HomePage({ cars, featured, filters, locations, loading, error }) {
         {error && <ErrorMessage text={error} />}
         {loading ? <InventorySkeleton /> : (
           <div className="mt-8 grid gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-            {cars.slice(0, 6).map((car) => <CarCard key={car.id} car={car} />)}
+            {showcaseCars.map((car) => <CarCard key={car.id} car={car} />)}
           </div>
         )}
         <div className="mt-10 flex flex-wrap gap-2 border-t border-white/10 pt-5">

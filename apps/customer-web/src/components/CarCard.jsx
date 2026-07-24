@@ -10,14 +10,10 @@ export default function CarCard({ car }) {
     : images;
   return (
     <a href={`/cars/${encodeURIComponent(car.id)}`} className="group block min-w-0">
-      <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[#101216]">
+      <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#0c0e11_72%)]">
         {preferredImages[0] ? (
-          <>
-            <VehicleImage sources={preferredImages} alt="" aria-hidden="true"
-              className="absolute inset-0 hidden h-full w-full scale-110 object-cover opacity-25 blur-xl sm:block" />
-            <VehicleImage sources={preferredImages} alt={carName(car)}
-              className="relative h-full w-full object-cover transition duration-700 group-hover:scale-[1.02] sm:object-contain" />
-          </>
+          <VehicleImage sources={preferredImages} alt={carName(car)}
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02] sm:object-contain" />
         ) : (
           <div className="grid h-full place-items-center bg-[linear-gradient(135deg,#171a1f,#0c0e11)] text-xs font-bold uppercase tracking-[.12em] text-neutral-600">
             Photos coming soon
