@@ -260,7 +260,7 @@ export default function SellsCarsBoard() {
     setAccessDenied(false);
 
     const { data: rows, error } = await supabase
-      .from("inventory")
+      .from("cars")
       .select("*, vehicle_media(*)")
       .order("updated_at", { ascending: false });
     if (error) {
@@ -334,7 +334,7 @@ export default function SellsCarsBoard() {
     };
     const channel = supabase
       .channel("inventory-board-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, scheduleRefresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "cars" }, scheduleRefresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "vehicle_media" }, scheduleRefresh)
       .subscribe();
     return () => {
@@ -381,7 +381,7 @@ export default function SellsCarsBoard() {
       return;
     }
     const currentCar = cars.find((car) => car.id === id);
-    const { data: updated, error } = await supabase.from("inventory").update({
+    const { data: updated, error } = await supabase.from("cars").update({
       ...values,
       updated_at: new Date().toISOString(),
       updated_by: session.user.id,
@@ -420,7 +420,7 @@ export default function SellsCarsBoard() {
         return;
       }
     }
-    const { error } = await supabase.from("inventory").delete().eq("id", id);
+    const { error } = await supabase.from("cars").delete().eq("id", id);
     if (error) setAppError(error.message);
     else setCars((current) => current.filter((car) => car.id !== id));
     setDetail(null);
@@ -463,8 +463,8 @@ export default function SellsCarsBoard() {
     };
     const row = carToRow(record, session.user.id);
     const saveQuery = form.id
-      ? supabase.from("inventory").update(row).eq("id", id).eq("version", form.version || 1).select("id").maybeSingle()
-      : supabase.from("inventory").insert(row).select("id").single();
+      ? supabase.from("cars").update(row).eq("id", id).eq("version", form.version || 1).select("id").maybeSingle()
+      : supabase.from("cars").insert(row).select("id").single();
     const { data: savedRow, error: saveError } = await saveQuery;
     if (saveError) {
       setAppError(saveError.message);

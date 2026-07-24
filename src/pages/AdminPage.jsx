@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import AuthScreen from "../AuthScreen";
 import SiteHeader from "../components/SiteHeader";
 import { api, carName } from "../lib/api";
+import { supabase } from "../lib/supabase";
 
 const blankCar = {
   id: "", year: "", make: "", model: "", trim: "", stock: "", price: "", mileage: "",
@@ -10,6 +12,22 @@ const blankCar = {
 const LABELS = ["HOT SELL", "NEW ARRIVAL", "HAS CARFAX"];
 
 export default function AdminPage() {
+  const [session, setSession] = useState(undefined);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session || null));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession || null);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+  if (session === undefined) {
+    return <div className="grid min-h-screen place-items-center bg-neutral-950 text-neutral-400">Connecting securely…</div>;
+  }
+  if (!session) return <AuthScreen />;
+  return <AdminDashboard />;
+}
+
+function AdminDashboard() {
   const [tab, setTab] = useState(new URLSearchParams(window.location.search).get("view") === "inventory" ? "inventory" : "leads");
   const [leads, setLeads] = useState([]);
   const [cars, setCars] = useState([]);
