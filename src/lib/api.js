@@ -1,13 +1,24 @@
+import { supabase } from "./supabase";
+
 export async function api(url, options) {
-  const response = await fetch(url, options);
+  const request = { ...(options || {}) };
+  const headers = new Headers(request.headers || {});
+  if (url.startsWith("/api/admin")) {
+    const { data } = await supabase.auth.getSession();
+    if (data.session?.access_token) headers.set("Authorization", `Bearer ${data.session.access_token}`);
+  }
+  request.headers = headers;
+  const response = await fetch(url, request);
   const contentType = response.headers.get("content-type") || "";
   const body = contentType.includes("application/json") ? await response.json() : await response.text();
   if (!response.ok) throw new Error(body?.error || body || "Request failed.");
   return body;
 }
 
-export const carName = (car) =>
-  [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ") || car.title || "Vehicle";
+export const carName = (car) => {
+  const structuredName = [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ");
+  return car.make || car.model ? structuredName : car.title || structuredName || "Vehicle";
+};
 
 export function carImages(car) {
   const normalized = [
