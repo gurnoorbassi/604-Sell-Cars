@@ -24,6 +24,13 @@ const mileageOptions = [
   ["150000", "Under 150,000 km"],
   ["200000", "Under 200,000 km"],
 ];
+const isRollsRoyceGhost = (car) => /rolls[\s-]*royce.*ghost/i.test(`${car?.title || ""} ${carName(car || {})}`);
+
+function coverImages(car) {
+  const images = carImages(car);
+  if (!isRollsRoyceGhost(car) || images.length < 2) return images;
+  return [images[1], ...images.filter((_, index) => index !== 1)];
+}
 
 export default function PublicSite() {
   const inventoryPage = window.location.pathname.includes("/inventory");
@@ -47,7 +54,8 @@ export default function PublicSite() {
   }, [current, inventoryPage]);
 
   const carsWithPhotos = cars.filter((car) => carImages(car).length);
-  const featured = carsWithPhotos.find((car) => car.featured)
+  const featured = carsWithPhotos.find(isRollsRoyceGhost)
+    || carsWithPhotos.find((car) => car.featured)
     || carsWithPhotos.find((car) => Number(car.price_amount || 0) > 0)
     || cars[0];
   const locations = [...new Map(cars.filter((car) => car.lot && car.lot_name).map((car) => [car.lot, {
@@ -71,7 +79,7 @@ export default function PublicSite() {
 }
 
 function HomePage({ cars, featured, filters, locations, loading, error }) {
-  const featuredImages = featured ? carImages(featured) : [];
+  const featuredImages = featured ? coverImages(featured) : [];
   const categories = filters.body_types.filter(Boolean).slice(0, 7);
   return (
     <main>
@@ -123,11 +131,13 @@ function HomePage({ cars, featured, filters, locations, loading, error }) {
         <section className="border-b border-white/10 bg-[#0d0f12]">
           <div className="mx-auto grid w-[min(1320px,92vw)] lg:grid-cols-[1.35fr_.65fr]">
             <a href={`/cars/${featured.id}`} className="group relative block min-h-[340px] overflow-hidden border-x border-white/10 sm:min-h-[430px] lg:border-r-0">
+              <VehicleImage sources={featuredImages} alt="" loading="eager" aria-hidden="true"
+                className="absolute inset-0 hidden h-full w-full scale-110 object-cover opacity-25 blur-2xl lg:block" />
               <VehicleImage sources={featuredImages} alt={carName(featured)} loading="eager" fetchPriority="high"
                 fallbackLabel="Vehicle photo coming soon"
-                className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/25" />
-              <div className="absolute left-5 top-5 bg-[#ef3f32] px-3 py-2 text-[9px] font-black uppercase tracking-[.16em] text-white sm:left-7 sm:top-7">Featured arrival</div>
+                className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.015] lg:object-contain" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/20" />
+              <div className="absolute left-5 top-5 bg-[#ef3f32] px-3 py-2 text-[9px] font-black uppercase tracking-[.16em] text-white sm:left-7 sm:top-7">High-end feature</div>
               <span className="absolute bottom-5 right-5 grid h-12 w-12 place-items-center bg-white text-black transition group-hover:bg-[#ef3f32] group-hover:text-white sm:bottom-7 sm:right-7"><ArrowRight size={18} /></span>
             </a>
             <div className="flex flex-col justify-between border-x border-white/10 bg-[#14171b] p-6 sm:p-8 lg:border-l-0 lg:p-10">

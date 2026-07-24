@@ -5,12 +5,19 @@ import VehicleImage from "./VehicleImage";
 
 export default function CarCard({ car }) {
   const images = carImages(car);
+  const preferredImages = /rolls[\s-]*royce.*ghost/i.test(`${car.title || ""} ${carName(car)}`) && images.length > 1
+    ? [images[1], ...images.filter((_, index) => index !== 1)]
+    : images;
   return (
     <a href={`/cars/${encodeURIComponent(car.id)}`} className="group block min-w-0">
       <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[#101216]">
-        {images[0] ? (
-          <VehicleImage sources={images} alt={carName(car)}
-            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" />
+        {preferredImages[0] ? (
+          <>
+            <VehicleImage sources={preferredImages} alt="" aria-hidden="true"
+              className="absolute inset-0 hidden h-full w-full scale-110 object-cover opacity-25 blur-xl sm:block" />
+            <VehicleImage sources={preferredImages} alt={carName(car)}
+              className="relative h-full w-full object-cover transition duration-700 group-hover:scale-[1.02] sm:object-contain" />
+          </>
         ) : (
           <div className="grid h-full place-items-center bg-[linear-gradient(135deg,#171a1f,#0c0e11)] text-xs font-bold uppercase tracking-[.12em] text-neutral-600">
             Photos coming soon
