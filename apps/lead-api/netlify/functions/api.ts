@@ -49,7 +49,11 @@ function ensureMediaBucket(supabase: any) {
 }
 
 function fail(error: unknown, fallback = "Something went wrong. Please try again.") {
-  const message = error instanceof Error ? error.message : String(error || fallback);
+  const message = error instanceof Error
+    ? error.message
+    : error && typeof error === "object" && "message" in error
+      ? String(error.message)
+      : String(error || fallback);
   const clean = message
     .replace(/^.*?ERROR:\s*/i, "")
     .replace(/\s*\(SQLSTATE.*$/i, "")
@@ -58,7 +62,8 @@ function fail(error: unknown, fallback = "Something went wrong. Please try again
     "required", "valid", "available", "location", "future", "14 days",
     "on the hour", "between 10", "just booked", "not found",
   ].some((term) => clean.toLowerCase().includes(term));
-  return json({ error: expected ? clean : fallback }, expected ? 422 : 500);
+  const status = clean.toLowerCase().includes("just booked") ? 409 : expected ? 422 : 500;
+  return json({ error: expected ? clean : fallback }, status);
 }
 
 function clean(value: unknown, max = 500) {
