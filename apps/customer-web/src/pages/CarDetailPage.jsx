@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
+import VehicleImage from "../components/VehicleImage";
 import {
   api, carImages, carName, carVideos, cleanVehicleDescription,
   mileageLabel, priceLabel, vehicleMileage,
@@ -82,7 +83,7 @@ export default function CarDetailPage({ id }) {
           <section>
             <div className="relative aspect-[16/10] overflow-hidden bg-neutral-200 shadow-[0_20px_55px_rgba(20,20,20,.12)]">
               {images[active] ? (
-                <img src={images[active]} alt={`${carName(car)} photo ${active + 1}`} className="h-full w-full object-cover" />
+                <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high" className="h-full w-full object-cover" />
               ) : (
                 <div className="grid h-full place-items-center text-sm font-semibold text-neutral-500">Photos coming soon</div>
               )}
@@ -106,7 +107,7 @@ export default function CarDetailPage({ id }) {
                 {images.slice(0, 18).map((image, index) => (
                   <button key={`${image}-${index}`} onClick={() => setActive(index)} aria-label={`View photo ${index + 1}`}
                     className={`aspect-[4/3] overflow-hidden border-2 transition ${active === index ? "border-[#ef3f32]" : "border-transparent opacity-70 hover:opacity-100"}`}>
-                    <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    <VehicleImage sources={[image]} alt={`${carName(car)} thumbnail ${index + 1}`} className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>

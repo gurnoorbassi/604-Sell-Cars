@@ -106,17 +106,19 @@ async function serveMedia(request: Request) {
   const apiKey = Netlify.env.get("TRELLO_API_KEY");
   const apiToken = Netlify.env.get("TRELLO_API_TOKEN");
   const signingSecret = Netlify.env.get("TRELLO_MEDIA_SIGNING_SECRET");
-  if (!apiKey || !apiToken || !signingSecret) return new Response("Media access is not configured.", { status: 503 });
+  if (!apiKey || !apiToken) return new Response("Media access is not configured.", { status: 503 });
 
   const requestUrl = new URL(request.url);
   const mediaUrl = requestUrl.searchParams.get("url") || "";
   const expires = Number(requestUrl.searchParams.get("expires"));
   const signature = requestUrl.searchParams.get("signature") || "";
+  const hasValidSignature = Boolean(signingSecret)
+    && Number.isFinite(expires)
+    && expires >= Date.now()
+    && expires <= Date.now() + SIX_HOURS_MS + 60_000
+    && await verifySignature(`${expires}\n${mediaUrl}`, signature, signingSecret || "");
   if (!isAllowedTrelloMediaUrl(mediaUrl)
-    || !Number.isFinite(expires)
-    || expires < Date.now()
-    || expires > Date.now() + SIX_HOURS_MS + 60_000
-    || !await verifySignature(`${expires}\n${mediaUrl}`, signature, signingSecret)) {
+    || (!hasValidSignature && !await isPublicInventoryMedia(mediaUrl))) {
     return new Response("Invalid or expired media link.", { status: 403 });
   }
 
@@ -136,11 +138,38 @@ async function serveMedia(request: Request) {
     status: 200,
     headers: {
       "Content-Type": contentType,
-      "Cache-Control": "private, max-age=3600",
-      "Netlify-CDN-Cache-Control": "public, durable, max-age=21600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=86400",
+      "Netlify-CDN-Cache-Control": "public, durable, max-age=604800, stale-while-revalidate=86400",
       "X-Content-Type-Options": "nosniff",
     },
   });
+}
+
+async function isPublicInventoryMedia(mediaUrl: string) {
+  const supabaseUrl = Netlify.env.get("VITE_SUPABASE_URL");
+  const serviceRoleKey = Netlify.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceRoleKey) return false;
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: media, error: mediaError } = await supabase
+    .from("vehicle_media")
+    .select("vehicle_id")
+    .eq("source_url", mediaUrl)
+    .eq("kind", "image")
+    .maybeSingle();
+  if (mediaError || !media?.vehicle_id) return false;
+  const { data: car, error: carError } = await supabase
+    .from("cars")
+    .select("status, lot, lot_address")
+    .eq("id", media.vehicle_id)
+    .maybeSingle();
+  return !carError
+    && car?.status === "available"
+    && Boolean(car.lot)
+    && car.lot !== "LOCATION_REQUIRED"
+    && Boolean(car.lot_address)
+    && car.lot_address !== "ADDRESS REQUIRED";
 }
 
 export default async (request: Request, _context: Context) => {

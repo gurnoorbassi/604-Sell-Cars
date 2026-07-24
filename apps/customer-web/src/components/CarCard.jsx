@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowUpRight, Camera, Gauge, MapPin } from "lucide-react";
 import { carImages, carName, mileageLabel, priceLabel } from "../lib/api";
+import VehicleImage from "./VehicleImage";
 
 export default function CarCard({ car }) {
   const images = carImages(car);
@@ -13,10 +14,9 @@ export default function CarCard({ car }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-neutral-200">
         {image ? (
-          <img
-            src={image}
+          <VehicleImage
+            sources={images}
             alt={carName(car)}
-            loading="lazy"
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]"
           />
         ) : (

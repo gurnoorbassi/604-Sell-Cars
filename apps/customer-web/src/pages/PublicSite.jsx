@@ -6,6 +6,7 @@ import {
 import CarCard from "../components/CarCard";
 import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
+import VehicleImage from "../components/VehicleImage";
 import { api, carImages, carName, mileageLabel, priceLabel } from "../lib/api";
 import { LANDING_URL, WEBSITE_URL } from "../lib/links";
 
@@ -45,7 +46,10 @@ export default function PublicSite() {
       .finally(() => setLoading(false));
   }, [current, inventoryPage]);
 
-  const featured = cars.find((car) => car.featured && carImages(car).length) || cars.find((car) => carImages(car).length) || cars[0];
+  const carsWithPhotos = cars.filter((car) => carImages(car).length);
+  const featured = carsWithPhotos.find((car) => car.featured)
+    || [...carsWithPhotos].sort((a, b) => Number(b.price_amount || 0) - Number(a.price_amount || 0))[0]
+    || cars[0];
   const locations = [...new Map(cars.filter((car) => car.lot && car.lot_name).map((car) => [car.lot, {
     lot: car.lot,
     name: car.lot_name,
@@ -56,7 +60,7 @@ export default function PublicSite() {
     <div className="min-h-screen bg-[#f3f3f1] text-[#111216]">
       <SiteHeader />
 
-      {!inventoryPage && <HomeHero featured={featured} filters={filters} loading={loading} />}
+      {!inventoryPage && <HomeHero featured={featured} filters={filters} loading={loading} total={cars.length} />}
 
       {inventoryPage ? (
         <InventoryPage cars={cars} filters={filters} current={current} loading={loading} error={error} />
@@ -69,44 +73,62 @@ export default function PublicSite() {
   );
 }
 
-function HomeHero({ featured, filters, loading }) {
-  const heroImage = featured ? carImages(featured)[0] : "";
+function HomeHero({ featured, filters, loading, total }) {
+  const heroImages = featured ? carImages(featured) : [];
   return (
     <>
-      <section className="relative isolate min-h-[620px] overflow-hidden bg-[#0c0d10] text-white">
-        {heroImage && <img src={heroImage} alt="" className="absolute inset-0 -z-30 h-full w-full object-cover object-center" />}
-        <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(4,5,7,.96)_0%,rgba(4,5,7,.78)_46%,rgba(4,5,7,.22)_100%)]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-transparent to-black/10" />
-
-        <div className="mx-auto flex min-h-[620px] w-[min(1380px,94vw)] items-center pb-24 pt-16">
-          <div className="max-w-[680px]">
+      <section className="relative overflow-hidden bg-[#0c0d10] text-white">
+        <div className="pointer-events-none absolute -right-24 -top-32 h-96 w-96 rounded-full bg-[#ef3f32]/10 blur-3xl" />
+        <div className="mx-auto grid w-[min(1380px,92vw)] gap-10 pb-24 pt-12 sm:pt-16 lg:min-h-[650px] lg:grid-cols-[.82fr_1.18fr] lg:items-center lg:gap-14 lg:pb-28">
+          <div className="relative z-10 max-w-[640px]">
             <p className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[.23em] text-[#ff6b60]">
               <span className="h-[2px] w-9 bg-[#ef3f32]" />
               Live dealership inventory
             </p>
-            <h1 className="mt-5 max-w-3xl text-[clamp(2.9rem,5.8vw,5.15rem)] font-black leading-[.96] tracking-[-.06em]">
+            <h1 className="mt-5 max-w-3xl text-[clamp(2.65rem,5.2vw,4.75rem)] font-black leading-[.97] tracking-[-.058em]">
               Your next car is already nearby.
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-neutral-300 sm:text-lg">
+            <p className="mt-5 max-w-xl text-[15px] leading-7 text-neutral-300 sm:mt-6 sm:text-lg">
               Browse current vehicles from independent Metro Vancouver dealerships, compare the details that matter, and book your viewing online.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 bg-[#ef3f32] px-6 py-4 text-sm font-black text-white transition hover:bg-[#d92d22]">
+            <div className="mt-7 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+              <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center justify-center gap-2 bg-[#ef3f32] px-4 py-4 text-sm font-black text-white transition hover:bg-[#d92d22] sm:px-6">
                 Shop all vehicles <ArrowRight size={17} />
               </a>
-              <a href={LANDING_URL} className="border border-white/35 bg-black/25 px-6 py-4 text-sm font-bold text-white backdrop-blur transition hover:bg-white/10">
+              <a href={LANDING_URL} className="flex items-center justify-center border border-white/30 px-4 py-4 text-sm font-bold text-white transition hover:bg-white/10 sm:px-6">
                 Book a viewing
               </a>
             </div>
+            <p className="mt-5 text-xs font-semibold text-neutral-500">
+              {loading ? "Syncing current inventoryâ€¦" : `${total} available vehicles across verified partner lots`}
+            </p>
           </div>
 
           {featured && (
-            <a href={`/cars/${featured.id}`} className="absolute bottom-8 right-[3vw] hidden w-[310px] border-l-2 border-[#ef3f32] bg-black/72 p-5 backdrop-blur-md xl:block">
-              <small className="font-black uppercase tracking-[.17em] text-[#ff6b60]">Featured now</small>
-              <strong className="mt-2 block text-xl leading-tight">{carName(featured)}</strong>
-              <span className="mt-4 flex items-center justify-between text-sm text-neutral-300">
-                <b className="text-lg text-white">{priceLabel(featured)}</b>
-                {mileageLabel(featured)}
+            <a href={`/cars/${featured.id}`} className="group relative block lg:translate-x-4">
+              <div className="absolute -left-3 -top-3 h-24 w-24 border-l-2 border-t-2 border-[#ef3f32] sm:-left-5 sm:-top-5" />
+              <div className="relative aspect-[16/10] overflow-hidden bg-neutral-800 shadow-[0_30px_90px_rgba(0,0,0,.45)]">
+                <VehicleImage
+                  sources={heroImages}
+                  alt={carName(featured)}
+                  loading="eager"
+                  fetchPriority="high"
+                  fallbackLabel="Vehicle photo coming soon"
+                  className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.025]"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/75 to-transparent px-5 pb-5 pt-16 sm:px-7 sm:pb-7">
+                  <small className="font-black uppercase tracking-[.17em] text-[#ff6b60]">Featured now</small>
+                  <div className="mt-2 flex items-end justify-between gap-4">
+                    <span>
+                      <strong className="block text-lg leading-tight sm:text-2xl">{carName(featured)}</strong>
+                      <span className="mt-2 block text-xs font-semibold text-neutral-300 sm:text-sm">{featured.lot_name} Â· {mileageLabel(featured)}</span>
+                    </span>
+                    <b className="shrink-0 text-lg text-white sm:text-2xl">{priceLabel(featured)}</b>
+                  </div>
+                </div>
+              </div>
+              <span className="absolute -bottom-3 right-4 bg-[#ef3f32] px-4 py-2 text-[10px] font-black uppercase tracking-[.15em] text-white sm:right-6">
+                View vehicle
               </span>
             </a>
           )}

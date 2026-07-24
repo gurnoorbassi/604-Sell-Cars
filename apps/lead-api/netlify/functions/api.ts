@@ -103,15 +103,31 @@ async function withSignedMedia(supabase: any, cars: Array<Record<string, any>>) 
   }
   return cars.map((sourceCar) => {
     const car = normalizeCar(sourceCar);
+    const mediaBaseUrl = (Netlify.env.get("VITE_BOARD_URL") || "https://dealership-inventory-board.netlify.app").replace(/\/$/, "");
     return {
     ...car,
     media: (car.vehicle_media || []).map((item: Record<string, any>) => ({
       ...item,
-      source_url: item.storage_path ? (signed.get(item.storage_path) || item.source_url) : item.source_url,
+      source_url: item.storage_path && signed.get(item.storage_path)
+        ? signed.get(item.storage_path)
+        : trelloMediaUrl(item.source_url, mediaBaseUrl),
     })),
     vehicle_media: undefined,
   };
   });
+}
+
+function trelloMediaUrl(sourceUrl: unknown, mediaBaseUrl: string) {
+  const value = clean(sourceUrl, 3000);
+  try {
+    const url = new URL(value);
+    if (url.protocol === "https:" && url.hostname === "trello.com" && url.pathname.startsWith("/1/cards/")) {
+      return `${mediaBaseUrl}/api/trello-media?url=${encodeURIComponent(value)}`;
+    }
+  } catch {
+    // Keep non-URL media values unchanged so the normal image fallback can handle them.
+  }
+  return value;
 }
 
 async function requireAdmin(request: Request, supabase: any) {
