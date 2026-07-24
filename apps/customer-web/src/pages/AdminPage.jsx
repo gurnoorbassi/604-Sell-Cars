@@ -100,27 +100,31 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-100 text-neutral-950">
+    <div className="min-h-screen bg-[#090a0c] text-white">
       <SiteHeader admin />
-      <main className="mx-auto w-[min(1400px,94vw)] py-10">
+      <main className="mx-auto w-[min(1400px,94vw)] py-8 sm:py-10">
         <div className="flex flex-wrap items-end justify-between gap-5">
-          <div><p className="text-xs font-black uppercase tracking-[.2em] text-red-600">604 Sell Cars operations</p><h1 className="mt-2 text-5xl font-black tracking-tight">{tab === "leads" ? "Lead desk" : "Inventory"}</h1></div>
-          <a href="https://dealership-inventory-board.netlify.app" className="rounded-md bg-neutral-900 px-4 py-3 font-bold text-white">Open inventory board ↗</a>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#ff5a50]">604 Sell Cars operations</p>
+            <h1 className="mt-3 text-[clamp(2.6rem,5vw,4.5rem)] font-black leading-none tracking-[-.055em]">{tab === "leads" ? "Lead desk" : "Inventory"}</h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-neutral-400">Appointments, assignments, and customer follow-up in one operating view.</p>
+          </div>
+          <a href="https://dealership-inventory-board.netlify.app" className="border border-white/15 bg-[#121417] px-4 py-3 text-sm font-bold text-white transition hover:border-white/30 hover:bg-[#181b20]">Open inventory board ↗</a>
         </div>
-        {notice && <button onClick={() => setNotice("")} className="mt-5 w-full bg-neutral-900 p-3 text-left text-sm text-white">{notice} ×</button>}
+        {notice && <button onClick={() => setNotice("")} className="mt-5 w-full border border-[#ef3f32]/30 bg-[#ef3f32]/10 p-3 text-left text-sm text-red-100">{notice} ×</button>}
         {tab === "leads" ? (
           <>
-            <div className="mt-8 flex flex-wrap gap-3 bg-white p-4">
-              <label className="text-xs font-bold uppercase">Lot<select value={lot} onChange={(event) => setLot(event.target.value)} className="ml-2 border p-2"><option value="">All lots</option>{lots.map((item) => <option key={item.lot} value={item.lot}>{item.lot_name}</option>)}</select></label>
-              <label className="text-xs font-bold uppercase">Appointment date<input value={date} onChange={(event) => setDate(event.target.value)} type="date" className="ml-2 border p-2" /></label>
+            <div className="mt-8 grid gap-4 border border-white/10 bg-[#121417] p-4 sm:grid-cols-2 sm:p-5">
+              <label className="text-[10px] font-black uppercase tracking-[.14em] text-neutral-500">Dealership lot<select value={lot} onChange={(event) => setLot(event.target.value)} className="mt-2 h-11 w-full border border-white/10 bg-[#0d0f12] px-3 text-sm font-semibold normal-case tracking-normal text-white outline-none focus:border-neutral-500"><option value="">All lots</option>{lots.map((item) => <option key={item.lot} value={item.lot}>{item.lot_name}</option>)}</select></label>
+              <label className="text-[10px] font-black uppercase tracking-[.14em] text-neutral-500">Appointment date<input value={date} onChange={(event) => setDate(event.target.value)} type="date" className="mt-2 h-11 w-full border border-white/10 bg-[#0d0f12] px-3 text-sm font-semibold normal-case tracking-normal text-white outline-none focus:border-neutral-500" /></label>
             </div>
-            <p className="mt-4 text-sm text-neutral-500">{leads.length} leads, newest first</p>
+            <p className="mt-5 text-xs font-bold uppercase tracking-[.14em] text-neutral-500">{leads.length} leads · newest first</p>
             <div className="mt-3 grid gap-4">
               {leads.map((lead, index) => (
-                <article key={lead.id} className="border border-neutral-200 bg-white p-5">
-                  <div className="flex flex-wrap justify-between gap-4 border-b pb-4">
-                    <div><span className={`px-2 py-1 text-xs font-black uppercase ${lead.appointment_status === "cancelled" ? "bg-neutral-200" : "bg-green-100 text-green-800"}`}>{lead.appointment_status}</span><h2 className="mt-2 text-2xl font-black">{lead.name}</h2><a className="text-red-600" href={`tel:${lead.phone}`}>{lead.phone}</a></div>
-                    <div className="sm:text-right"><small className="uppercase text-neutral-500">Appointment</small><strong className="block">{new Date(lead.appointment_time).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</strong></div>
+                <article key={lead.id} className="border border-white/10 bg-[#121417] p-4 transition hover:border-white/20 sm:p-5">
+                  <div className="flex flex-wrap justify-between gap-4 border-b border-white/10 pb-4">
+                    <div><span className={`inline-flex border px-2.5 py-1 text-[9px] font-black uppercase tracking-[.13em] ${lead.appointment_status === "cancelled" ? "border-white/10 bg-white/5 text-neutral-400" : "border-emerald-500/25 bg-emerald-500/10 text-emerald-300"}`}>{lead.appointment_status}</span><h2 className="mt-3 text-2xl font-black tracking-[-.035em]">{lead.name}</h2><a className="mt-1 block text-sm font-bold text-[#ff5a50]" href={`tel:${lead.phone}`}>{lead.phone}</a></div>
+                    <div className="sm:text-right"><small className="text-[9px] font-black uppercase tracking-[.14em] text-neutral-500">Appointment</small><strong className="mt-1 block text-sm">{new Date(lead.appointment_time).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</strong></div>
                   </div>
                   <dl className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
                     <Data term="Lead / car ID" value={`#${lead.id} / ${lead.car_id}`} />
@@ -130,14 +134,20 @@ function AdminDashboard() {
                     <Data term="Lot" value={`${lead.lot_name} — ${lead.lot_address}`} />
                     <Data term="Created / updated" value={`${new Date(lead.created_at).toLocaleDateString()} / ${new Date(lead.updated_at).toLocaleDateString()}`} />
                   </dl>
-                  <div className="mt-5 grid gap-3 border-t pt-4 lg:grid-cols-[1fr_180px_2fr_auto]">
-                    <label className="text-xs font-bold uppercase">Assigned to<input value={lead.assigned_to || ""} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, assigned_to: event.target.value } : item))} className="mt-1 w-full border p-2 normal-case" /></label>
-                    <label className="text-xs font-bold uppercase">Status<select value={lead.appointment_status} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, appointment_status: event.target.value } : item))} className="mt-1 w-full border p-2 normal-case"><option value="booked">Booked</option><option value="cancelled">Cancelled</option></select></label>
-                    <label className="text-xs font-bold uppercase">Notes<textarea value={lead.notes || ""} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, notes: event.target.value } : item))} className="mt-1 w-full border p-2 normal-case" rows="2" /></label>
-                    <button onClick={() => saveLead(lead)} className="self-end bg-neutral-950 px-5 py-3 font-bold text-white">Save</button>
+                  <div className="mt-5 grid gap-3 border-t border-white/10 pt-4 lg:grid-cols-[1fr_180px_2fr_auto]">
+                    <label className="text-[10px] font-black uppercase tracking-[.12em] text-neutral-500">Assigned to<input value={lead.assigned_to || ""} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, assigned_to: event.target.value } : item))} className="mt-2 h-11 w-full border border-white/10 bg-[#0d0f12] px-3 text-sm font-normal normal-case tracking-normal text-white outline-none focus:border-neutral-500" /></label>
+                    <label className="text-[10px] font-black uppercase tracking-[.12em] text-neutral-500">Status<select value={lead.appointment_status} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, appointment_status: event.target.value } : item))} className="mt-2 h-11 w-full border border-white/10 bg-[#0d0f12] px-3 text-sm font-semibold normal-case tracking-normal text-white outline-none focus:border-neutral-500"><option value="booked">Booked</option><option value="cancelled">Cancelled</option></select></label>
+                    <label className="text-[10px] font-black uppercase tracking-[.12em] text-neutral-500">Notes<textarea value={lead.notes || ""} onChange={(event) => setLeads((all) => all.map((item, itemIndex) => itemIndex === index ? { ...item, notes: event.target.value } : item))} className="mt-2 w-full border border-white/10 bg-[#0d0f12] p-3 text-sm font-normal normal-case tracking-normal text-white outline-none focus:border-neutral-500" rows="2" /></label>
+                    <button onClick={() => saveLead(lead)} className="self-end bg-[#ef3f32] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d92d22]">Save lead</button>
                   </div>
                 </article>
               ))}
+              {!leads.length && (
+                <div className="border border-white/10 bg-[#121417] px-6 py-16 text-center">
+                  <h2 className="text-xl font-black">No leads match these filters</h2>
+                  <p className="mt-2 text-sm text-neutral-500">Try another dealership or appointment date.</p>
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -190,5 +200,5 @@ function AdminDashboard() {
 }
 
 function Data({ term, value }) {
-  return <div><dt className="text-[10px] font-black uppercase tracking-wide text-neutral-500">{term}</dt><dd className="mt-1 text-sm">{value}</dd></div>;
+  return <div><dt className="text-[9px] font-black uppercase tracking-[.13em] text-neutral-500">{term}</dt><dd className="mt-1.5 break-words text-sm leading-5 text-neutral-300">{value}</dd></div>;
 }

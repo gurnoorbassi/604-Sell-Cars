@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Car, KeyRound, LogIn, UserPlus } from "lucide-react";
+import { KeyRound, LogIn, UserPlus } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
 const PRODUCTION_APP_URL = "https://dealership-inventory-board.netlify.app";
@@ -43,11 +43,18 @@ export default function AuthScreen() {
   };
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100 grid place-items-center p-5">
-      <section className="w-full max-w-sm rounded-2xl border border-neutral-800 bg-neutral-900 p-6 shadow-2xl">
+    <main className="relative grid min-h-screen place-items-center overflow-hidden bg-[#090a0c] p-5 text-neutral-100">
+      <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.035)_1px,transparent_1px)] [background-size:48px_48px]" />
+      <div className="pointer-events-none absolute -right-24 top-0 h-80 w-80 rounded-full bg-red-600/10 blur-3xl" />
+      <section className="relative w-full max-w-md border border-white/10 bg-[#121417] p-6 shadow-[0_30px_100px_rgba(0,0,0,.55)] sm:p-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-xl bg-red-600"><Car className="h-6 w-6" /></div>
-          <div><h1 className="font-extrabold tracking-tight">604SELLSCARS</h1><p className="text-xs text-neutral-500">Team inventory access</p></div>
+          <div className="grid h-12 w-14 place-items-center bg-[#ef3f32] text-base font-black italic">604</div>
+          <div><h1 className="font-extrabold tracking-[-.04em]">SELL CARS</h1><p className="mt-1 text-[9px] font-bold uppercase tracking-[.2em] text-neutral-500">Secure operations access</p></div>
+        </div>
+        <div className="mb-6 border-y border-white/10 py-5">
+          <p className="text-[10px] font-black uppercase tracking-[.18em] text-[#ff5a50]">Lead desk</p>
+          <h2 className="mt-2 text-2xl font-black tracking-[-.04em]">Sign in to operations</h2>
+          <p className="mt-2 text-sm leading-6 text-neutral-400">Manage viewing appointments, assignments, and customer follow-up.</p>
         </div>
         <label htmlFor="auth-email" className="text-xs font-medium text-neutral-400">Email</label>
         <input id="auth-email" className="inp mb-4" type="email" autoComplete="email" value={email}
@@ -57,11 +64,11 @@ export default function AuthScreen() {
           onChange={(event) => setPassword(event.target.value)} placeholder="Your password" />
         {message && <p className="mt-3 rounded-lg bg-neutral-800 px-3 py-2 text-xs text-amber-200">{message}</p>}
         <button disabled={busy || !email || password.length < 6} onClick={() => authenticate("signin")}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 py-2.5 text-sm font-bold hover:bg-red-500 disabled:opacity-40">
+          className="mt-5 flex w-full items-center justify-center gap-2 bg-[#ef3f32] py-3 text-sm font-black hover:bg-[#d92d22] disabled:opacity-40">
           <LogIn className="h-4 w-4" /> {busy ? "Working…" : "Sign in"}
         </button>
         <button disabled={busy || !email || password.length < 6} onClick={() => authenticate("signup")}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 py-2.5 text-sm font-semibold text-neutral-300 hover:bg-neutral-800 disabled:opacity-40">
+          className="mt-2 flex w-full items-center justify-center gap-2 border border-white/10 py-3 text-sm font-semibold text-neutral-300 hover:bg-white/5 disabled:opacity-40">
           <UserPlus className="h-4 w-4" /> Request BDC access
         </button>
         <button disabled={busy} onClick={requestPasswordReset}
