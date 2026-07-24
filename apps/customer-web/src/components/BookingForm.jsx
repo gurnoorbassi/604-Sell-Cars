@@ -88,7 +88,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
 
   if (confirmation) {
     return (
-      <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.16)]">
+      <section className="overflow-hidden border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.16)]">
         <div className="bg-green-700 p-7 text-white sm:p-9">
           <CheckCircle2 size={40} />
           <p className="mt-5 text-xs font-black uppercase tracking-[.18em] text-green-100">Appointment confirmed</p>
@@ -107,7 +107,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
   const fieldClass = "mt-2 h-12 w-full rounded-md border border-neutral-300 bg-white px-3 text-base font-normal normal-case outline-none transition focus:border-neutral-950 focus:ring-2 focus:ring-neutral-950/10";
 
   return (
-    <form onSubmit={submit} className={`rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.14)] ${compact ? "p-5 sm:p-7" : "p-6 sm:p-9"}`}>
+    <form onSubmit={submit} className={`border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.14)] ${compact ? "p-5 sm:p-7" : "p-6 sm:p-9"}`}>
       <div className="mb-7 flex items-start justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <p className="text-xs font-black uppercase tracking-[.18em] text-red-600">Reserve your visit</p>
@@ -153,9 +153,14 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         </div>
       )}
 
-      <label className="mt-4 block text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Approximate budget
-        <input className={fieldClass} name="budget" type="number" min="0" step="500" placeholder="$30,000" required />
-      </label>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Email <span className="font-medium normal-case text-neutral-400">(optional)</span>
+          <input className={fieldClass} name="email" type="email" autoComplete="email" placeholder="you@example.com" />
+        </label>
+        <label className="text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Approximate budget
+          <input className={fieldClass} name="budget" type="number" min="0" step="500" placeholder="$30,000" required />
+        </label>
+      </div>
 
       <fieldset className="mt-6" disabled={!selected}>
         <legend className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-neutral-700"><Clock3 size={15} /> Appointment time</legend>
