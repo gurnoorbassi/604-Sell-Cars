@@ -24,7 +24,7 @@ const carfaxUrl = (card) => [
 ].map(cleanUrl).find((url) => /carfax/i.test(url));
 const previewFor = (attachment) => {
   const previews = [...(attachment.previews || [])]
-    .filter((preview) => preview.width <= 600)
+    .filter((preview) => preview.width <= 1600)
     .sort((a, b) => b.width - a.width);
   return previews[0]?.url || attachment.url;
 };
@@ -50,7 +50,7 @@ for (const record of uniqueSeed) {
   record.t = card.name || record.t;
   record.de = card.desc || record.de;
   record.trelloUrl = card.shortUrl;
-  record.photos = orderedImages.slice(0, 8).map(previewFor);
+  record.photos = orderedImages.map(previewFor);
   record.pc = images.length;
   record.videos = attachments
     .filter((attachment) => (attachment.mimeType || "").startsWith("video/") && attachment.isUpload)
