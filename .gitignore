@@ -3,7 +3,9 @@ dist/
 .env
 .env.*
 !.env.example
+uploads/
 *.log
+logs/
 backups/
 
 # Local Netlify folder
