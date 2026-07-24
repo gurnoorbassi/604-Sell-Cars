@@ -20,28 +20,37 @@ const safeFilename = (value) => value
   .replace(/^-+|-+$/g, "")
   .slice(0, 80) || "vehicle";
 
-const imageExtension = (contentType, sourceUrl) => {
-  const typeExtensions = {
-    "image/avif": "avif",
-    "image/bmp": "bmp",
-    "image/gif": "gif",
-    "image/heic": "heic",
-    "image/heif": "heif",
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/svg+xml": "svg",
-    "image/tiff": "tiff",
-    "image/webp": "webp",
-  };
-  const normalizedType = contentType?.split(";")[0].trim().toLowerCase();
-  if (typeExtensions[normalizedType]) return typeExtensions[normalizedType];
-  try {
-    const match = new URL(sourceUrl).pathname.match(/\.([a-z0-9]{2,5})$/i);
-    if (match) return match[1].toLowerCase();
-  } catch {
-    // The response MIME type normally determines the extension.
-  }
-  return "jpg";
+const toJpegBlob = (sourceBlob) => {
+  if (sourceBlob.type.toLowerCase() === "image/jpeg") return Promise.resolve(sourceBlob);
+
+  return new Promise((resolve, reject) => {
+    const imageUrl = URL.createObjectURL(sourceBlob);
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext("2d");
+      if (!context) {
+        URL.revokeObjectURL(imageUrl);
+        reject(new Error("JPEG conversion is not supported by this browser"));
+        return;
+      }
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0);
+      canvas.toBlob((jpegBlob) => {
+        URL.revokeObjectURL(imageUrl);
+        if (jpegBlob) resolve(jpegBlob);
+        else reject(new Error("JPEG conversion failed"));
+      }, "image/jpeg", 0.92);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(imageUrl);
+      reject(new Error("This picture format cannot be converted to JPEG"));
+    };
+    image.src = imageUrl;
+  });
 };
 
 const downloadCarPictures = async (car, onProgress) => {
@@ -60,8 +69,8 @@ const downloadCarPictures = async (car, onProgress) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const blob = await response.blob();
         if (!blob.type.startsWith("image/")) throw new Error("The server did not return an image");
-        const extension = imageExtension(blob.type, url);
-        zip.file(`${String(index + 1).padStart(width, "0")}.${extension}`, blob);
+        const jpegBlob = await toJpegBlob(blob);
+        zip.file(`${String(index + 1).padStart(width, "0")}.jpg`, jpegBlob);
         saved += 1;
       } catch (error) {
         failed.push(`Picture ${index + 1}: ${error.message || "download failed"}`);
@@ -90,7 +99,7 @@ const downloadCarPictures = async (car, onProgress) => {
   const downloadUrl = URL.createObjectURL(archive);
   const link = document.createElement("a");
   link.href = downloadUrl;
-  link.download = `${safeFilename(`${car.title}-${car.stock || car.id}`)}-pictures.zip`;
+  link.download = `${safeFilename(`${car.title}-${car.stock || car.id}`)}-jpeg-pictures.zip`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -977,8 +986,8 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
     try {
       const result = await downloadCarPictures(car, setPictureDownload);
       setPictureDownloadMessage(result.failed
-        ? `Saved ${result.saved} pictures. ${result.failed} could not be downloaded; details are inside the ZIP.`
-        : `Saved all ${result.saved} pictures.`);
+        ? `Saved ${result.saved} pictures as JPEG. ${result.failed} could not be converted; details are inside the ZIP.`
+        : `Saved all ${result.saved} pictures as JPEG.`);
     } catch (error) {
       setPictureDownloadMessage(error.message || "Pictures could not be saved. Please try again.");
     } finally {
@@ -990,7 +999,7 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
     ? `Creating ZIP ${pictureDownload.completed}%`
     : pictureDownload
       ? `Downloading ${pictureDownload.completed}/${pictureDownload.total}`
-      : `Save all pictures (${car.photos?.length || 0})`;
+      : `Save all pictures as JPEG (${car.photos?.length || 0})`;
 
   return (
     <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex justify-end" onClick={onClose}>
