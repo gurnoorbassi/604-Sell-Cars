@@ -57,7 +57,7 @@ export default function CarDetailPage({ id }) {
     <div className="min-h-screen bg-[#090a0c] text-white">
       <SiteHeader />
 
-      <main>
+      <main className="pb-20 lg:pb-0">
         <section className="border-b border-white/10 bg-[#0d0f12]">
           <div className="mx-auto w-[min(1380px,94vw)] py-6 sm:py-8">
             <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.13em] text-neutral-500 hover:text-white">
@@ -81,9 +81,10 @@ export default function CarDetailPage({ id }) {
 
         <div className="mx-auto grid w-[min(1380px,94vw)] gap-8 py-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:items-start">
           <section>
-            <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-neutral-900 shadow-[0_24px_70px_rgba(0,0,0,.42)]">
+            <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#08090b_75%)] shadow-[0_24px_70px_rgba(0,0,0,.42)]">
               {images[active] ? (
-                <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high" className="h-full w-full object-cover" />
+                <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high"
+                  className="h-full w-full object-cover sm:object-contain" />
               ) : (
                 <div className="grid h-full place-items-center text-sm font-semibold text-neutral-500">Photos coming soon</div>
               )}
@@ -130,7 +131,7 @@ export default function CarDetailPage({ id }) {
                 )}
                 <div className="mt-8 grid gap-3 border-t border-white/10 pt-6 text-sm font-semibold text-neutral-300 sm:grid-cols-2">
                   <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Live inventory status</span>
-                  <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Verified viewing location</span>
+                  <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Exact listing location</span>
                 </div>
               </div>
             </section>
@@ -171,6 +172,15 @@ export default function CarDetailPage({ id }) {
           </aside>
         </div>
       </main>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#090a0c]/95 p-3 backdrop-blur lg:hidden">
+        <a
+          href={`${LANDING_URL}?car=${encodeURIComponent(car.id)}`}
+          className="mx-auto flex w-full max-w-lg items-center justify-center gap-2 bg-[#ef3f32] px-5 py-3.5 text-sm font-black text-white"
+        >
+          <CalendarDays size={17} /> Book a viewing
+        </a>
+      </div>
 
       <SiteFooter />
     </div>

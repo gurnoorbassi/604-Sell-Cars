@@ -36,7 +36,7 @@ remain private until corrected in the board.
 npm run import:trello-export -- "C:\path\to\trello-board-export.json"
 ```
 
-This matches vehicles by their original Trello card IDs, removes duplicate URL-only pointers, restores card names and descriptions, adds up to eight 600px previews per vehicle, and recovers CARFAX links.
+This matches vehicles by their original Trello card IDs, removes duplicate URL-only pointers, restores card names and descriptions, preserves every uploaded vehicle photo in Trello cover-first order using previews up to 1600px, and recovers CARFAX links.
 
 ## Run locally
 
@@ -77,6 +77,8 @@ The resumable migration downloads the imported Trello image previews with your a
 The deployed app's Trello media function requires `TRELLO_API_KEY`, `TRELLO_API_TOKEN`, and `TRELLO_MEDIA_SIGNING_SECRET` as encrypted Netlify environment variables. It returns short-lived signed media URLs only to active team accounts.
 
 The older `npm run import:trello` command is still available when you need a fresh API import directly from a board.
+
+The Owner-only **Admin access** panel also includes **Sync every gallery**. It queues only vehicles whose stored image count is below the source card's photo count, so the operation is safe to rerun and does not duplicate completed galleries.
 
 ## Refresh inventory classifications
 

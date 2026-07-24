@@ -3,7 +3,7 @@ import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
-  ShieldCheck, Users, Download,
+  ShieldCheck, Users, Download, RefreshCw,
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
 import { chunkArray, tierFor } from "./lib/inventory";
@@ -255,6 +255,7 @@ export default function SellsCarsBoard() {
   const [teamNotice, setTeamNotice] = useState("");
   const [migrationStatus, setMigrationStatus] = useState(null);
   const [migrationStarting, setMigrationStarting] = useState(false);
+  const [galleryBatchStarting, setGalleryBatchStarting] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(48);
   const isOwner = membershipRole === "owner";
   const canEdit = membershipRole === "owner" || membershipRole === "admin";
@@ -379,6 +380,12 @@ export default function SellsCarsBoard() {
     setDisplayLimit(48);
   }, [tab, search, f.dealership, f.body, f.fuel, f.tier, f.flag]);
 
+  useEffect(() => {
+    if (!detail) return;
+    const refreshedCar = cars.find((car) => car.id === detail.id);
+    if (refreshedCar) setDetail(refreshedCar);
+  }, [cars]);
+
   const visible = cars.filter((c) => {
     if (tab === "sold" ? c.status !== "sold" : c.status !== "live") return false;
     if (f.dealership && c.dealership !== f.dealership) return false;
@@ -405,6 +412,12 @@ export default function SellsCarsBoard() {
     missingPrice: cars.filter((car) => !car.price).length,
     missingCarfax: cars.filter((car) => !car.carfax).length,
     duplicateStocks: [...stockCounts.values()].filter((count) => count > 1).length,
+  };
+  const galleryStatus = {
+    vehicles: cars.filter((car) => car.trelloUrl).length,
+    incomplete: cars.filter((car) => car.trelloUrl && car.photos.length < car.photoCount).length,
+    stored: cars.reduce((total, car) => total + car.photos.length, 0),
+    expected: cars.reduce((total, car) => total + Number(car.photoCount || 0), 0),
   };
 
   const updateStatus = async (id, values) => {
@@ -665,6 +678,30 @@ export default function SellsCarsBoard() {
     }
   };
 
+  const startGalleryBatch = async () => {
+    if (!isOwner || galleryBatchStarting || !galleryStatus.incomplete) return;
+    setGalleryBatchStarting(true);
+    setTeamError("");
+    setTeamNotice("");
+    try {
+      const response = await fetch("/.netlify/functions/sync-all-trello-media-background", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "x-supabase-publishable-key": supabasePublishableKey,
+        },
+      });
+      if (!response.ok && response.status !== 202) {
+        throw new Error("The full inventory gallery sync could not be started.");
+      }
+      setTeamNotice(`Full gallery sync started for ${galleryStatus.incomplete} incomplete vehicles. It is safe to close this panel.`);
+    } catch (error) {
+      setTeamError(error.message || "The full inventory gallery sync could not be started.");
+    } finally {
+      setGalleryBatchStarting(false);
+    }
+  };
+
   if (!authReady) return <div className="min-h-screen bg-neutral-950 grid place-items-center text-sm text-neutral-500">Connecting securely…</div>;
   if (!session) return <AuthScreen />;
   if (passwordRecovery) return <PasswordUpdateScreen onDone={() => setPasswordRecovery(false)} />;
@@ -781,7 +818,8 @@ export default function SellsCarsBoard() {
       </main>
 
       {detail && (
-        <DetailPanel car={detail} canEdit={canEdit} onClose={() => setDetail(null)}
+        <DetailPanel car={detail} canEdit={canEdit} isOwner={isOwner} session={session}
+          onClose={() => setDetail(null)}
           onSold={() => markSold(detail.id)} onRelist={() => relist(detail.id)}
           onEdit={() => openEdit(detail)} onDelete={() => remove(detail.id)} />
       )}
@@ -796,7 +834,8 @@ export default function SellsCarsBoard() {
           onUpdate={updateTeamMember} onClose={() => setTeamOpen(false)}
           migrationStatus={migrationStatus} migrationStarting={migrationStarting}
           onStartMigration={startMediaMigration} onRefreshMigration={loadMigrationStatus}
-          qualityStatus={qualityStatus} />
+          galleryStatus={galleryStatus} galleryBatchStarting={galleryBatchStarting}
+          onStartGalleryBatch={startGalleryBatch} qualityStatus={qualityStatus} />
       )}
       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
     </div>
@@ -806,6 +845,7 @@ export default function SellsCarsBoard() {
 function TeamPanel({
   members, email, setEmail, loading, error, notice, onAdd, onUpdate, onClose,
   migrationStatus, migrationStarting, onStartMigration, onRefreshMigration, qualityStatus,
+  galleryStatus, galleryBatchStarting, onStartGalleryBatch,
 }) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm">
@@ -846,6 +886,24 @@ function TeamPanel({
             <span>{qualityStatus.duplicateStocks} duplicate stock group</span>
           </div>
           <p className="mt-2 text-[11px] text-neutral-500">These require real dealership data; the app will not invent missing values.</p>
+        </div>
+
+        <div className="border-b border-neutral-800 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-neutral-200">Complete vehicle galleries</p>
+              <p className="mt-1 text-xs text-neutral-500">
+                {galleryStatus.stored.toLocaleString()} of {galleryStatus.expected.toLocaleString()} photos available
+                {" · "}{galleryStatus.incomplete} of {galleryStatus.vehicles} galleries incomplete
+              </p>
+            </div>
+            <button onClick={onStartGalleryBatch}
+              disabled={galleryBatchStarting || !galleryStatus.incomplete}
+              className="rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-500 disabled:opacity-40">
+              {galleryBatchStarting ? "Starting…" : "Sync every gallery"}
+            </button>
+          </div>
+          <p className="mt-2 text-[11px] text-neutral-500">Adds missing Trello exterior and interior photos without duplicating files already stored.</p>
         </div>
 
         <div className="border-b border-neutral-800 p-5">
@@ -1013,10 +1071,35 @@ const Tag = ({ children }) => (
   <span className="text-[10px] bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded font-medium">{children}</span>
 );
 
-function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete }) {
+function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist, onEdit, onDelete }) {
   const sold = car.status === "sold";
   const [pictureDownload, setPictureDownload] = useState(null);
   const [pictureDownloadMessage, setPictureDownloadMessage] = useState("");
+  const [gallerySyncing, setGallerySyncing] = useState(false);
+  const [gallerySyncMessage, setGallerySyncMessage] = useState("");
+
+  const syncFullGallery = async () => {
+    if (!isOwner || gallerySyncing || !car.trelloUrl) return;
+    setGallerySyncing(true);
+    setGallerySyncMessage("");
+    try {
+      const response = await fetch("/.netlify/functions/sync-trello-card-media-background", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+          "x-supabase-publishable-key": supabasePublishableKey,
+        },
+        body: JSON.stringify({ vehicleId: car.id }),
+      });
+      if (!response.ok && response.status !== 202) throw new Error("The full gallery sync could not be started.");
+      setGallerySyncMessage("Full Trello gallery sync started. New exterior and interior photos will appear here automatically.");
+    } catch (error) {
+      setGallerySyncMessage(error.message || "The full gallery sync could not be started.");
+    } finally {
+      setGallerySyncing(false);
+    }
+  };
 
   const saveAllPictures = async () => {
     setPictureDownloadMessage("");
@@ -1067,6 +1150,22 @@ function DetailPanel({ car, canEdit, onClose, onSold, onRelist, onEdit, onDelete
           </div>
           {car.photos?.length > 0 && (
             <div className="mt-4">
+              {isOwner && car.trelloUrl && (
+                <button type="button" onClick={syncFullGallery} disabled={gallerySyncing}
+                  className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-red-500 disabled:cursor-wait disabled:opacity-60">
+                  <RefreshCw className={`h-4 w-4 ${gallerySyncing ? "animate-spin" : ""}`} />
+                  {gallerySyncing ? "Starting full gallery sync…" : `Sync all Trello photos (${car.photoCount || car.photos.length} expected)`}
+                </button>
+              )}
+              {gallerySyncMessage && (
+                <p role="status" className={`mb-3 rounded-lg border px-3 py-2 text-xs ${
+                  gallerySyncMessage.startsWith("Full")
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
+                    : "border-red-500/30 bg-red-500/10 text-red-200"
+                }`}>
+                  {gallerySyncMessage}
+                </p>
+              )}
               <button type="button" onClick={saveAllPictures} disabled={Boolean(pictureDownload)}
                 className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800/80 px-3 py-2.5 text-sm font-semibold text-neutral-100 hover:border-neutral-500 hover:bg-neutral-800 disabled:cursor-wait disabled:opacity-60">
                 {pictureDownload
