@@ -9,6 +9,8 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
   const [slots, setSlots] = useState([]);
   const [date, setDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
+  const [budget, setBudget] = useState(30000);
+  const [budgetTouched, setBudgetTouched] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [confirmation, setConfirmation] = useState(null);
@@ -53,6 +55,10 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
   async function chooseCar(car) {
     setSelected(car);
     setSearch(carName(car));
+    if (!budgetTouched && Number.isFinite(Number(car.price_amount))) {
+      const suggestedBudget = Math.ceil(Number(car.price_amount) / 5000) * 5000;
+      setBudget(Math.min(250000, Math.max(5000, suggestedBudget)));
+    }
     setError("");
     setAppointmentTime("");
     try {
@@ -157,9 +163,33 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         <label className="text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Email <span className="font-medium normal-case text-neutral-400">(optional)</span>
           <input className={fieldClass} name="email" type="email" autoComplete="email" placeholder="you@example.com" />
         </label>
-        <label className="text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Approximate budget
-          <input className={fieldClass} name="budget" type="number" min="0" step="500" placeholder="$30,000" required />
-        </label>
+        <div className="rounded-md border border-neutral-300 bg-neutral-50 px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="budget-range" className="text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Approximate budget</label>
+            <output htmlFor="budget-range" className="text-lg font-black tabular-nums text-neutral-950">
+              ${budget.toLocaleString()}
+            </output>
+          </div>
+          <input
+            id="budget-range"
+            className="budget-range mt-4 w-full"
+            type="range"
+            min="5000"
+            max="250000"
+            step="1000"
+            value={budget}
+            style={{ "--budget-progress": `${((budget - 5000) / 245000) * 100}%` }}
+            onChange={(event) => {
+              setBudget(Number(event.target.value));
+              setBudgetTouched(true);
+            }}
+          />
+          <input type="hidden" name="budget" value={budget} />
+          <div className="mt-2 flex justify-between text-[11px] font-semibold normal-case text-neutral-400">
+            <span>$5k</span>
+            <span>$250k+</span>
+          </div>
+        </div>
       </div>
 
       <fieldset className="mt-6" disabled={!selected}>
