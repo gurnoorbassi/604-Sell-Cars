@@ -4,51 +4,37 @@ import { ADMIN_URL, BOARD_URL, LANDING_URL, WEBSITE_URL } from "../lib/links";
 
 export default function SiteHeader({ admin = false }) {
   const siteHome = admin ? ADMIN_URL : WEBSITE_URL;
-
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090a0c]/95 text-white backdrop-blur-xl">
-      <div className="hidden border-b border-white/10 bg-black/40 md:block">
-        <div className="mx-auto flex h-9 w-[min(1380px,94vw)] items-center justify-between text-[10px] font-bold uppercase tracking-[.17em] text-neutral-400">
-          <span className="flex items-center gap-2">
-            <MapPin size={12} className="text-[#ef3f32]" />
-            Independent dealership inventory across Metro Vancouver
-          </span>
-          <span>{admin ? "Secure operations portal" : "Viewing appointments · Daily 10 AM–7 PM"}</span>
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#08090b]/96 text-white backdrop-blur-xl">
+      <div className="hidden border-b border-white/10 md:block">
+        <div className="mx-auto flex h-8 w-[min(1320px,92vw)] items-center justify-between text-[9px] font-bold uppercase tracking-[.16em] text-neutral-500">
+          <span className="flex items-center gap-2"><MapPin size={11} className="text-[#ef3f32]" />Metro Vancouver dealership inventory</span>
+          <span>{admin ? "Secure operations portal" : "Viewings available daily · 10 AM–7 PM"}</span>
         </div>
       </div>
-
-      <div className="mx-auto flex h-[74px] w-[min(1380px,94vw)] items-center justify-between gap-5">
-        <a href={siteHome} className="group flex items-center gap-3" aria-label="604 Sell Cars home">
-          <span className="relative grid h-11 w-[54px] place-items-center overflow-hidden bg-[#ef3f32] text-[17px] font-black italic tracking-[-.06em] text-white">
-            <span className="absolute -right-2 top-0 h-full w-3 skew-x-[-12deg] bg-white/15" />
-            604
-          </span>
-          <span className="leading-none">
-            <strong className="block text-[17px] font-black tracking-[-.055em]">SELL CARS</strong>
-            <small className="mt-1.5 block text-[8px] font-bold uppercase tracking-[.24em] text-neutral-500">
-              {admin ? "Operations" : "Metro Vancouver"}
-            </small>
+      <div className="mx-auto flex h-[72px] w-[min(1320px,92vw)] items-center justify-between gap-5">
+        <a href={siteHome} className="flex items-center gap-3" aria-label="604 Sell Cars home">
+          <span className="grid h-10 w-[50px] place-items-center bg-[#ef3f32] text-[15px] font-black italic tracking-[-.06em] text-white">604</span>
+          <span>
+            <strong className="block text-[15px] font-black leading-none tracking-[-.045em]">SELL CARS</strong>
+            <small className="mt-1.5 block text-[7px] font-bold uppercase tracking-[.23em] text-neutral-500">{admin ? "Operations" : "Dealer network"}</small>
           </span>
         </a>
 
-        <nav className="flex items-center gap-1 text-[13px] font-bold" aria-label="Primary navigation">
+        <nav className="flex items-center gap-1 text-xs font-bold" aria-label="Primary navigation">
           {admin ? (
             <>
-              <a href={ADMIN_URL} className="rounded px-3 py-2 hover:bg-white/10">Lead desk</a>
-              <a href={BOARD_URL} className="rounded px-3 py-2 hover:bg-white/10">Inventory board</a>
-              <a href={WEBSITE_URL} className="hidden items-center gap-1 rounded px-3 py-2 text-neutral-400 hover:bg-white/10 lg:flex">
-                Public site <ArrowUpRight size={14} />
-              </a>
+              <a href={ADMIN_URL} className="px-3 py-2 hover:bg-white/5">Lead desk</a>
+              <a href={BOARD_URL} className="px-3 py-2 hover:bg-white/5">Inventory board</a>
+              <a href={WEBSITE_URL} className="hidden items-center gap-1 px-3 py-2 text-neutral-400 hover:text-white lg:flex">Public site <ArrowUpRight size={13} /></a>
             </>
           ) : (
             <>
-              <a href={WEBSITE_URL} className="hidden rounded px-3 py-2 text-neutral-300 hover:text-white sm:block">Home</a>
-              <a href={`${WEBSITE_URL}/inventory`} className="rounded px-3 py-2 text-neutral-300 hover:text-white">Inventory</a>
-              <a href={`${WEBSITE_URL}/#how-it-works`} className="hidden rounded px-3 py-2 text-neutral-300 hover:text-white lg:block">How it works</a>
-              <a href={LANDING_URL} className="ml-1 flex items-center gap-2 bg-[#ef3f32] px-3.5 py-3 text-white transition hover:bg-[#d92d22] sm:px-5">
-                <CalendarDays size={16} />
-                <span className="hidden sm:inline">Book a viewing</span>
-                <span className="sm:hidden">Book</span>
+              <a href={WEBSITE_URL} className="hidden px-3 py-2 text-neutral-400 transition hover:text-white md:block">Home</a>
+              <a href={`${WEBSITE_URL}/inventory`} className="px-3 py-2 text-neutral-300 transition hover:text-white">Inventory</a>
+              <a href={`${WEBSITE_URL}/#how-it-works`} className="hidden px-3 py-2 text-neutral-400 transition hover:text-white lg:block">How it works</a>
+              <a href={LANDING_URL} className="ml-2 flex h-10 items-center gap-2 bg-[#ef3f32] px-4 text-white transition hover:bg-[#d92d22] sm:px-5">
+                <CalendarDays size={15} /><span className="hidden sm:inline">Book a viewing</span><span className="sm:hidden">Book</span>
               </a>
             </>
           )}
