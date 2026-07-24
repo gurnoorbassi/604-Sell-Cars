@@ -12,8 +12,8 @@ export default function LandingPage() {
       <main className="relative isolate overflow-hidden bg-[#111216] text-white">
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(115deg,#111216_0%,#111216_55%,#1d2025_100%)]" />
         <div className="absolute left-0 top-0 -z-10 h-full w-1 bg-[#ef3f32]" />
-        <div className="mx-auto grid min-h-[calc(100vh-113px)] w-[min(1380px,94vw)] gap-12 py-12 lg:grid-cols-[.78fr_1.22fr] lg:items-center lg:py-16">
-          <section className="max-w-xl">
+        <div className="mx-auto grid min-h-[calc(100vh-113px)] w-[min(1380px,94vw)] min-w-0 gap-7 py-6 sm:py-10 lg:grid-cols-[.78fr_1.22fr] lg:items-center lg:gap-12 lg:py-16">
+          <section className="hidden max-w-xl lg:block">
             <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#ff6b60]">Book directly from live inventory</p>
             <h1 className="mt-5 text-[clamp(2.8rem,5vw,4.7rem)] font-black leading-[.95] tracking-[-.06em]">
               See the right car at the right location.
@@ -31,7 +31,14 @@ export default function LandingPage() {
               <span>No account required · Confirmation appears instantly</span>
             </div>
           </section>
-          <section className="lg:pl-6">
+          <section className="min-w-0 max-w-full lg:pl-6">
+            <div className="mb-5 lg:hidden">
+              <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#ff6b60]">Book directly from live inventory</p>
+              <h1 className="mt-2 max-w-sm text-[2rem] font-black leading-[1.02] tracking-[-.045em]">
+                Pick your car. Choose your time.
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">We automatically send you to the correct dealership location.</p>
+            </div>
             <BookingForm initialCarId={initialCarId} />
           </section>
         </div>

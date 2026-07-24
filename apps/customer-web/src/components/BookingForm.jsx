@@ -53,6 +53,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
   }, new Map()), [slots]);
 
   async function chooseCar(car) {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     setSelected(car);
     setSearch(carName(car));
     if (!budgetTouched && Number.isFinite(Number(car.price_amount))) {
@@ -110,10 +111,10 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
     );
   }
 
-  const fieldClass = "mt-2 h-12 w-full rounded-md border border-neutral-300 bg-white px-3 text-base font-normal normal-case outline-none transition focus:border-neutral-950 focus:ring-2 focus:ring-neutral-950/10";
+  const fieldClass = "mobile-form-control mt-2 h-12 min-w-0 w-full max-w-full rounded-md border border-neutral-300 bg-white px-3 text-base font-normal normal-case outline-none transition focus:border-neutral-950 focus:ring-2 focus:ring-neutral-950/10";
 
   return (
-    <form onSubmit={submit} className={`border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.14)] ${compact ? "p-5 sm:p-7" : "p-6 sm:p-9"}`}>
+    <form onSubmit={submit} className={`w-full min-w-0 max-w-full overflow-x-hidden border border-neutral-200 bg-white text-neutral-950 shadow-[0_20px_60px_rgba(0,0,0,.14)] ${compact ? "p-4 sm:p-7" : "p-4 sm:p-9"}`}>
       <div className="mb-7 flex items-start justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <p className="text-xs font-black uppercase tracking-[.18em] text-red-600">Reserve your visit</p>
@@ -132,7 +133,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         </label>
       </div>
 
-      <label className="relative mt-4 block text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Vehicle
+      <label className="relative mt-4 block min-w-0 max-w-full text-xs font-bold uppercase tracking-[.08em] text-neutral-700">Vehicle
         <div className="relative">
           <Search size={17} className="absolute left-3 top-1/2 mt-1 -translate-y-1/2 text-neutral-400" />
           <input className={`${fieldClass} pl-10`} value={search}
@@ -140,11 +141,11 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
             placeholder="Search year, make, or model" autoComplete="off" />
         </div>
         {!selected && search && (
-          <div className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-neutral-200 bg-white p-1 shadow-2xl">
+          <div className="absolute z-20 mt-1 max-h-72 w-full max-w-full overflow-auto overscroll-contain rounded-lg border border-neutral-200 bg-white p-1 shadow-2xl">
             {cars.length ? cars.map((car) => (
               <button type="button" key={car.id} onClick={() => chooseCar(car)}
-                className="flex w-full items-center justify-between gap-4 rounded-md border-b border-neutral-100 p-3 text-left normal-case transition last:border-0 hover:bg-neutral-50">
-                <span><strong className="block text-sm">{carName(car)}</strong><span className="mt-1 block text-xs text-neutral-500">{priceLabel(car)} · {car.lot_name}</span></span>
+                className="flex w-full min-w-0 items-center justify-between gap-3 rounded-md border-b border-neutral-100 p-3 text-left normal-case transition last:border-0 hover:bg-neutral-50">
+                <span className="min-w-0"><strong className="block break-words text-sm leading-5">{carName(car)}</strong><span className="mt-1 block truncate text-xs text-neutral-500">{priceLabel(car)} · {car.lot_name}</span></span>
                 <ChevronRight size={17} className="shrink-0 text-neutral-400" />
               </button>
             )) : <p className="p-4 text-center text-sm font-normal normal-case text-neutral-500">No matching vehicles found.</p>}
@@ -155,7 +156,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
       {selected && (
         <div className="mt-3 flex gap-3 rounded-lg bg-neutral-950 p-4 text-white">
           <MapPin size={18} className="mt-0.5 shrink-0 text-red-400" />
-          <div><small className="font-bold uppercase tracking-[.12em] text-neutral-400">Your viewing location</small><strong className="mt-1 block">{selected.lot_name}</strong><span className="mt-0.5 block text-sm text-neutral-300">{selected.lot_address}</span></div>
+          <div className="min-w-0"><small className="font-bold uppercase tracking-[.12em] text-neutral-400">Your viewing location</small><strong className="mt-1 block break-words">{selected.lot_name}</strong><span className="mt-0.5 block break-words text-sm text-neutral-300">{selected.lot_address}</span></div>
         </div>
       )}
 
@@ -192,9 +193,9 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         </div>
       </div>
 
-      <fieldset className="mt-6" disabled={!selected}>
+      <fieldset className="mt-6 min-w-0 w-full max-w-full" disabled={!selected}>
         <legend className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.08em] text-neutral-700"><Clock3 size={15} /> Appointment time</legend>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+        <div className="mobile-slot-scroll mt-3 flex w-full min-w-0 max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-2">
           {[...groups.keys()].map((label) => (
             <button type="button" key={label} onClick={() => setDate(label)}
               className={`shrink-0 rounded-md border px-3 py-2.5 text-sm font-bold transition ${date === label ? "border-neutral-950 bg-neutral-950 text-white" : "border-neutral-300 bg-white hover:border-neutral-500"}`}>
@@ -202,7 +203,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
             </button>
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <div className="mt-2 grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-5">
           {(groups.get(date) || []).map((slot) => (
             <button type="button" key={slot.iso} onClick={() => setAppointmentTime(slot.iso)}
               className={`rounded-md border p-2.5 text-sm font-bold transition ${appointmentTime === slot.iso ? "border-red-600 bg-red-600 text-white" : "border-neutral-300 hover:border-red-400"}`}>
@@ -217,7 +218,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
       <button disabled={submitting} className="mt-6 flex w-full items-center justify-center gap-3 rounded-md bg-red-600 p-4 font-black text-white transition hover:bg-red-700 disabled:opacity-60">
         <span>{submitting ? "Confirming appointment…" : "Confirm my viewing"}</span><ChevronRight size={18} />
       </button>
-      <p className="mt-4 flex items-center justify-center gap-2 text-xs font-medium normal-case text-neutral-500"><LockKeyhole size={13} /> Your information is used only to coordinate this viewing.</p>
+      <p className="mt-4 flex items-start justify-center gap-2 text-center text-xs font-medium leading-5 normal-case text-neutral-500"><LockKeyhole size={13} className="mt-0.5 shrink-0" /> Your information is used only to coordinate this viewing.</p>
     </form>
   );
 }
