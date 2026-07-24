@@ -15,7 +15,7 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
 const backupDirectory = resolve(process.argv[2] || `backups/${new Date().toISOString().replace(/[:.]/g, "-")}`);
 await mkdir(backupDirectory, { recursive: true });
 
-for (const table of ["inventory", "vehicle_media", "team_members", "inventory_audit"]) {
+for (const table of ["cars", "vehicle_media", "leads", "team_members", "inventory_audit"]) {
   const rows = [];
   for (let from = 0; ; from += 1000) {
     const { data, error } = await supabase.from(table).select("*").range(from, from + 999);
