@@ -54,13 +54,13 @@ export default function CarDetailPage({ id }) {
   const next = () => setActive((index) => (index + 1) % images.length);
 
   return (
-    <div className="min-h-screen bg-[#f3f3f1] text-[#111216]">
+    <div className="min-h-screen bg-[#090a0c] text-white">
       <SiteHeader />
 
       <main>
-        <section className="border-b border-neutral-200 bg-white">
+        <section className="border-b border-white/10 bg-[#0d0f12]">
           <div className="mx-auto w-[min(1380px,94vw)] py-6 sm:py-8">
-            <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.13em] text-neutral-500 hover:text-[#111216]">
+            <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.13em] text-neutral-500 hover:text-white">
               <ArrowLeft size={14} /> Back to inventory
             </a>
             <div className="mt-5 flex flex-wrap items-end justify-between gap-5">
@@ -81,7 +81,7 @@ export default function CarDetailPage({ id }) {
 
         <div className="mx-auto grid w-[min(1380px,94vw)] gap-8 py-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:items-start">
           <section>
-            <div className="relative aspect-[16/10] overflow-hidden bg-neutral-200 shadow-[0_20px_55px_rgba(20,20,20,.12)]">
+            <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-neutral-900 shadow-[0_24px_70px_rgba(0,0,0,.42)]">
               {images[active] ? (
                 <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high" className="h-full w-full object-cover" />
               ) : (
@@ -117,18 +117,18 @@ export default function CarDetailPage({ id }) {
               <video key={video} controls preload="metadata" className="mt-6 w-full bg-black"><source src={video} /></video>
             ))}
 
-            <section className="mt-10 border border-neutral-200 bg-white">
-              <div className="border-b border-neutral-200 p-6 sm:p-8">
+            <section className="mt-10 border border-white/10 bg-[#121417]">
+              <div className="border-b border-white/10 p-6 sm:p-8">
                 <p className="text-[10px] font-black uppercase tracking-[.18em] text-[#d92d22]">Vehicle overview</p>
                 <h2 className="mt-2 text-3xl font-black tracking-[-.045em]">About this {car.year || ""} {car.make || "vehicle"}</h2>
               </div>
               <div className="p-6 sm:p-8">
                 {description ? (
-                  <p className="whitespace-pre-line text-[15px] leading-7 text-neutral-700">{description}</p>
+                  <p className="whitespace-pre-line text-[15px] leading-7 text-neutral-300">{description}</p>
                 ) : (
-                  <p className="text-[15px] leading-7 text-neutral-600">Contact the dealership or book a viewing to learn more about this vehicle.</p>
+                  <p className="text-[15px] leading-7 text-neutral-400">Contact the dealership or book a viewing to learn more about this vehicle.</p>
                 )}
-                <div className="mt-8 grid gap-3 border-t border-neutral-200 pt-6 text-sm font-semibold text-neutral-700 sm:grid-cols-2">
+                <div className="mt-8 grid gap-3 border-t border-white/10 pt-6 text-sm font-semibold text-neutral-300 sm:grid-cols-2">
                   <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Live inventory status</span>
                   <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Verified viewing location</span>
                 </div>
@@ -136,8 +136,8 @@ export default function CarDetailPage({ id }) {
             </section>
           </section>
 
-          <aside className="border border-neutral-200 bg-white lg:sticky lg:top-[112px]">
-            <dl className="grid grid-cols-2 border-b border-neutral-200">
+          <aside className="border border-white/10 bg-[#121417] lg:sticky lg:top-[112px]">
+            <dl className="grid grid-cols-2 border-b border-white/10">
               <Spec icon={Gauge} term="Mileage" value={mileageLabel(car)} />
               <Spec term="Body style" value={car.body_type} />
               <Spec term="Fuel" value={car.fuel_type || car.fuel_tags?.join(", ")} />
@@ -159,13 +159,13 @@ export default function CarDetailPage({ id }) {
                 <CalendarDays size={18} /> Book this vehicle
               </a>
               {car.carfax_url && (
-                <a href={car.carfax_url} target="_blank" rel="noreferrer" className="mt-3 flex w-full items-center justify-center gap-2 border border-neutral-300 p-3 text-sm font-bold transition hover:bg-neutral-50">
+                <a href={car.carfax_url} target="_blank" rel="noreferrer" className="mt-3 flex w-full items-center justify-center gap-2 border border-white/15 p-3 text-sm font-bold transition hover:bg-white/5">
                   View CARFAX <ExternalLink size={15} />
                 </a>
               )}
-              <div className="mt-5 flex items-start gap-3 border-t border-neutral-200 pt-5 text-sm text-neutral-600">
+              <div className="mt-5 flex items-start gap-3 border-t border-white/10 pt-5 text-sm text-neutral-400">
                 <ShieldCheck size={20} className="mt-0.5 shrink-0 text-green-600" />
-                <span><strong className="block text-[#111216]">Current availability</strong>This vehicle is still listed as available by its dealership.</span>
+                <span><strong className="block text-white">Current availability</strong>This vehicle is still listed as available by its dealership.</span>
               </div>
             </div>
           </aside>
@@ -179,7 +179,7 @@ export default function CarDetailPage({ id }) {
 
 function Spec({ icon: Icon, term, value }) {
   return (
-    <div className="border-b border-r border-neutral-200 p-4">
+    <div className="border-b border-r border-white/10 p-4">
       <dt className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[.13em] text-neutral-400">
         {Icon && <Icon size={13} />}{term}
       </dt>
@@ -190,12 +190,12 @@ function Spec({ icon: Icon, term, value }) {
 
 function StatePage({ title, text }) {
   return (
-    <div className="min-h-screen bg-[#f3f3f1]">
+    <div className="min-h-screen bg-[#090a0c] text-white">
       <SiteHeader />
       <main className="mx-auto w-[min(1380px,94vw)] py-24 text-center">
         <h1 className="text-3xl font-black">{title}</h1>
         <p className="mt-3 text-neutral-500">{text}</p>
-        <a href={`${WEBSITE_URL}/inventory`} className="mt-6 inline-flex bg-[#111216] px-5 py-3 text-sm font-bold text-white">Browse inventory</a>
+        <a href={`${WEBSITE_URL}/inventory`} className="mt-6 inline-flex bg-[#ef3f32] px-5 py-3 text-sm font-bold text-white">Browse inventory</a>
       </main>
       <SiteFooter />
     </div>
