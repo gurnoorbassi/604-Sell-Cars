@@ -102,7 +102,8 @@ export function cleanVehicleDescription(car) {
 export function carImages(car) {
   const normalized = [
     ...(car.images || []),
-    ...(car.media || [])
+    ...[...(car.media || [])]
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0) || Number(a.id || 0) - Number(b.id || 0))
       .filter((item) => item.kind === "image")
       .map((item) => item.source_url || item.storage_path),
   ];
@@ -112,7 +113,8 @@ export function carImages(car) {
 export function carVideos(car) {
   const normalized = [
     ...(car.videos || []),
-    ...(car.media || [])
+    ...[...(car.media || [])]
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0) || Number(a.id || 0) - Number(b.id || 0))
       .filter((item) => item.kind === "video")
       .map((item) => item.source_url || item.storage_path),
   ];

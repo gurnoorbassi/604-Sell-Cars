@@ -481,6 +481,12 @@ export default function SellsCarsBoard() {
     const id = form.id || crypto.randomUUID();
     const manualPhotos = form.manualPhotos || [];
     const uploadFiles = form.uploadFiles || [];
+    const hasCoverImage = manualPhotos.length > 0 || uploadFiles.some((file) => file.type.startsWith("image/"));
+    if (!form.id && !hasCoverImage) {
+      setAppError("Add a front exterior photo before listing this vehicle. The first image becomes its website cover.");
+      setSaving(false);
+      return;
+    }
     const oversizedFile = uploadFiles.find((file) => file.size > MAX_UPLOAD_BYTES);
     if (oversizedFile) {
       setAppError(`${oversizedFile.name} is larger than the ${MAX_UPLOAD_MB} MB per-file upload limit.`);
@@ -1157,6 +1163,18 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
     }));
   };
 
+  const makeUploadCover = (coverIndex) => {
+    setForm((current) => {
+      const files = [...(current.uploadFiles || [])];
+      const [coverFile] = files.splice(coverIndex, 1);
+      return coverFile ? { ...current, uploadFiles: [coverFile, ...files] } : current;
+    });
+  };
+
+  const coverUploadIndex = (form.manualPhotos || []).length
+    ? -1
+    : filePreviews.findIndex(({ file }) => file.type.startsWith("image/"));
+
   const generateDescription = async () => {
     if (!form.title.trim() || generatingDescription) return;
     setGeneratingDescription(true);
@@ -1304,9 +1322,13 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                 const manualPhotos = e.target.value.split("\n").map((url) => url.trim()).filter(Boolean);
                 setForm({ ...form, manualPhotos });
               }} />
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Use permanent public image URLs only. Uploaded files are stored privately in Supabase.</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">The first URL is the website cover. Use a front exterior photo first. Uploaded files are stored privately in Supabase.</p>
           </F>
           <F label="Upload photos or videos">
+            <div className="mb-2 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2.5">
+              <p className="text-xs font-bold text-red-200">Cover photo rule</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-neutral-400">Choose a clear front exterior photo first. The image marked Cover is used on the website and inventory cards.</p>
+            </div>
             <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white">
               <Upload className="h-4 w-4" />
               {form.uploadFiles?.length ? "Add more photos or videos" : "Choose files from this device"}
@@ -1338,6 +1360,17 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                       className="absolute right-1.5 top-1.5 rounded-full bg-black/75 p-1 text-white shadow hover:bg-red-600">
                       <X className="h-3.5 w-3.5" />
                     </button>
+                    {file.type.startsWith("image/") && index === coverUploadIndex && (
+                      <span className="absolute left-1.5 top-1.5 rounded bg-red-600 px-2 py-1 text-[9px] font-black uppercase tracking-[.12em] text-white">
+                        Cover
+                      </span>
+                    )}
+                    {file.type.startsWith("image/") && index !== coverUploadIndex && !(form.manualPhotos || []).length && (
+                      <button type="button" onClick={() => makeUploadCover(index)}
+                        className="absolute left-1.5 top-1.5 rounded bg-black/75 px-2 py-1 text-[9px] font-bold uppercase tracking-[.08em] text-white hover:bg-red-600">
+                        Make cover
+                      </button>
+                    )}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-2 pb-1.5 pt-6">
                       <p className="truncate text-[10px] font-medium text-white">{file.name}</p>
                     </div>
@@ -1345,7 +1378,7 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                 ))}
               </div>
             )}
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">No fixed file-count limit. Supabase Free allows up to {MAX_UPLOAD_MB} MB per file; large files use resumable chunks.</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">New listings require at least one image. No fixed file-count limit. Supabase Free allows up to {MAX_UPLOAD_MB} MB per file; large files use resumable chunks.</p>
             {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
         </div>
