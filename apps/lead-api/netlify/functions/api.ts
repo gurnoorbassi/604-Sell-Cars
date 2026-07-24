@@ -6,6 +6,9 @@ const TIMEZONE = "America/Vancouver";
 const OPENING_HOUR = 10;
 const CLOSING_HOUR = 19;
 const DAYS_VISIBLE = 14;
+const MEDIA_BUCKET = "vehicle-media";
+
+let mediaBucketReady: Promise<void> | null = null;
 
 function json(body: unknown, status = 200, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
@@ -25,6 +28,24 @@ function serviceClient() {
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+}
+
+function ensureMediaBucket(supabase: any) {
+  if (!mediaBucketReady) {
+    mediaBucketReady = (async () => {
+      const { error: getError } = await supabase.storage.getBucket(MEDIA_BUCKET);
+      if (!getError) return;
+      const { error: createError } = await supabase.storage.createBucket(MEDIA_BUCKET, {
+        public: false,
+        fileSizeLimit: 50 * 1024 * 1024,
+      });
+      if (createError && !/already exists/i.test(createError.message)) throw createError;
+    })().catch((error) => {
+      mediaBucketReady = null;
+      throw error;
+    });
+  }
+  return mediaBucketReady;
 }
 
 function fail(error: unknown, fallback = "Something went wrong. Please try again.") {
@@ -91,12 +112,14 @@ function normalizeCar(car: Record<string, any>) {
 }
 
 async function withSignedMedia(supabase: any, cars: Array<Record<string, any>>) {
+  await ensureMediaBucket(supabase);
   const paths = [...new Set(cars.flatMap((car) =>
     (car.vehicle_media || []).map((item: Record<string, any>) => item.storage_path).filter(Boolean),
   ))];
   const signed = new Map<string, string>();
   if (paths.length) {
-    const { data } = await supabase.storage.from("vehicle-media").createSignedUrls(paths, 3600);
+    const { data, error } = await supabase.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
+    if (error) console.error("Could not sign vehicle media URLs:", error.message);
     (data || []).forEach((item: Record<string, any>) => {
       if (item.path && item.signedUrl) signed.set(item.path, item.signedUrl);
     });
@@ -104,9 +127,12 @@ async function withSignedMedia(supabase: any, cars: Array<Record<string, any>>) 
   return cars.map((sourceCar) => {
     const car = normalizeCar(sourceCar);
     const mediaBaseUrl = (Netlify.env.get("VITE_BOARD_URL") || "https://dealership-inventory-board.netlify.app").replace(/\/$/, "");
+    const orderedMedia = [...(car.vehicle_media || [])].sort((a: Record<string, any>, b: Record<string, any>) =>
+      Number(a.sort_order || 0) - Number(b.sort_order || 0) || Number(a.id || 0) - Number(b.id || 0),
+    );
     return {
     ...car,
-    media: (car.vehicle_media || []).map((item: Record<string, any>) => ({
+    media: orderedMedia.map((item: Record<string, any>) => ({
       ...item,
       source_url: item.storage_path && signed.get(item.storage_path)
         ? signed.get(item.storage_path)
