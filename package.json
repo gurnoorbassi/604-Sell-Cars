@@ -19,7 +19,7 @@
     "@vitejs/plugin-react": "6.0.4",
     "autoprefixer": "10.5.4",
     "jszip": "3.10.1",
-    "lucide-react": "1.25.0",
+    "lucide-react": "1.26.0",
     "postcss": "8.5.21",
     "react": "19.2.8",
     "react-dom": "19.2.8",
