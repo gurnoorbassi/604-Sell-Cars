@@ -36,6 +36,7 @@ const bodyTypes = [
 export default function PublicSite() {
   const inventoryPage = window.location.pathname.includes("/inventory");
   const [cars, setCars] = useState([]);
+  const [heroCars, setHeroCars] = useState([]);
   const [filters, setFilters] = useState({ cities: [], body_types: [], fuel_types: [], makes: [], years: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -45,12 +46,25 @@ export default function PublicSite() {
     document.title = inventoryPage
       ? "Live Used Vehicle Inventory | 604 Sell Cars"
       : "604 Sell Cars | Find It. We Reserve It. You Drive It.";
-    Promise.all([api(`/api/cars?${current.toString()}`), api("/api/filters")])
-      .then(([rows, options]) => {
-        setCars(rows);
-        setFilters(options);
+    Promise.allSettled([
+      api(`/api/cars?${current.toString()}`),
+      api("/api/filters"),
+      inventoryPage ? Promise.resolve([]) : api("/api/cars?hero=1"),
+    ])
+      .then(([carsResult, filtersResult, heroResult]) => {
+        if (carsResult.status === "fulfilled") {
+          setCars(carsResult.value);
+          setError("");
+        } else {
+          setError(carsResult.reason?.message || "Inventory is temporarily unavailable.");
+        }
+        if (filtersResult.status === "fulfilled") {
+          setFilters(filtersResult.value);
+        }
+        if (heroResult.status === "fulfilled") {
+          setHeroCars(heroResult.value);
+        }
       })
-      .catch((requestError) => setError(requestError.message))
       .finally(() => setLoading(false));
   }, [current, inventoryPage]);
 
@@ -103,28 +117,57 @@ export default function PublicSite() {
       <SiteHeader />
       {inventoryPage
         ? <InventoryPage cars={cars} filters={filters} current={current} loading={loading} error={error} />
-        : <HomePage cars={cars} filters={filters} loading={loading} error={error} />}
+        : <HomePage cars={cars} heroCars={heroCars} filters={filters} loading={loading} error={error} />}
       <SiteFooter />
     </div>
   );
 }
 
-function HomePage({ cars, filters, loading, error }) {
-  const photographed = cars.filter((car) => carImages(car).length);
-  const highEndCars = [...photographed]
+function HomePage({ cars, heroCars, filters, loading, error }) {
+  const [heroReady, setHeroReady] = useState(false);
+  const heroCarById = new Map(heroCars.map((car) => [car.id, car]));
+  const displayCars = cars.map((car) => heroCarById.get(car.id) || car);
+  const photographed = displayCars.filter((car) => carImages(car).length);
+  const highEndCars = [...(heroCars.length ? heroCars : photographed)]
+    .filter((car) => carImages(car).length)
     .sort((a, b) => Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 10);
+  const heroCoverUrls = highEndCars.map((car) => heroImageSources(car)[0]).filter(Boolean);
+  const heroCoverKey = heroCoverUrls.join("|");
   const featured = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
       || Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 8);
+
+  useEffect(() => {
+    setHeroReady(false);
+    if (!heroCoverUrls.length) return undefined;
+    let cancelled = false;
+    const preload = heroCoverUrls.slice(0, 5).map((source) => new Promise((resolve) => {
+      const image = new Image();
+      const timeout = window.setTimeout(resolve, 5_000);
+      const finish = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+      image.onload = finish;
+      image.onerror = finish;
+      image.src = source;
+    }));
+    Promise.all(preload).then(() => {
+      if (!cancelled) setHeroReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [heroCoverKey]);
 
   return (
     <main>
       <section className="hero-stage relative min-h-[690px] overflow-hidden border-b border-white/10 sm:min-h-[760px]">
         {highEndCars.length ? (
           <div className="hero-media absolute inset-0">
-            <div className="hero-gallery-track">
+            <div className={`hero-gallery-track${heroReady ? " is-ready" : ""}`}>
               {[false, true].map((duplicate) => (
                 <div className="hero-gallery-group" aria-hidden={duplicate || undefined} key={duplicate ? "repeat" : "original"}>
                   {highEndCars.map((car, index) => (
@@ -133,7 +176,7 @@ function HomePage({ cars, filters, loading, error }) {
                         sources={heroImageSources(car)}
                         alt=""
                         aria-hidden="true"
-                        loading={!duplicate && index < 4 ? "eager" : "lazy"}
+                        loading={!duplicate ? "eager" : "lazy"}
                         fetchPriority={!duplicate && index === 0 ? "high" : undefined}
                         className="hero-gallery-image h-full w-full object-cover"
                       />
@@ -198,7 +241,7 @@ function HomePage({ cars, filters, loading, error }) {
           <SectionHeader kicker="Start with the shape" title="Browse by body type." />
           <div className="mt-9 grid grid-cols-2 gap-3 md:grid-cols-5">
             {bodyTypes.map(([label, matcher]) => {
-              const car = photographedForType(cars, matcher);
+              const car = photographedForType(displayCars, matcher);
               const image = carImages(car || {})[0];
               return (
                 <a key={label} href={`${WEBSITE_URL}/inventory?${label === "EV" ? "fuel=Electric" : `bodyType=${encodeURIComponent(label)}`}`} className="group relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#15181c]">

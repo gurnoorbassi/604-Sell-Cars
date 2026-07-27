@@ -152,13 +152,20 @@ select {
   width: max-content;
   height: 100%;
   animation: hero-gallery-flow 82s linear infinite;
+  animation-play-state: paused;
+  backface-visibility: hidden;
   will-change: transform;
+}
+
+.hero-gallery-track.is-ready {
+  animation-play-state: running;
 }
 
 .hero-gallery-group {
   display: flex;
   flex: none;
   height: 100%;
+  backface-visibility: hidden;
 }
 
 .hero-gallery-slide {
@@ -167,6 +174,7 @@ select {
   height: 100%;
   overflow: hidden;
   background: #111419;
+  contain: paint;
 }
 
 .hero-gallery-slide::after {
@@ -182,6 +190,7 @@ select {
   display: block;
   object-position: center 44%;
   filter: saturate(.92) contrast(1.04);
+  backface-visibility: hidden;
 }
 
 .hero-line {
