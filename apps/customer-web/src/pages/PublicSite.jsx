@@ -110,77 +110,42 @@ export default function PublicSite() {
 }
 
 function HomePage({ cars, filters, loading, error }) {
-  const [heroIndex, setHeroIndex] = useState(0);
-  const [heroTransition, setHeroTransition] = useState(true);
   const photographed = cars.filter((car) => carImages(car).length);
   const highEndCars = [...photographed]
     .sort((a, b) => Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 10);
-  const heroSlides = highEndCars.length ? [...highEndCars, highEndCars[0]] : [];
-  const activeHero = highEndCars[heroIndex % Math.max(highEndCars.length, 1)];
   const featured = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
       || Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 8);
 
-  useEffect(() => {
-    setHeroIndex(0);
-    setHeroTransition(true);
-    if (highEndCars.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return undefined;
-    }
-    const rotation = window.setInterval(() => {
-      setHeroIndex((current) => current + 1);
-    }, 4200);
-    return () => window.clearInterval(rotation);
-  }, [highEndCars.length]);
-
-  const finishHeroSlide = () => {
-    if (heroIndex !== highEndCars.length) return;
-    setHeroTransition(false);
-    setHeroIndex(0);
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => setHeroTransition(true));
-    });
-  };
-
   return (
     <main>
       <section className="hero-stage relative min-h-[690px] overflow-hidden border-b border-white/10 sm:min-h-[760px]">
-        {heroSlides.length ? (
+        {highEndCars.length ? (
           <div className="hero-media absolute inset-0">
-            <div
-              className="hero-carousel-track"
-              onTransitionEnd={finishHeroSlide}
-              style={{
-                transform: `translate3d(-${heroIndex * 84}%, 0, 0)`,
-                transition: heroTransition ? "transform 900ms cubic-bezier(.22,.72,.18,1)" : "none",
-              }}
-            >
-              {heroSlides.map((car, index) => (
-                <div className="hero-carousel-slide" key={`${car.id}-${index}`}>
-                  <VehicleImage
-                    sources={heroImageSources(car)}
-                    alt=""
-                    aria-hidden="true"
-                    loading={index < 3 ? "eager" : "lazy"}
-                    fetchPriority={index === 0 ? "high" : undefined}
-                    className="hero-carousel-image h-full w-full object-cover"
-                  />
+            <div className="hero-gallery-track">
+              {[false, true].map((duplicate) => (
+                <div className="hero-gallery-group" aria-hidden={duplicate || undefined} key={duplicate ? "repeat" : "original"}>
+                  {highEndCars.map((car, index) => (
+                    <div className="hero-gallery-slide" key={`${duplicate ? "repeat" : "original"}-${car.id}`}>
+                      <VehicleImage
+                        sources={heroImageSources(car)}
+                        alt=""
+                        aria-hidden="true"
+                        loading={!duplicate && index < 4 ? "eager" : "lazy"}
+                        fetchPriority={!duplicate && index === 0 ? "high" : undefined}
+                        className="hero-gallery-image h-full w-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
-            {activeHero && (
-              <a href={`/cars/${encodeURIComponent(activeHero.id)}`} className="hero-carousel-caption">
-                <span>{String((heroIndex % highEndCars.length) + 1).padStart(2, "0")} / {String(highEndCars.length).padStart(2, "0")} · High-end inventory</span>
-                <strong>{carName(activeHero)}</strong>
-                <em>{priceLabel(activeHero)} <ArrowRight size={13} /></em>
-              </a>
-            )}
           </div>
         ) : <div className="absolute inset-0 bg-[#111419]" />}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,4,5,.94)_0%,rgba(3,4,5,.76)_46%,rgba(3,4,5,.28)_76%,rgba(3,4,5,.5)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,#08090b_0%,transparent_38%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,4,5,.89)_0%,rgba(3,4,5,.72)_46%,rgba(3,4,5,.58)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,#08090b_0%,rgba(8,9,11,.18)_45%,rgba(8,9,11,.3)_100%)]" />
         <div className="relative mx-auto flex min-h-[690px] w-[min(1340px,92vw)] flex-col justify-center pb-28 pt-16 sm:min-h-[760px]">
           <p className="hero-line hero-line-1 text-[10px] font-black uppercase tracking-[.24em] text-[#ff655a]">604SELLSCARS · Live marketplace inventory</p>
           <h1 className="hero-line hero-line-2 mt-5 max-w-4xl text-[clamp(2.65rem,6vw,5.5rem)] font-black leading-[.94] tracking-[-.06em]">
