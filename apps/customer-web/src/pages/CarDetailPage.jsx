@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft, CalendarDays, Camera, Check, ChevronLeft, ChevronRight,
   ExternalLink, Gauge, MapPin, Maximize2, ShieldCheck, X,
@@ -11,22 +11,26 @@ import {
   mileageLabel, priceLabel, vehicleMileage,
 } from "../lib/api";
 import { LANDING_URL, WEBSITE_URL } from "../lib/links";
+import { setPageMeta } from "../lib/pageMeta";
 
 export default function CarDetailPage({ id }) {
   const [car, setCar] = useState(null);
   const [active, setActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [error, setError] = useState("");
+  const closeButtonRef = useRef(null);
+  const restoreFocusRef = useRef(null);
 
   useEffect(() => {
     api(`/api/cars/${encodeURIComponent(id)}`).then((row) => {
       setCar(row);
       const name = carName(row);
       const mileage = vehicleMileage(row);
-      document.title = `${name} for Sale | 604 Sell Cars`;
-      const meta = document.querySelector('meta[name="description"]') || document.head.appendChild(document.createElement("meta"));
-      meta.name = "description";
-      meta.content = `${name}, ${mileageLabel(row)}, available ${row.location_label}. Ask our team to confirm a viewing.`;
+      setPageMeta({
+        title: `${name} for Sale | 604 Sell Cars`,
+        description: `${name}, ${mileageLabel(row)}, available ${row.location_label}. Ask our team to confirm a viewing.`,
+        canonical: `${WEBSITE_URL}/cars/${encodeURIComponent(row.id)}`,
+      });
       const schema = document.createElement("script");
       schema.type = "application/ld+json";
       schema.text = JSON.stringify({
@@ -42,12 +46,21 @@ export default function CarDetailPage({ id }) {
       schema.dataset.vehicleSchema = id;
       document.querySelectorAll("script[data-vehicle-schema]").forEach((item) => item.remove());
       document.head.appendChild(schema);
-    }).catch((requestError) => setError(requestError.message));
+    }).catch((requestError) => {
+      setPageMeta({
+        title: "Vehicle Unavailable | 604 Sell Cars",
+        description: "This vehicle is no longer available. Browse the current live inventory.",
+        robots: "noindex,nofollow",
+      });
+      setError(requestError.message);
+    });
   }, [id]);
 
   useEffect(() => {
     if (!lightboxOpen) return undefined;
     const previousOverflow = document.body.style.overflow;
+    restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
     const closeOnEscape = (event) => {
       if (event.key === "Escape") setLightboxOpen(false);
     };
@@ -56,6 +69,8 @@ export default function CarDetailPage({ id }) {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", closeOnEscape);
+      window.cancelAnimationFrame(focusFrame);
+      restoreFocusRef.current?.focus();
     };
   }, [lightboxOpen]);
 
@@ -218,7 +233,7 @@ export default function CarDetailPage({ id }) {
             <p className="text-xs font-bold text-neutral-300">
               Photo {active + 1} of {images.length} <span className="ml-2 text-neutral-500">Pinch to zoom</span>
             </p>
-            <button type="button" onClick={() => setLightboxOpen(false)} className="grid h-11 w-11 place-items-center border border-white/15 bg-white/5" aria-label="Close photo viewer">
+            <button ref={closeButtonRef} type="button" onClick={() => setLightboxOpen(false)} className="grid h-11 w-11 place-items-center border border-white/15 bg-white/5" aria-label="Close photo viewer">
               <X />
             </button>
           </div>

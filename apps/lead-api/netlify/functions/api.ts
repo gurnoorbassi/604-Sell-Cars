@@ -410,16 +410,22 @@ async function publicCars(request: Request, supabase: any) {
   const maxYear = Number(url.searchParams.get("maxYear"));
   const maxMileage = Number(url.searchParams.get("maxMileage"));
   if (Number.isFinite(minPrice) && minPrice > 0) rows = rows.filter((car) => Number(car.price_amount) >= minPrice);
-  if (Number.isFinite(maxPrice) && maxPrice > 0) rows = rows.filter((car) => Number(car.price_amount) <= maxPrice);
+  if (Number.isFinite(maxPrice) && maxPrice > 0) {
+    rows = rows.filter((car) => Number(car.price_amount) > 0 && Number(car.price_amount) <= maxPrice);
+  }
   if (Number.isFinite(minYear) && minYear > 0) rows = rows.filter((car) => Number(car.year) >= minYear);
   if (Number.isFinite(maxYear) && maxYear > 0) rows = rows.filter((car) => Number(car.year) <= maxYear);
   if (Number.isFinite(maxMileage) && maxMileage > 0) rows = rows.filter((car) => Number(car.mileage) <= maxMileage);
   const sort = url.searchParams.get("sort");
   const number = (value: unknown, fallback = Number.MAX_SAFE_INTEGER) =>
     Number.isFinite(Number(value)) ? Number(value) : fallback;
+  const price = (value: unknown, fallback: number) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  };
   if (heroMode) rows.sort((a, b) => showcaseRank(a) - showcaseRank(b));
-  else if (sort === "price_asc") rows.sort((a, b) => number(a.price_amount) - number(b.price_amount));
-  else if (sort === "price_desc") rows.sort((a, b) => number(b.price_amount, -1) - number(a.price_amount, -1));
+  else if (sort === "price_asc") rows.sort((a, b) => price(a.price_amount, Number.MAX_SAFE_INTEGER) - price(b.price_amount, Number.MAX_SAFE_INTEGER));
+  else if (sort === "price_desc") rows.sort((a, b) => price(b.price_amount, -1) - price(a.price_amount, -1));
   else if (sort === "mileage") rows.sort((a, b) => number(a.mileage) - number(b.mileage));
   else if (sort === "newest") rows.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   else rows.sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))

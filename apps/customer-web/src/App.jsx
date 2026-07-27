@@ -1,8 +1,10 @@
 import React, { lazy, Suspense } from "react";
+import SurfaceErrorBoundary from "./components/SurfaceErrorBoundary";
 
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const CarDetailPage = lazy(() => import("./pages/CarDetailPage"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const PublicSite = lazy(() => import("./pages/PublicSite"));
 
 function LoadingSurface() {
@@ -25,10 +27,14 @@ export default function App() {
   else if (surface === "admin") content = <AdminPage />;
   else {
     const carMatch = path.match(/^\/cars\/([^/]+)$/);
-    content = carMatch
-      ? <CarDetailPage id={decodeURIComponent(carMatch[1])} />
-      : <PublicSite />;
+    if (carMatch) content = <CarDetailPage id={decodeURIComponent(carMatch[1])} />;
+    else if (path === "/" || path === "/inventory") content = <PublicSite />;
+    else content = <NotFoundPage />;
   }
 
-  return <Suspense fallback={<LoadingSurface />}>{content}</Suspense>;
+  return (
+    <SurfaceErrorBoundary>
+      <Suspense fallback={<LoadingSurface />}>{content}</Suspense>
+    </SurfaceErrorBoundary>
+  );
 }

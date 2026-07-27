@@ -9,6 +9,7 @@ import SiteHeader from "../components/SiteHeader";
 import VehicleImage from "../components/VehicleImage";
 import { api, carImages, carName, priceLabel } from "../lib/api";
 import { WEBSITE_URL } from "../lib/links";
+import { setPageMeta } from "../lib/pageMeta";
 
 const readParams = () => new URLSearchParams(window.location.search);
 const priceOptions = [
@@ -65,9 +66,17 @@ export default function PublicSite() {
   const current = useMemo(readParams, []);
 
   useEffect(() => {
-    document.title = inventoryPage
-      ? "Live Used Vehicle Inventory | 604 Sell Cars"
-      : "604 Sell Cars | Find It. We Reserve It. You Drive It.";
+    setPageMeta({
+      title: inventoryPage
+        ? "Live Used Vehicle Inventory | 604 Sell Cars"
+        : "604 Sell Cars | Find It. We Reserve It. You Drive It.",
+      description: inventoryPage
+        ? "Browse live used vehicle inventory near Langley with shareable filters for make, body style, price, mileage, fuel, and year."
+        : "Search live vehicles near Langley from independent dealerships and private sellers, then request a confirmed viewing.",
+      canonical: inventoryPage
+        ? `${WEBSITE_URL}/inventory${window.location.search}`
+        : WEBSITE_URL,
+    });
     Promise.allSettled([
       api(`/api/cars?${current.toString()}`),
       api("/api/filters"),

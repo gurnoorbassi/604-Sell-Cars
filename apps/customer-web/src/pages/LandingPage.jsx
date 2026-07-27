@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CheckCircle2, Clock3, MapPin, ShieldCheck } from "lucide-react";
 import BookingForm from "../components/BookingForm";
 import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
+import { setPageMeta } from "../lib/pageMeta";
 
 export default function LandingPage() {
   const initialCarId = new URLSearchParams(window.location.search).get("car") || "";
+  useEffect(() => {
+    setPageMeta({
+      title: "Book a Vehicle Viewing | 604 Sell Cars",
+      description: "Choose a live vehicle and request a viewing time with the 604 Sell Cars team.",
+      robots: "noindex,nofollow",
+    });
+  }, []);
   return (
     <div className="min-h-screen bg-[#08090b]">
       <SiteHeader />

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:site": "cross-env VITE_SURFACE=site vite build --outDir dist-site",
-    "build:landing": "cross-env VITE_SURFACE=landing vite build --outDir dist-landing",
-    "build:admin": "cross-env VITE_SURFACE=admin vite build --outDir dist-admin"
+    "generate:surface-assets": "node scripts/generate-surface-assets.mjs",
+    "build": "npm run generate:surface-assets && vite build",
+    "build:site": "cross-env VITE_SURFACE=site npm run build -- --outDir dist-site",
+    "build:landing": "cross-env VITE_SURFACE=landing npm run build -- --outDir dist-landing",
+    "build:admin": "cross-env VITE_SURFACE=admin npm run build -- --outDir dist-admin"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.8",
