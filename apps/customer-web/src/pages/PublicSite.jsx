@@ -277,8 +277,8 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
               const car = photographedForType(displayCars, matcher);
               const image = carImages(car || {})[0];
               return (
-                <a key={label} href={`${WEBSITE_URL}/inventory?${label === "EV" ? "fuel=Electric" : `bodyType=${encodeURIComponent(label)}`}`} className="group relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#15181c]">
-                  {image && <VehicleImage sources={carImages(car)} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />}
+                <a key={label} href={`${WEBSITE_URL}/inventory?${label === "EV" ? "fuel=Electric" : `bodyType=${encodeURIComponent(label)}`}`} className="group relative aspect-[4/3] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#20242a_0%,#0b0d10_78%)] sm:aspect-[4/5]">
+                  {image && <VehicleImage sources={carImages(car)} alt="" className="h-full w-full object-contain object-center" />}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
                   <span className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4 text-lg font-black">{label}<ChevronRight size={18} /></span>
                 </a>
