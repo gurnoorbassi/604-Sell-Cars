@@ -153,14 +153,10 @@ function normalizeCar(car: Record<string, any>) {
   };
 }
 
-function cityForCar(car: Record<string, any>) {
-  const location = [car.lot_address, car.lot_name, car.lot, car.dealership].filter(Boolean).join(" ");
-  if (/\blangley\b/i.test(location)) return "Langley";
-  if (/\bsurrey\b/i.test(location)) return "Surrey";
-  if (/\bcoquitlam\b/i.test(location)) return "Coquitlam";
-  if (/\bburnaby\b/i.test(location)) return "Burnaby";
-  if (/\bvancouver\b/i.test(location)) return "Vancouver";
-  return "Lower Mainland";
+function cityForCar(_car: Record<string, any>) {
+  // The public marketplace is Langley-based. Exact lot data remains private
+  // and continues to drive internal lead routing and confirmed appointments.
+  return "Langley";
 }
 
 function locationLabel(city: string) {
