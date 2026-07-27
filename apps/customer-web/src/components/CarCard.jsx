@@ -9,11 +9,11 @@ export default function CarCard({ car }) {
     ? [images[1], ...images.filter((_, index) => index !== 1)]
     : images;
   return (
-    <a href={`/cars/${encodeURIComponent(car.id)}`} className="group block min-w-0">
+    <a href={`/cars/${encodeURIComponent(car.id)}`} className="reveal-card group block min-w-0 transition duration-300 hover:-translate-y-1 hover:drop-shadow-[0_20px_30px_rgba(0,0,0,.35)]">
       <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#0c0e11_72%)]">
         {preferredImages[0] ? (
           <VehicleImage sources={preferredImages} alt={carName(car)}
-            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02] sm:object-contain" />
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
         ) : (
           <div className="grid h-full place-items-center bg-[linear-gradient(135deg,#171a1f,#0c0e11)] text-xs font-bold uppercase tracking-[.12em] text-neutral-600">
             Photos coming soon
@@ -21,7 +21,7 @@ export default function CarCard({ car }) {
         )}
         <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
           <div className="flex flex-wrap gap-1.5">
-            {(car.labels || []).slice(0, 2).map((label) => (
+            {(car.public_labels || []).slice(0, 1).map((label) => (
               <span key={label} className="bg-[#ef3f32] px-2.5 py-1.5 text-[8px] font-black uppercase tracking-[.14em] text-white">{label}</span>
             ))}
           </div>
@@ -39,7 +39,7 @@ export default function CarCard({ car }) {
       <div className="border-b border-white/10 pb-5 pt-4">
         <div className="flex items-center justify-between gap-3">
           <p className="flex min-w-0 items-center gap-1.5 truncate text-[9px] font-black uppercase tracking-[.14em] text-[#ff5a50]">
-            <MapPin size={11} className="shrink-0" />{car.lot_name}
+            <MapPin size={11} className="shrink-0" />{car.location_label}
           </p>
           {car.stock && <span className="shrink-0 text-[9px] font-semibold text-neutral-600">#{car.stock}</span>}
         </div>

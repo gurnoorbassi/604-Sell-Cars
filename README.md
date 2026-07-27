@@ -21,6 +21,12 @@ updates the shared `cars` row; the website and booking deployment read that
 change on their next request. Vehicles without a verified physical lot address
 remain private until corrected in the board.
 
+The public API exposes an explicit anonymized vehicle shape. Dealership names,
+exact addresses, source links, internal labels, and rep-only data never enter the
+public browser bundle. Customers see only `Near {City}` or `Lower Mainland`.
+The true source lot remains available inside the inventory board and lead desk
+for assignment and sold-status checks.
+
 ## What works
 
 - All 344 unique imported vehicles are seeded into Supabase Postgres.
@@ -28,6 +34,9 @@ remain private until corrected in the board.
 - New uploads are stored privately in Supabase Storage and displayed with expiring signed URLs.
 - CARFAX URLs are clickable when an actual URL exists.
 - Live/sold status, filters, search, editing, deletion, and new inventory persist for the whole team.
+- Buyer leads use phone-number deduplication, a 24-hour booking lead time, lot-level slot locking, payment intake, source attribution, and a vehicle-verification handoff state.
+- Private-seller submissions and photos land in the protected lead desk.
+- Internal inventory labels are separate from the public website badges.
 - The source seed remains in `src/data/seed.json` for repeatable imports; it is not bundled into the app.
 
 ## Refresh from a Trello JSON export
@@ -78,7 +87,7 @@ The deployed app's Trello media function requires `TRELLO_API_KEY`, `TRELLO_API_
 
 The older `npm run import:trello` command is still available when you need a fresh API import directly from a board.
 
-The Owner-only **Admin access** panel also includes **Sync every gallery**. It queues only vehicles whose stored image count is below the source card's photo count, so the operation is safe to rerun and does not duplicate completed galleries.
+The Owner-only **Admin access** panel also includes **Sync every gallery**. It queues only vehicles whose stored image count is below the source card's complete attachment count, preserving the source cover-first order. The operation is safe to rerun and does not duplicate completed gallery files.
 
 ## Refresh inventory classifications
 
@@ -96,7 +105,11 @@ Anyone with the deployed app link can create an email/password account. A databa
 - `admin` can add, edit, mark sold, relist, delete, upload media, and generate AI descriptions.
 - `bdc` sees the same inventory, photos, videos, CARFAX links, sold list, search, and filters with no editing access.
 
-The owner-only **Admin access** panel lists signups, promotes BDC users to Admin, and disables or restores access. It can also pre-add a BDC email before registration. The owner cannot be demoted or disabled from the web app.
+The owner-only **Admin access** panel lists signups, assigns each BDC or admin
+the lots they may work, promotes BDC users to Admin, and disables or restores
+access. Buyer leads are automatically assigned to an active rep with access to
+the selected vehicle's true lot. The owner cannot be demoted or disabled from
+the web app.
 
 ## Deploy
 

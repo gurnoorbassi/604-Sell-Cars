@@ -25,7 +25,7 @@ export default function CarDetailPage({ id }) {
       document.title = `${name} for Sale | 604 Sell Cars`;
       const meta = document.querySelector('meta[name="description"]') || document.head.appendChild(document.createElement("meta"));
       meta.name = "description";
-      meta.content = `${name}, ${mileageLabel(row)}, available at ${row.lot_name}. Book a viewing online.`;
+      meta.content = `${name}, ${mileageLabel(row)}, available ${row.location_label}. Ask our team to confirm a viewing.`;
       const schema = document.createElement("script");
       schema.type = "application/ld+json";
       schema.text = JSON.stringify({
@@ -66,7 +66,7 @@ export default function CarDetailPage({ id }) {
             <div className="mt-5 flex flex-wrap items-end justify-between gap-5">
               <div>
                 <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.17em] text-[#d92d22]">
-                  <MapPin size={13} /> {car.lot_name}
+                  <MapPin size={13} /> 604SELLSCARS · {car.location_label}
                 </p>
                 <h1 className="mt-2 text-[clamp(2.25rem,4.5vw,4.35rem)] font-black leading-[.98] tracking-[-.06em]">{carName(car)}</h1>
               </div>
@@ -127,11 +127,11 @@ export default function CarDetailPage({ id }) {
                 {description ? (
                   <p className="whitespace-pre-line text-[15px] leading-7 text-neutral-300">{description}</p>
                 ) : (
-                  <p className="text-[15px] leading-7 text-neutral-400">Contact the dealership or book a viewing to learn more about this vehicle.</p>
+                  <p className="text-[15px] leading-7 text-neutral-400">Request a viewing and our team will confirm the vehicle details before you make the drive.</p>
                 )}
                 <div className="mt-8 grid gap-3 border-t border-white/10 pt-6 text-sm font-semibold text-neutral-300 sm:grid-cols-2">
                   <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Live inventory status</span>
-                  <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Exact listing location</span>
+                  <span className="flex items-center gap-2"><Check size={16} className="text-green-600" /> Team-confirmed handoff</span>
                 </div>
               </div>
             </section>
@@ -152,8 +152,8 @@ export default function CarDetailPage({ id }) {
                 <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.15em] text-[#ff6b60]">
                   <MapPin size={14} /> Viewing location
                 </p>
-                <strong className="mt-3 block text-lg">{car.lot_name}</strong>
-                <span className="mt-1 block text-sm leading-6 text-neutral-300">{car.lot_address}</span>
+                <strong className="mt-3 block text-lg">{car.location_label}</strong>
+                <span className="mt-1 block text-sm leading-6 text-neutral-300">Approximate area only. Our team shares the handoff details after confirming availability.</span>
               </div>
 
               <a href={`${LANDING_URL}?car=${encodeURIComponent(car.id)}`} className="mt-4 flex w-full items-center justify-center gap-2 bg-[#ef3f32] p-4 text-sm font-black text-white transition hover:bg-[#d92d22]">
@@ -166,7 +166,7 @@ export default function CarDetailPage({ id }) {
               )}
               <div className="mt-5 flex items-start gap-3 border-t border-white/10 pt-5 text-sm text-neutral-400">
                 <ShieldCheck size={20} className="mt-0.5 shrink-0 text-green-600" />
-                <span><strong className="block text-white">Current availability</strong>This vehicle is still listed as available by its dealership.</span>
+                <span><strong className="block text-white">Current availability</strong>This vehicle is listed as available. Our team verifies it before confirming your viewing.</span>
               </div>
             </div>
           </aside>

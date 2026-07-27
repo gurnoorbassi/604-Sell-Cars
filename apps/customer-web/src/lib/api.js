@@ -1,5 +1,10 @@
 export async function api(url, options) {
-  const baseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+  const baseUrl = (
+    import.meta.env.VITE_API_BASE_URL
+    || (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? ""
+      : "https://604-sell-cars-api.netlify.app")
+  ).replace(/\/$/, "");
   const request = { ...(options || {}) };
   const headers = new Headers(request.headers || {});
   if (url.startsWith("/api/admin")) {

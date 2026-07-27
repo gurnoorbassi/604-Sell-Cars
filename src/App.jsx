@@ -134,9 +134,9 @@ const uploadResumableFile = (file, storagePath, session, onProgress) => new Prom
 });
 
 const LOT_DETAILS = {
-  "Karma Autos": { name: "Karma Autos", address: "" },
+  "Karma Autos": { name: "Karma Autos", address: "20247 Langley Bypass, Langley, BC V3A 5E8" },
   "SkyHigh Auto": { name: "SkyHigh Motors", address: "16065 Fraser Hwy, Surrey, BC V4N 0G2" },
-  "Mainland Motors": { name: "Mainland Motors", address: "" },
+  "Mainland Motors": { name: "Mainland Motors", address: "5933 200 St, Langley, BC V3A 1N2" },
   "Lougheed Hyundai": { name: "Lougheed Hyundai", address: "1288 Lougheed Hwy, Coquitlam, BC V3K 6S4" },
 };
 
@@ -153,8 +153,8 @@ const numericValue = (value) => {
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
   const hasCarfaxUrl = Boolean(row.carfax_url?.trim());
-  const labels = (row.labels || []).filter((label) => label !== "HAS CARFAX");
-  if (hasCarfaxUrl) labels.push("HAS CARFAX");
+  const internalLabels = (row.internal_labels || row.labels || []).filter((label) => label !== "HAS CARFAX");
+  if (hasCarfaxUrl) internalLabels.push("HAS CARFAX");
   const photos = media.filter((item) => item.kind === "image").map((item) =>
     item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
   ).filter(Boolean);
@@ -166,7 +166,8 @@ const rowToCar = (row, signedUrls) => {
     dealership: row.dealership, bodyType: row.body_type, fuelTags: row.fuel_tags || [],
     lot: row.lot, lotName: row.lot_name,
     lotAddress: row.lot_address === "ADDRESS REQUIRED" ? "" : row.lot_address,
-    labels, description: row.description, carfax: row.carfax_url,
+    labels: internalLabels, internalLabels, publicLabels: row.public_labels || [],
+    description: row.description, carfax: row.carfax_url,
     trelloUrl: row.trello_url, photoCount: row.photo_count, photos, videos,
     manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
     storagePaths: media.map((item) => item.storage_path).filter(Boolean),
@@ -191,7 +192,9 @@ const carToRow = (car, userId) => {
   dealership,
   body_type: car.bodyType || "",
   fuel_tags: car.fuelTags || [],
-  labels: car.labels || [],
+  labels: car.internalLabels || car.labels || [],
+  internal_labels: car.internalLabels || car.labels || [],
+  public_labels: car.publicLabels || [],
   description: car.description || "",
   carfax_url: car.carfax === "on-file" ? "" : (car.carfax || ""),
   trello_url: car.trelloUrl || "",
@@ -215,7 +218,8 @@ const carToRow = (car, userId) => {
 const DEALERSHIPS = Object.keys(LOT_DETAILS);
 const BODY_TYPES = ["Sedan", "SUV", "Coupe", "Truck", "Van", "Minivan", "Hatchback", "Wagon", "Convertible", "Offroad"];
 const FUEL_TAGS = ["Gasoline", "Hybrid", "Electric", "Diesel", "Automatic", "Manual", "AWD", "4WD", "FWD", "Performance", "Luxury", "Brand New"];
-const LABELS = ["BONUS PAY", "PARTNER LOT", "GOOD MEDIA", "HAS CARFAX"];
+const INTERNAL_LABELS = ["BONUS PAY", "PARTNER LOT", "GOOD MEDIA", "HAS CARFAX"];
+const PUBLIC_LABELS = ["PRICE DROP", "GREAT VALUE", "LOW FINANCE RATE", "NEW ARRIVAL", "LOW KM", "CERTIFIED"];
 const LABEL_COLORS = {
   "BONUS PAY": "bg-green-600", "PARTNER LOT": "bg-yellow-600",
   "GOOD MEDIA": "bg-blue-600", "HAS CARFAX": "bg-teal-600",
@@ -223,7 +227,8 @@ const LABEL_COLORS = {
 const TIERS = ["<$10K", "<$20K", "<$30K", "$30-50K", "$50-100K", "High End"];
 const emptyForm = {
   id: null, title: "", stock: "", price: "", kms: "",
-  dealership: "", lot: "", lotName: "", lotAddress: "", bodyType: "", fuelTags: [], labels: [],
+  dealership: "", lot: "", lotName: "", lotAddress: "", bodyType: "", fuelTags: [],
+  labels: [], internalLabels: [], publicLabels: [],
   description: "", carfax: "", trelloUrl: "", photoCount: 0, photos: [], videos: [],
   manualPhotos: [], uploadFiles: [], storedMediaCount: 0,
   updatedAt: null, version: 1,
@@ -605,7 +610,7 @@ export default function SellsCarsBoard() {
     setTeamError("");
     const { data, error } = await supabase
       .from("team_members")
-      .select("email, role, active, created_at")
+      .select("email, role, active, lot_access, created_at")
       .order("role")
       .order("email");
     if (error) setTeamError(error.message);
@@ -936,7 +941,7 @@ function TeamPanel({
             const owner = member.role === "owner";
             return (
               <div key={member.email} className="flex flex-wrap items-center gap-3 rounded-xl px-3 py-3 hover:bg-neutral-800/60">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-[180px] flex-1">
                   <p className="truncate text-sm font-medium text-neutral-200">{member.email}</p>
                   <p className="mt-0.5 text-[11px] text-neutral-500">{owner ? "Protected owner account" : member.active ? "Access active" : "Pending or disabled"}</p>
                 </div>
@@ -944,6 +949,25 @@ function TeamPanel({
                   <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-200">Owner</span>
                 ) : (
                   <>
+                    <div className="w-full order-last rounded-lg border border-neutral-800 bg-neutral-950/60 p-2 sm:w-auto sm:order-none">
+                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">Lot access</p>
+                      <div className="flex flex-wrap gap-1">
+                        {DEALERSHIPS.map((lot) => {
+                          const active = (member.lot_access || []).includes(lot);
+                          return (
+                            <button key={lot} type="button"
+                              onClick={() => onUpdate(member.email, {
+                                lot_access: active
+                                  ? (member.lot_access || []).filter((item) => item !== lot)
+                                  : [...(member.lot_access || []), lot],
+                              })}
+                              className={`rounded px-2 py-1 text-[10px] font-semibold ${active ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-500 hover:text-white"}`}>
+                              {lot}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                     <div className="flex rounded-lg border border-neutral-700 bg-neutral-950 p-0.5">
                       {['bdc', 'admin'].map((role) => (
                         <button key={role} onClick={() => onUpdate(member.email, { role })}
@@ -1379,15 +1403,26 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
               ))}
             </div>
           </F>
-          <F label="Labels">
+          <F label="Internal labels — never shown publicly">
             <div className="flex gap-1.5 flex-wrap">
-              {LABELS.map((l) => (
-                <button key={l} onClick={() => toggleIn("labels", l)}
-                  className={`text-[11px] font-bold px-2.5 py-1 rounded ${form.labels.includes(l) ? `${LABEL_COLORS[l]} text-white` : "bg-neutral-800 text-neutral-500"}`}>
+              {INTERNAL_LABELS.map((l) => (
+                <button key={l} type="button" onClick={() => toggleIn("internalLabels", l)}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded ${form.internalLabels.includes(l) ? `${LABEL_COLORS[l]} text-white` : "bg-neutral-800 text-neutral-500"}`}>
                   {l}
                 </button>
               ))}
             </div>
+          </F>
+          <F label="Public website badges">
+            <div className="flex gap-1.5 flex-wrap">
+              {PUBLIC_LABELS.map((l) => (
+                <button key={l} type="button" onClick={() => toggleIn("publicLabels", l)}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded border ${form.publicLabels.includes(l) ? "border-red-500 bg-red-600 text-white" : "border-neutral-700 bg-neutral-800 text-neutral-500"}`}>
+                  {l}
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-neutral-500 mt-1.5">Only these badges can appear on 604SELLSCARS public vehicle cards.</p>
           </F>
           <div className="flex gap-4">
             <Toggle on={form.hot} onClick={() => setForm({ ...form, hot: !form.hot })} icon={<Flame className="w-3.5 h-3.5" />}>Hot sell</Toggle>
