@@ -110,39 +110,73 @@ export default function PublicSite() {
 }
 
 function HomePage({ cars, filters, loading, error }) {
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [heroTransition, setHeroTransition] = useState(true);
   const photographed = cars.filter((car) => carImages(car).length);
-  const heroCar = photographed.find((car) => /\bmercedes(?:[\s-]+benz)?\s+e63s\b/i.test(`${carName(car)} ${car.title || ""}`))
-    || photographed.find((car) => car.featured)
-    || photographed[0];
-  const heroMedia = [...(heroCar?.media || [])]
-    .filter((item) => item.kind === "image")
-    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-  const heroFeatureImage = /e63s/i.test(`${carName(heroCar || {})} ${heroCar?.title || ""}`)
-    ? heroMedia.find((item) => Number(item.sort_order) === 1)
-    : heroMedia[0];
-  const heroSources = [...new Set([
-    heroFeatureImage?.source_url,
-    ...carImages(heroCar || {}),
-  ].filter(Boolean))];
-  const heroImage = heroSources[0];
+  const highEndCars = [...photographed]
+    .sort((a, b) => Number(b.price_amount || 0) - Number(a.price_amount || 0))
+    .slice(0, 10);
+  const heroSlides = highEndCars.length ? [...highEndCars, highEndCars[0]] : [];
+  const activeHero = highEndCars[heroIndex % Math.max(highEndCars.length, 1)];
   const featured = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
       || Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 8);
 
+  useEffect(() => {
+    setHeroIndex(0);
+    setHeroTransition(true);
+    if (highEndCars.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return undefined;
+    }
+    const rotation = window.setInterval(() => {
+      setHeroIndex((current) => current + 1);
+    }, 4200);
+    return () => window.clearInterval(rotation);
+  }, [highEndCars.length]);
+
+  const finishHeroSlide = () => {
+    if (heroIndex !== highEndCars.length) return;
+    setHeroTransition(false);
+    setHeroIndex(0);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setHeroTransition(true));
+    });
+  };
+
   return (
     <main>
       <section className="hero-stage relative min-h-[690px] overflow-hidden border-b border-white/10 sm:min-h-[760px]">
-        {heroImage ? (
+        {heroSlides.length ? (
           <div className="hero-media absolute inset-0">
-            <VehicleImage
-              sources={heroSources}
-              alt=""
-              aria-hidden="true"
-              loading="eager"
-              fetchPriority="high"
-              className="hero-image h-full w-full object-cover"
-            />
+            <div
+              className="hero-carousel-track"
+              onTransitionEnd={finishHeroSlide}
+              style={{
+                transform: `translate3d(-${heroIndex * 84}%, 0, 0)`,
+                transition: heroTransition ? "transform 900ms cubic-bezier(.22,.72,.18,1)" : "none",
+              }}
+            >
+              {heroSlides.map((car, index) => (
+                <div className="hero-carousel-slide" key={`${car.id}-${index}`}>
+                  <VehicleImage
+                    sources={heroImageSources(car)}
+                    alt=""
+                    aria-hidden="true"
+                    loading={index < 3 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : undefined}
+                    className="hero-carousel-image h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+            {activeHero && (
+              <a href={`/cars/${encodeURIComponent(activeHero.id)}`} className="hero-carousel-caption">
+                <span>{String((heroIndex % highEndCars.length) + 1).padStart(2, "0")} / {String(highEndCars.length).padStart(2, "0")} · High-end inventory</span>
+                <strong>{carName(activeHero)}</strong>
+                <em>{priceLabel(activeHero)} <ArrowRight size={13} /></em>
+              </a>
+            )}
           </div>
         ) : <div className="absolute inset-0 bg-[#111419]" />}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,4,5,.94)_0%,rgba(3,4,5,.76)_46%,rgba(3,4,5,.28)_76%,rgba(3,4,5,.5)_100%)]" />
@@ -400,6 +434,20 @@ function Step({ number, title, text }) {
 function photographedForType(cars, matcher) {
   return cars.find((car) => matcher.test(`${car.body_type || ""} ${car.fuel_type || ""} ${(car.fuel_tags || []).join(" ")}`) && carImages(car).length)
     || cars.find((car) => carImages(car).length);
+}
+
+function heroImageSources(car) {
+  const media = [...(car?.media || [])]
+    .filter((item) => item.kind === "image")
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+  const identity = `${carName(car || {})} ${car?.title || ""}`;
+  const preferredOrder = /rolls[\s-]*royce.*ghost/i.test(identity)
+    ? 19
+    : /\bmercedes(?:[\s-]+benz)?\s+e63s\b/i.test(identity)
+      ? 1
+      : 0;
+  const preferred = media.find((item) => Number(item.sort_order) === preferredOrder);
+  return [...new Set([preferred?.source_url, ...carImages(car || {})].filter(Boolean))];
 }
 
 function HeroField({ label, ...props }) {
