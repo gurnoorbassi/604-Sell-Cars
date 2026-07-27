@@ -111,14 +111,14 @@ export default function PublicSite() {
 
 function HomePage({ cars, filters, loading, error }) {
   const photographed = cars.filter((car) => carImages(car).length);
-  const heroCar = photographed.find((car) => /rolls[\s-]*royce/i.test(carName(car)))
+  const heroCar = photographed.find((car) => /\bmercedes(?:[\s-]+benz)?\s+e63s\b/i.test(`${carName(car)} ${car.title || ""}`))
     || photographed.find((car) => car.featured)
     || photographed[0];
   const heroMedia = [...(heroCar?.media || [])]
     .filter((item) => item.kind === "image")
     .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-  const heroFeatureImage = /rolls[\s-]*royce/i.test(carName(heroCar || {}))
-    ? heroMedia.find((item) => Number(item.sort_order) === 19)
+  const heroFeatureImage = /e63s/i.test(`${carName(heroCar || {})} ${heroCar?.title || ""}`)
+    ? heroMedia.find((item) => Number(item.sort_order) === 1)
     : heroMedia[0];
   const heroSources = [...new Set([
     heroFeatureImage?.source_url,
