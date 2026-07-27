@@ -56,7 +56,7 @@ export default function PublicSite() {
 
   useEffect(() => {
     if (loading) return undefined;
-    const cards = [...document.querySelectorAll(".reveal-card")];
+    const cards = [...document.querySelectorAll(".reveal-card, .motion-section")];
     if (!("IntersectionObserver" in window)) {
       cards.forEach((card) => card.classList.add("is-visible"));
       return undefined;
@@ -73,8 +73,33 @@ export default function PublicSite() {
     return () => observer.disconnect();
   }, [loading, cars]);
 
+  useEffect(() => {
+    let frame = 0;
+    const updateMotion = () => {
+      frame = 0;
+      const scrollTop = window.scrollY;
+      const scrollRange = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      document.documentElement.style.setProperty("--page-progress", String(Math.min(scrollTop / scrollRange, 1)));
+      document.documentElement.style.setProperty("--hero-shift", `${Math.min(scrollTop * 0.14, 92)}px`);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateMotion);
+    };
+    updateMotion();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+      document.documentElement.style.removeProperty("--page-progress");
+      document.documentElement.style.removeProperty("--hero-shift");
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#08090b] text-[#f5f5f3]">
+      <div className="scroll-progress" aria-hidden="true" />
       <SiteHeader />
       {inventoryPage
         ? <InventoryPage cars={cars} filters={filters} current={current} loading={loading} error={error} />
@@ -89,7 +114,17 @@ function HomePage({ cars, filters, loading, error }) {
   const heroCar = photographed.find((car) => /rolls[\s-]*royce/i.test(carName(car)))
     || photographed.find((car) => car.featured)
     || photographed[0];
-  const heroImage = carImages(heroCar || {})[0];
+  const heroMedia = [...(heroCar?.media || [])]
+    .filter((item) => item.kind === "image")
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+  const heroFeatureImage = /rolls[\s-]*royce/i.test(carName(heroCar || {}))
+    ? heroMedia.find((item) => Number(item.sort_order) === 19)
+    : heroMedia[0];
+  const heroSources = [...new Set([
+    heroFeatureImage?.source_url,
+    ...carImages(heroCar || {}),
+  ].filter(Boolean))];
+  const heroImage = heroSources[0];
   const featured = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
       || Number(b.price_amount || 0) - Number(a.price_amount || 0))
@@ -99,18 +134,20 @@ function HomePage({ cars, filters, loading, error }) {
     <main>
       <section className="hero-stage relative min-h-[690px] overflow-hidden border-b border-white/10 sm:min-h-[760px]">
         {heroImage ? (
-          <VehicleImage
-            sources={carImages(heroCar)}
-            alt=""
-            aria-hidden="true"
-            loading="eager"
-            fetchPriority="high"
-            className="hero-image absolute inset-0 h-full w-full object-cover"
-          />
+          <div className="hero-media absolute inset-0">
+            <VehicleImage
+              sources={heroSources}
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              fetchPriority="high"
+              className="hero-image h-full w-full object-cover"
+            />
+          </div>
         ) : <div className="absolute inset-0 bg-[#111419]" />}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,4,5,.94)_0%,rgba(3,4,5,.76)_46%,rgba(3,4,5,.28)_76%,rgba(3,4,5,.5)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,#08090b_0%,transparent_38%)]" />
-        <div className="relative mx-auto flex min-h-[690px] w-[min(1340px,92vw)] flex-col justify-center py-16 sm:min-h-[760px]">
+        <div className="relative mx-auto flex min-h-[690px] w-[min(1340px,92vw)] flex-col justify-center pb-28 pt-16 sm:min-h-[760px]">
           <p className="hero-line hero-line-1 text-[10px] font-black uppercase tracking-[.24em] text-[#ff655a]">604SELLSCARS · Live marketplace inventory</p>
           <h1 className="hero-line hero-line-2 mt-5 max-w-4xl text-[clamp(2.65rem,6vw,5.5rem)] font-black leading-[.94] tracking-[-.06em]">
             Search live vehicles from independent dealerships and private sellers.
@@ -137,9 +174,15 @@ function HomePage({ cars, filters, loading, error }) {
             </button>
           </form>
         </div>
+        <div className="motion-ticker absolute inset-x-0 bottom-0 border-t border-white/10 bg-[#08090b]/90 py-4 backdrop-blur" aria-label="Marketplace benefits">
+          <div className="motion-ticker-track">
+            <TickerContent />
+            <TickerContent ariaHidden />
+          </div>
+        </div>
       </section>
 
-      <section className="mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
+      <section className="motion-section mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
         <SectionHeader kicker="Selected inventory" title="Vehicles worth a closer look." text="Live availability, clean media, and approximate location—nothing that sends you chasing the wrong car.">
           <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-white">View all <ArrowRight size={14} /></a>
         </SectionHeader>
@@ -152,7 +195,7 @@ function HomePage({ cars, filters, loading, error }) {
       </section>
 
       <section className="border-y border-white/10 bg-[#0d0f12] py-16 sm:py-24">
-        <div className="mx-auto w-[min(1340px,92vw)]">
+        <div className="motion-section mx-auto w-[min(1340px,92vw)]">
           <SectionHeader kicker="Start with the shape" title="Browse by body type." />
           <div className="mt-9 grid grid-cols-2 gap-3 md:grid-cols-5">
             {bodyTypes.map(([label, matcher]) => {
@@ -170,7 +213,7 @@ function HomePage({ cars, filters, loading, error }) {
         </div>
       </section>
 
-      <section id="how-it-works" className="mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
+      <section id="how-it-works" className="motion-section mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
         <SectionHeader kicker="No wasted drives" title="Find it. We reserve it. You drive it." />
         <div className="mt-10 grid border border-white/10 md:grid-cols-3">
           <Step number="01" title="Find it" text="Search live inventory by vehicle, budget, body style, and city." />
@@ -289,7 +332,7 @@ function SellerSection() {
   return (
     <section id="list-with-us" className="relative overflow-hidden border-t border-white/10 bg-[#111418] py-16 sm:py-24">
       <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(239,69,56,.13),transparent_65%)]" />
-      <div className="relative mx-auto grid w-[min(1180px,92vw)] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+      <div className="motion-section relative mx-auto grid w-[min(1180px,92vw)] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#ff655a]">Private sellers</p>
           <h2 className="mt-3 text-[clamp(2.4rem,4.5vw,4.4rem)] font-black leading-[.97] tracking-[-.06em]">Put your vehicle in front of the 604 audience.</h2>
@@ -326,6 +369,20 @@ function SectionHeader({ kicker, title, text, children }) {
         {text && <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">{text}</p>}
       </div>
       {children}
+    </div>
+  );
+}
+
+function TickerContent({ ariaHidden = false }) {
+  const items = ["Live inventory", "Approximate locations", "Reserve before you drive", "Lower Mainland"];
+  return (
+    <div className="motion-ticker-group" aria-hidden={ariaHidden || undefined}>
+      {items.map((item) => (
+        <span key={item}>
+          {item}
+          <i aria-hidden="true" />
+        </span>
+      ))}
     </div>
   );
 }
