@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ArrowLeft, CalendarDays, Camera, Check, ChevronLeft, ChevronRight,
-  ExternalLink, Gauge, MapPin, ShieldCheck,
+  ExternalLink, Gauge, MapPin, Maximize2, ShieldCheck, X,
 } from "lucide-react";
 import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
@@ -15,6 +15,7 @@ import { LANDING_URL, WEBSITE_URL } from "../lib/links";
 export default function CarDetailPage({ id }) {
   const [car, setCar] = useState(null);
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -44,6 +45,20 @@ export default function CarDetailPage({ id }) {
     }).catch((requestError) => setError(requestError.message));
   }, [id]);
 
+  useEffect(() => {
+    if (!lightboxOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setLightboxOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [lightboxOpen]);
+
   if (error) return <StatePage title="Vehicle unavailable" text={error} />;
   if (!car) return <StatePage title="Loading vehicle" text="Checking live inventory and media…" />;
 
@@ -57,7 +72,7 @@ export default function CarDetailPage({ id }) {
     <div className="min-h-screen bg-[#090a0c] text-white">
       <SiteHeader />
 
-      <main className="pb-20 lg:pb-0">
+      <main className="overflow-x-hidden pb-20 lg:pb-0">
         <section className="border-b border-white/10 bg-[#0d0f12]">
           <div className="mx-auto w-[min(1380px,94vw)] py-6 sm:py-8">
             <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.13em] text-neutral-500 hover:text-white">
@@ -79,12 +94,22 @@ export default function CarDetailPage({ id }) {
           </div>
         </section>
 
-        <div className="mx-auto grid w-[min(1380px,94vw)] gap-8 py-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:items-start">
-          <section>
+        <div className="mx-auto grid min-w-0 w-[min(1380px,94vw)] gap-8 py-8 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,.65fr)] lg:items-start">
+          <section className="min-w-0">
             <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#08090b_75%)] shadow-[0_24px_70px_rgba(0,0,0,.42)]">
               {images[active] ? (
-                <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high"
-                  className="h-full w-full object-cover sm:object-contain" />
+                <button
+                  type="button"
+                  onClick={() => setLightboxOpen(true)}
+                  className="absolute inset-0 block h-full w-full cursor-zoom-in overflow-hidden"
+                  aria-label={`Enlarge photo ${active + 1}`}
+                >
+                  <VehicleImage sources={[images[active]]} alt={`${carName(car)} photo ${active + 1}`} loading="eager" fetchPriority="high"
+                    className="absolute inset-0 h-full w-full object-contain" />
+                  <span className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/75 px-3 py-2 text-[10px] font-black uppercase tracking-[.12em] text-white backdrop-blur">
+                    <Maximize2 size={14} /> Enlarge
+                  </span>
+                </button>
               ) : (
                 <div className="grid h-full place-items-center text-sm font-semibold text-neutral-500">Photos coming soon</div>
               )}
@@ -104,10 +129,10 @@ export default function CarDetailPage({ id }) {
             </div>
 
             {images.length > 1 && (
-              <div className="mt-3 grid grid-cols-5 gap-2 sm:grid-cols-7 lg:grid-cols-9">
-                {images.slice(0, 18).map((image, index) => (
+              <div className="mobile-gallery-strip mt-3 flex w-full max-w-full gap-2 overflow-x-auto pb-2">
+                {images.map((image, index) => (
                   <button key={`${image}-${index}`} onClick={() => setActive(index)} aria-label={`View photo ${index + 1}`}
-                    className={`aspect-[4/3] overflow-hidden border-2 transition ${active === index ? "border-[#ef3f32]" : "border-transparent opacity-70 hover:opacity-100"}`}>
+                    className={`aspect-[4/3] w-24 shrink-0 overflow-hidden border-2 bg-[#0c0e11] transition sm:w-28 ${active === index ? "border-[#ef3f32]" : "border-transparent opacity-70 hover:opacity-100"}`}>
                     <VehicleImage sources={[image]} alt={`${carName(car)} thumbnail ${index + 1}`} className="h-full w-full object-cover" />
                   </button>
                 ))}
@@ -181,6 +206,44 @@ export default function CarDetailPage({ id }) {
           <CalendarDays size={17} /> Book a viewing
         </a>
       </div>
+
+      {lightboxOpen && images[active] && (
+        <div
+          className="fixed inset-0 z-[100] flex flex-col bg-black/95"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${carName(car)} photo viewer`}
+        >
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <p className="text-xs font-bold text-neutral-300">
+              Photo {active + 1} of {images.length} <span className="ml-2 text-neutral-500">Pinch to zoom</span>
+            </p>
+            <button type="button" onClick={() => setLightboxOpen(false)} className="grid h-11 w-11 place-items-center border border-white/15 bg-white/5" aria-label="Close photo viewer">
+              <X />
+            </button>
+          </div>
+          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-auto p-2 sm:p-6">
+            <img
+              src={images[active]}
+              alt={`${carName(car)} enlarged photo ${active + 1}`}
+              className="lightbox-image block max-h-full max-w-full object-contain"
+            />
+            {images.length > 1 && (
+              <>
+                <button type="button" onClick={previous} aria-label="Previous enlarged photo" className="absolute left-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center bg-black/70 text-white backdrop-blur">
+                  <ChevronLeft />
+                </button>
+                <button type="button" onClick={next} aria-label="Next enlarged photo" className="absolute right-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center bg-black/70 text-white backdrop-blur">
+                  <ChevronRight />
+                </button>
+              </>
+            )}
+          </div>
+          <a href={images[active]} target="_blank" rel="noreferrer" className="border-t border-white/10 px-4 py-3 text-center text-xs font-black uppercase tracking-[.12em] text-white">
+            Open original image
+          </a>
+        </div>
+      )}
 
       <SiteFooter />
     </div>

@@ -33,6 +33,28 @@ const bodyTypes = [
   ["EV", /electric|ev/i],
 ];
 
+const SHOWCASE_RULES = [
+  /\b2021\b.*\bC63S?\b/i,
+  /\bGLE63S?\b/i,
+  /ROLLS[\s-]*ROYCE.*GHOST/i,
+  /\bE63S?\b/i,
+  /\bGLC63S?\b/i,
+  /\bC63S?\b/i,
+  /\bS63S?\b/i,
+  /\bAMG\b/i,
+  /\bPORSCHE\b/i,
+  /\bRS7\b/i,
+  /\bRS5\b/i,
+  /\bBENTLEY\b|\bMASERATI\b|\bFERRARI\b|\bLAMBORGHINI\b|\bMCLAREN\b|\bASTON MARTIN\b/i,
+  /\bMERCEDES(?:[\s-]+BENZ)?\b|\bBMW\b|\bAUDI\b|\bRANGE ROVER\b|\bLAND ROVER\b|\bJAGUAR\b/i,
+];
+
+function showcaseRank(car) {
+  const identity = `${car?.title || ""} ${carName(car || {})}`;
+  const rank = SHOWCASE_RULES.findIndex((rule) => rule.test(identity));
+  return rank < 0 ? Number.MAX_SAFE_INTEGER : rank;
+}
+
 export default function PublicSite() {
   const inventoryPage = window.location.pathname.includes("/inventory");
   const [cars, setCars] = useState([]);
@@ -70,7 +92,8 @@ export default function PublicSite() {
 
   useEffect(() => {
     if (loading) return undefined;
-    const cards = [...document.querySelectorAll(".reveal-card, .motion-section")];
+    const cards = [...document.querySelectorAll(".reveal-card")];
+    document.querySelectorAll(".motion-section").forEach((section) => section.classList.add("is-visible"));
     if (!("IntersectionObserver" in window)) {
       cards.forEach((card) => card.classList.add("is-visible"));
       return undefined;
@@ -82,7 +105,7 @@ export default function PublicSite() {
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.06, rootMargin: "0px 0px -4% 0px" });
     cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
   }, [loading, cars]);
@@ -129,8 +152,9 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
   const displayCars = cars.map((car) => heroCarById.get(car.id) || car);
   const photographed = displayCars.filter((car) => carImages(car).length);
   const highEndCars = [...(heroCars.length ? heroCars : photographed)]
-    .filter((car) => carImages(car).length)
-    .sort((a, b) => Number(b.price_amount || 0) - Number(a.price_amount || 0))
+    .filter((car) => carImages(car).length && showcaseRank(car) < Number.MAX_SAFE_INTEGER)
+    .sort((a, b) => showcaseRank(a) - showcaseRank(b)
+      || Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 10);
   const heroCoverUrls = highEndCars.map((car) => heroImageSources(car)[0]).filter(Boolean);
   const heroCoverKey = heroCoverUrls.join("|");
@@ -143,7 +167,7 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
     setHeroReady(false);
     if (!heroCoverUrls.length) return undefined;
     let cancelled = false;
-    const preload = heroCoverUrls.slice(0, 5).map((source) => new Promise((resolve) => {
+    const preload = heroCoverUrls.slice(0, 3).map((source) => new Promise((resolve) => {
       const image = new Image();
       const timeout = window.setTimeout(resolve, 5_000);
       const finish = () => {
@@ -176,7 +200,7 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
                         sources={heroImageSources(car)}
                         alt=""
                         aria-hidden="true"
-                        loading={!duplicate ? "eager" : "lazy"}
+                        loading={!duplicate && index < 3 ? "eager" : "lazy"}
                         fetchPriority={!duplicate && index === 0 ? "high" : undefined}
                         className="hero-gallery-image h-full w-full object-cover"
                       />

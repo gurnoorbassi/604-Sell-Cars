@@ -324,6 +324,48 @@ function buildSlots(bookedValues: string[]) {
 async function publicCars(request: Request, supabase: any) {
   const url = new URL(request.url);
   const heroMode = url.searchParams.get("hero") === "1";
+  const showcaseFilter = [
+    "title.ilike.*C63*",
+    "title.ilike.*GLE63*",
+    "title.ilike.*E63*",
+    "title.ilike.*GLC63*",
+    "title.ilike.*S63*",
+    "title.ilike.*AMG*",
+    "title.ilike.*ROLLS*",
+    "title.ilike.*PORSCHE*",
+    "title.ilike.*BENTLEY*",
+    "title.ilike.*MASERATI*",
+    "title.ilike.*FERRARI*",
+    "title.ilike.*LAMBORGHINI*",
+    "title.ilike.*MCLAREN*",
+    "title.ilike.*ASTON MARTIN*",
+    "title.ilike.*MERCEDES*",
+    "title.ilike.*BMW*",
+    "title.ilike.*AUDI*",
+    "title.ilike.*RANGE ROVER*",
+    "title.ilike.*LAND ROVER*",
+    "title.ilike.*JAGUAR*",
+  ].join(",");
+  const showcaseRules = [
+    /\b2021\b.*\bC63S?\b/i,
+    /\bGLE63S?\b/i,
+    /ROLLS[\s-]*ROYCE.*GHOST/i,
+    /\bE63S?\b/i,
+    /\bGLC63S?\b/i,
+    /\bC63S?\b/i,
+    /\bS63S?\b/i,
+    /\bAMG\b/i,
+    /\bPORSCHE\b/i,
+    /\bRS7\b/i,
+    /\bRS5\b/i,
+    /\bBENTLEY\b|\bMASERATI\b|\bFERRARI\b|\bLAMBORGHINI\b|\bMCLAREN\b|\bASTON MARTIN\b/i,
+    /\bMERCEDES(?:[\s-]+BENZ)?\b|\bBMW\b|\bAUDI\b|\bRANGE ROVER\b|\bLAND ROVER\b|\bJAGUAR\b/i,
+  ];
+  const showcaseRank = (car: Record<string, any>) => {
+    const identity = `${car.title || ""} ${car.year || ""} ${car.make || ""} ${car.model || ""} ${car.trim || ""}`;
+    const rank = showcaseRules.findIndex((rule) => rule.test(identity));
+    return rank < 0 ? Number.MAX_SAFE_INTEGER : rank;
+  };
   const { data, error } = await withJwtClockRetry(() => {
     const query = supabase
       .from("cars")
@@ -334,11 +376,17 @@ async function publicCars(request: Request, supabase: any) {
       .eq("vehicle_media.kind", "image")
       .order("sort_order", { ascending: true, referencedTable: "vehicle_media" });
     return heroMode
-      ? query.order("price_amount", { ascending: false }).limit(10)
+      ? query.or(showcaseFilter).limit(100)
       : query.limit(1, { referencedTable: "vehicle_media" }).limit(500);
   });
   if (error) throw error;
-  let rows = await withSignedMedia(supabase, (data || []).filter(isPublicCar));
+  let publicRows = (data || []).filter(isPublicCar);
+  if (heroMode) {
+    publicRows = publicRows
+      .sort((a, b) => showcaseRank(a) - showcaseRank(b))
+      .slice(0, 10);
+  }
+  let rows = await withSignedMedia(supabase, publicRows);
   const search = clean(url.searchParams.get("search") || url.searchParams.get("q")).toLowerCase();
   const exact = (key: string, getter: (car: Record<string, any>) => unknown) => {
     const value = clean(url.searchParams.get(key));
@@ -369,7 +417,8 @@ async function publicCars(request: Request, supabase: any) {
   const sort = url.searchParams.get("sort");
   const number = (value: unknown, fallback = Number.MAX_SAFE_INTEGER) =>
     Number.isFinite(Number(value)) ? Number(value) : fallback;
-  if (sort === "price_asc") rows.sort((a, b) => number(a.price_amount) - number(b.price_amount));
+  if (heroMode) rows.sort((a, b) => showcaseRank(a) - showcaseRank(b));
+  else if (sort === "price_asc") rows.sort((a, b) => number(a.price_amount) - number(b.price_amount));
   else if (sort === "price_desc") rows.sort((a, b) => number(b.price_amount, -1) - number(a.price_amount, -1));
   else if (sort === "mileage") rows.sort((a, b) => number(a.mileage) - number(b.mileage));
   else if (sort === "newest") rows.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));

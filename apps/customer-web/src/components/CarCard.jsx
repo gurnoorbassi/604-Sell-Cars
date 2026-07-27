@@ -13,7 +13,7 @@ export default function CarCard({ car }) {
       <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#0c0e11_72%)]">
         {preferredImages[0] ? (
           <VehicleImage sources={preferredImages} alt={carName(car)}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+            className="vehicle-card-image h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
         ) : (
           <div className="grid h-full place-items-center bg-[linear-gradient(135deg,#171a1f,#0c0e11)] text-xs font-bold uppercase tracking-[.12em] text-neutral-600">
             Photos coming soon
