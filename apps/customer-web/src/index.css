@@ -214,12 +214,13 @@ select {
 }
 
 .motion-section {
-  opacity: 0;
-  transform: translateY(34px);
+  opacity: 1;
+  transform: none;
 }
 
 .motion-section.is-visible {
-  animation: section-in .8s cubic-bezier(.2,.72,.2,1) forwards;
+  opacity: 1;
+  transform: none;
 }
 
 .motion-ticker {
@@ -276,6 +277,17 @@ select {
 
 .inventory-grid {
   animation: inventory-fade .28s ease both;
+}
+
+.lightbox-image {
+  touch-action: pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mobile-gallery-strip {
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
 }
 
 .site-header.is-scrolled > div {
@@ -355,6 +367,13 @@ select {
 
   .hero-gallery-slide {
     flex-basis: 86vw;
+  }
+
+  .vehicle-card-image {
+    object-fit: contain !important;
+    object-position: center;
+    background: #0c0e11;
+    transform: none !important;
   }
 
   input:not([type="range"]):not([type="hidden"]),
