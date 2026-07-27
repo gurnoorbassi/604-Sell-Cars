@@ -16,6 +16,10 @@ const PAYMENT_METHODS = new Set(["Cash", "Finance", "Lease"]);
 const CREDIT_RANGES = new Set(["Excellent (750+)", "Good (680–749)", "Fair (600–679)", "Rebuilding (under 600)", "Not sure"]);
 const HEARD_FROM = new Set(["Instagram", "Facebook", "Google", "Referral", "Other"]);
 const HANDOFF_STATUSES = new Set(["pending_confirmation", "verified", "handed_off", "source_alternative", "closed"]);
+const PUBLIC_CACHE_HEADERS = {
+  "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
+  "Netlify-CDN-Cache-Control": "public, durable, s-maxage=300, stale-while-revalidate=3600",
+};
 
 let mediaBucketReady: Promise<void> | null = null;
 let sellerBucketReady: Promise<void> | null = null;
@@ -38,6 +42,15 @@ function serviceClient() {
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+}
+
+async function withJwtClockRetry(operation: () => PromiseLike<any>) {
+  let result = await operation();
+  if (result?.error && /jwt issued at future/i.test(String(result.error.message || result.error))) {
+    await new Promise((resolve) => setTimeout(resolve, 750));
+    result = await operation();
+  }
+  return result;
 }
 
 function ensureBucket(
@@ -87,6 +100,9 @@ function fail(error: unknown, fallback = "Something went wrong. Please try again
     .replace(/^.*?ERROR:\s*/i, "")
     .replace(/\s*\(SQLSTATE.*$/i, "")
     .trim();
+  if (/jwt issued at future/i.test(cleanMessage)) {
+    return json({ error: "Inventory is temporarily refreshing. Please try again." }, 503);
+  }
   const expected = [
     "required", "valid", "available", "location", "future", "14 days", "24 hours",
     "on the hour", "between 10", "just booked", "not found", "maximum", "image",
@@ -225,7 +241,7 @@ async function withSignedMedia(supabase: any, cars: Array<Record<string, any>>) 
   ))];
   const signed = new Map<string, string>();
   if (paths.length) {
-    const { data, error } = await supabase.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 3600);
+    const { data, error } = await supabase.storage.from(MEDIA_BUCKET).createSignedUrls(paths, 7200);
     if (error) console.error("Could not sign vehicle media URLs:", error.message);
     (data || []).forEach((item: Record<string, any>) => {
       if (item.path && item.signedUrl) signed.set(item.path, item.signedUrl);
@@ -307,13 +323,20 @@ function buildSlots(bookedValues: string[]) {
 
 async function publicCars(request: Request, supabase: any) {
   const url = new URL(request.url);
-  const { data, error } = await supabase
-    .from("cars")
-    .select("*, vehicle_media(*)")
-    .eq("status", "available")
-    .neq("lot", "LOCATION_REQUIRED")
-    .neq("lot_address", "ADDRESS REQUIRED")
-    .limit(500);
+  const heroMode = url.searchParams.get("hero") === "1";
+  const { data, error } = await withJwtClockRetry(() => {
+    const query = supabase
+      .from("cars")
+      .select("*, vehicle_media(id, kind, source_url, storage_path, sort_order, mime_type)")
+      .eq("status", "available")
+      .neq("lot", "LOCATION_REQUIRED")
+      .neq("lot_address", "ADDRESS REQUIRED")
+      .eq("vehicle_media.kind", "image")
+      .order("sort_order", { ascending: true, referencedTable: "vehicle_media" });
+    return heroMode
+      ? query.order("price_amount", { ascending: false }).limit(10)
+      : query.limit(1, { referencedTable: "vehicle_media" }).limit(500);
+  });
   if (error) throw error;
   let rows = await withSignedMedia(supabase, (data || []).filter(isPublicCar));
   const search = clean(url.searchParams.get("search") || url.searchParams.get("q")).toLowerCase();
@@ -352,7 +375,7 @@ async function publicCars(request: Request, supabase: any) {
   else if (sort === "newest") rows.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   else rows.sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
     || String(b.updated_at).localeCompare(String(a.updated_at)));
-  return json(rows.map(publicCarPayload));
+  return json(rows.map(publicCarPayload), 200, PUBLIC_CACHE_HEADERS);
 }
 
 async function carDetail(id: string, supabase: any) {
@@ -482,12 +505,12 @@ async function submitSellerLead(request: Request, supabase: any) {
 }
 
 async function filters(supabase: any) {
-  const { data, error } = await supabase
+  const { data, error } = await withJwtClockRetry(() => supabase
     .from("cars")
     .select("title, lot, lot_name, lot_address, dealership, body_type, fuel_type, make, year")
     .eq("status", "available")
     .neq("lot", "LOCATION_REQUIRED")
-    .neq("lot_address", "ADDRESS REQUIRED");
+    .neq("lot_address", "ADDRESS REQUIRED"));
   if (error) throw error;
   const normalized = (data || []).map(normalizeCar);
   const unique = (getter: (row: Record<string, any>) => unknown, descending = false) =>
@@ -499,7 +522,7 @@ async function filters(supabase: any) {
     fuel_types: unique((row) => row.fuel_type),
     makes: unique((row) => row.make),
     years: unique((row) => row.year, true),
-  });
+  }, 200, PUBLIC_CACHE_HEADERS);
 }
 
 function carRow(input: Record<string, any>, id: string) {

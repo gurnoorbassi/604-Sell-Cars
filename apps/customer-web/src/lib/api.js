@@ -13,11 +13,21 @@ export async function api(url, options) {
     if (data.session?.access_token) headers.set("Authorization", `Bearer ${data.session.access_token}`);
   }
   request.headers = headers;
-  const response = await fetch(`${baseUrl}${url}`, request);
-  const contentType = response.headers.get("content-type") || "";
-  const body = contentType.includes("application/json") ? await response.json() : await response.text();
-  if (!response.ok) throw new Error(body?.error || body || "Request failed.");
-  return body;
+  const isRead = !request.method || request.method.toUpperCase() === "GET";
+  const attempts = isRead ? 2 : 1;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const response = await fetch(`${baseUrl}${url}`, request);
+    const contentType = response.headers.get("content-type") || "";
+    const body = contentType.includes("application/json") ? await response.json() : await response.text();
+    if (response.ok) return body;
+    const message = body?.error || body || "Request failed.";
+    if (attempt + 1 < attempts && (response.status >= 500 || /jwt issued at future/i.test(String(message)))) {
+      await new Promise((resolve) => window.setTimeout(resolve, 750));
+      continue;
+    }
+    throw new Error(message);
+  }
+  throw new Error("Request failed.");
 }
 
 const VEHICLE_ACRONYMS = new Set([
