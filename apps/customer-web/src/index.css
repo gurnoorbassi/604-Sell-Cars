@@ -279,6 +279,13 @@ select {
   animation: inventory-fade .28s ease both;
 }
 
+.vehicle-card-image {
+  object-fit: contain !important;
+  object-position: center;
+  background: #0c0e11;
+  transform: none !important;
+}
+
 .lightbox-image {
   touch-action: pinch-zoom;
   -webkit-user-select: none;
@@ -367,13 +374,6 @@ select {
 
   .hero-gallery-slide {
     flex-basis: 86vw;
-  }
-
-  .vehicle-card-image {
-    object-fit: contain !important;
-    object-position: center;
-    background: #0c0e11;
-    transform: none !important;
   }
 
   input:not([type="range"]):not([type="hidden"]),

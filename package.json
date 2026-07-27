@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest run",
+    "audit:public": "node scripts/audit-public-site.mjs",
     "backup:data": "node --env-file-if-exists=.env scripts/backup-data.mjs",
     "preview": "vite preview",
     "import:trello": "node --env-file-if-exists=.env scripts/import-trello.mjs",

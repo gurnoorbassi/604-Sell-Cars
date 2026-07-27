@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowUpRight, CalendarDays, Phone, RefreshCw, UserRound 
 import AuthScreen from "../AuthScreen";
 import SiteHeader from "../components/SiteHeader";
 import { api, carName } from "../lib/api";
+import { setPageMeta } from "../lib/pageMeta";
 import { supabase } from "../lib/supabase";
 
 const HANDOFFS = [
@@ -15,6 +16,13 @@ const HANDOFFS = [
 
 export default function AdminPage() {
   const [session, setSession] = useState(undefined);
+  useEffect(() => {
+    setPageMeta({
+      title: "Lead Desk | 604 Sell Cars",
+      description: "Protected 604 Sell Cars lead operations.",
+      robots: "noindex,nofollow",
+    });
+  }, []);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session || null));
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession || null));

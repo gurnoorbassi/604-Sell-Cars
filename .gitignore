@@ -1,6 +1,8 @@
 node_modules/
 dist/
 apps/*/dist*/
+apps/customer-web/public/robots.txt
+apps/customer-web/public/sitemap.xml
 .env
 .env.*
 !.env.example

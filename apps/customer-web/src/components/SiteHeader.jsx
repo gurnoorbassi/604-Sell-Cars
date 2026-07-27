@@ -14,6 +14,15 @@ export default function SiteHeader({ admin = false }) {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+
   return (
     <header className={`site-header sticky top-0 z-50 border-b border-white/10 text-white backdrop-blur-xl ${scrolled ? "is-scrolled bg-[#08090b]/98" : "bg-[#08090b]/88"}`}>
       <div className="mx-auto flex h-[76px] w-[min(1340px,92vw)] items-center justify-between gap-5 transition-all duration-300">
@@ -25,11 +34,18 @@ export default function SiteHeader({ admin = false }) {
           </span>
         </a>
 
-        <button type="button" onClick={() => setOpen((value) => !value)} className="grid h-10 w-10 place-items-center border border-white/15 md:hidden" aria-label="Toggle navigation">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="grid h-10 w-10 place-items-center border border-white/15 md:hidden"
+          aria-label="Toggle navigation"
+          aria-expanded={open}
+          aria-controls="primary-navigation"
+        >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
 
-        <nav className={`${open ? "flex" : "hidden"} absolute inset-x-0 top-[76px] flex-col border-b border-white/10 bg-[#08090b] p-4 text-sm font-bold md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`} aria-label="Primary navigation">
+        <nav id="primary-navigation" className={`${open ? "flex" : "hidden"} absolute inset-x-0 top-[76px] flex-col border-b border-white/10 bg-[#08090b] p-4 text-sm font-bold md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0`} aria-label="Primary navigation">
           {admin ? (
             <>
               <a href={ADMIN_URL} className="px-4 py-3 hover:bg-white/5">Lead desk</a>

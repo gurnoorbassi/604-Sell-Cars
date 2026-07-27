@@ -150,7 +150,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <Field label="Full name" name="name" autoComplete="name" placeholder="Your full name" className={fieldClass} />
           <Field label="Phone" name="phone" type="tel" autoComplete="tel" placeholder="(604) 555-0123" className={fieldClass} />
-          <Field label="Email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className={`${fieldClass} sm:col-span-2`} />
+          <Field label="Email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className={`${fieldClass} sm:col-span-2`} optional />
         </div>
       </section>
 
@@ -299,7 +299,7 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
         </div>
       </section>
 
-      {error && <p className="mt-5 border border-red-400/30 bg-red-500/10 p-3 text-sm font-semibold text-red-200">{error}</p>}
+      {error && <p role="alert" className="mt-5 border border-red-400/30 bg-red-500/10 p-3 text-sm font-semibold text-red-200">{error}</p>}
       <button disabled={submitting} className="mt-6 flex min-h-14 w-full items-center justify-center gap-3 bg-[#ef4538] px-5 py-4 font-black text-white transition hover:bg-[#d9362b] disabled:opacity-60">
         <span>{submitting ? "Sending request…" : "Request my viewing"}</span><ChevronRight size={18} />
       </button>
@@ -310,11 +310,11 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
   );
 }
 
-function Field({ label, className, ...props }) {
+function Field({ label, className, optional = false, ...props }) {
   return (
     <label className={`text-[10px] font-black uppercase tracking-[.12em] text-neutral-400 ${props.name === "email" ? "sm:col-span-2" : ""}`}>
-      {label}
-      <input className={className} required {...props} />
+      {label}{optional && <span className="ml-1 font-medium normal-case tracking-normal text-neutral-600">(optional)</span>}
+      <input className={className} required={!optional} {...props} />
     </label>
   );
 }
