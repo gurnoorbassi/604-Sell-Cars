@@ -9,11 +9,13 @@
     "test": "vitest run",
     "audit:public": "node scripts/audit-public-site.mjs",
     "backup:data": "node --env-file-if-exists=.env scripts/backup-data.mjs",
+    "audit:trello-photos": "node --env-file-if-exists=.env scripts/audit-trello-photo-counts.mjs",
     "preview": "vite preview",
     "import:trello": "node --env-file-if-exists=.env scripts/import-trello.mjs",
     "import:trello-export": "node scripts/import-trello-export.mjs",
     "classify:inventory": "node scripts/classify-inventory.mjs --write",
-    "migrate:media": "node --env-file-if-exists=.env scripts/migrate-media-to-supabase.mjs"
+    "migrate:media": "node --env-file-if-exists=.env scripts/migrate-media-to-supabase.mjs",
+    "sync:trello-photos": "node --env-file-if-exists=.env scripts/sync-all-trello-photos.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.110.8",

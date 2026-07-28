@@ -166,6 +166,21 @@ const numericValue = (value) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
+const loadAllVehicleMedia = async () => {
+  const pageSize = 1000;
+  const media = [];
+  for (let start = 0; ; start += pageSize) {
+    const { data, error } = await supabase
+      .from("vehicle_media")
+      .select("*")
+      .order("id")
+      .range(start, start + pageSize - 1);
+    if (error) throw error;
+    media.push(...(data || []));
+    if (!data || data.length < pageSize) return media;
+  }
+};
+
 const rowToCar = (row, signedUrls) => {
   const media = [...(row.vehicle_media || [])].sort((a, b) => a.sort_order - b.sort_order);
   const hasCarfaxUrl = Boolean(row.carfax_url?.trim());
@@ -315,13 +330,29 @@ export default function SellsCarsBoard() {
 
     const { data: rows, error } = await supabase
       .from("cars")
-      .select("*, vehicle_media(*)")
+      .select("*")
       .order("updated_at", { ascending: false });
     if (error) {
       setAppError(error.message);
       setLoading(false);
       return;
     }
+
+    let mediaRows;
+    try {
+      mediaRows = await loadAllVehicleMedia();
+    } catch (mediaError) {
+      setAppError(mediaError.message);
+      setLoading(false);
+      return;
+    }
+    const mediaByVehicle = new Map();
+    for (const item of mediaRows) {
+      const vehicleMedia = mediaByVehicle.get(item.vehicle_id) || [];
+      vehicleMedia.push(item);
+      mediaByVehicle.set(item.vehicle_id, vehicleMedia);
+    }
+    for (const row of rows) row.vehicle_media = mediaByVehicle.get(row.id) || [];
 
     const storagePaths = rows.flatMap((row) => row.vehicle_media || [])
       .map((item) => item.storage_path)
