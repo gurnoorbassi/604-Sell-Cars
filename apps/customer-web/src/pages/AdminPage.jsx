@@ -14,6 +14,15 @@ const HANDOFFS = [
   ["closed", "Closed"],
 ];
 
+const APPOINTMENT_STATUSES = [
+  ["new", "New"],
+  ["assigned", "Assigned"],
+  ["booked", "Booked"],
+  ["cancelled", "Cancelled"],
+  ["completed", "Completed"],
+  ["no_show", "No-show"],
+];
+
 export default function AdminPage() {
   const [session, setSession] = useState(undefined);
   useEffect(() => {
@@ -206,12 +215,21 @@ function BuyerLead({ lead, update, save }) {
         <Data term="Credit range" value={lead.credit_range || "Not provided"} />
         <Data term="Heard from" value={lead.heard_from || "—"} />
         <Data term="Customer notes" value={lead.customer_notes || "—"} />
+        <Data term="SMS consent" value={lead.consent_sms ? "Granted" : "Not granted"} />
+        <Data
+          term="SMS reminders"
+          value={[
+            `24h ${lead.reminder_24h_sent_at ? "sent" : "pending"}`,
+            `3h ${lead.reminder_3h_sent_at ? "sent" : "pending"}`,
+            `1h ${lead.reminder_1h_sent_at ? "sent" : "pending"}`,
+          ].join(" · ")}
+        />
         <Data term="Lead ID / created" value={`#${lead.id} · ${new Date(lead.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`} />
       </dl>
 
       <div className="mt-5 grid gap-3 border-t border-white/10 pt-5 lg:grid-cols-[1fr_190px_220px_2fr_auto]">
         <DeskField label="Assigned rep" value={lead.assigned_to || ""} onChange={(value) => update({ assigned_to: value })} />
-        <DeskSelect label="Appointment" value={lead.appointment_status} onChange={(value) => update({ appointment_status: value })} options={[["booked", "Booked"], ["cancelled", "Cancelled"]]} />
+        <DeskSelect label="Appointment" value={lead.appointment_status} onChange={(value) => update({ appointment_status: value })} options={APPOINTMENT_STATUSES} />
         <DeskSelect label="Handoff" value={lead.handoff_status || "pending_confirmation"} onChange={(value) => update({ handoff_status: value })} options={HANDOFFS} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none focus:border-white/30" rows="2" /></label>
         <button onClick={save} className="self-end bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b]">Save</button>
