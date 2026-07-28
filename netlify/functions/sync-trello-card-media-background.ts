@@ -66,12 +66,11 @@ export default async (request: Request, _context: Context) => {
 
   const trelloKey = Netlify.env.get("TRELLO_API_KEY");
   const trelloToken = Netlify.env.get("TRELLO_API_TOKEN");
-  const serviceRoleKey = Netlify.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const publishableKey = Netlify.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")
     || request.headers.get("x-supabase-publishable-key");
   const authorization = request.headers.get("authorization") || "";
   const sessionToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-  if (!trelloKey || !trelloToken || !serviceRoleKey || !publishableKey || !sessionToken) {
+  if (!trelloKey || !trelloToken || !publishableKey || !sessionToken) {
     console.error("Full gallery sync is missing its authentication configuration.");
     return;
   }
@@ -109,10 +108,7 @@ export default async (request: Request, _context: Context) => {
     return;
   }
 
-  const adminClient = createClient(SUPABASE_URL, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  const { data: car, error: carError } = await adminClient
+  const { data: car, error: carError } = await userClient
     .from("cars")
     .select("id, trello_url")
     .eq("id", vehicleId)
@@ -145,7 +141,7 @@ export default async (request: Request, _context: Context) => {
     ? [cover, ...images.filter((attachment) => attachment.id !== cover.id)]
     : images;
 
-  const { data: existingData, error: existingError } = await adminClient
+  const { data: existingData, error: existingError } = await userClient
     .from("vehicle_media")
     .select("id, source_url, sort_order")
     .eq("vehicle_id", vehicleId)
@@ -182,7 +178,7 @@ export default async (request: Request, _context: Context) => {
       }
       const extension = extensionFor(contentType, sourceUrl);
       storagePath = `${vehicleId}/${String(sortOrder).padStart(3, "0")}-trello-${attachment.id}.${extension}`;
-      const { error: uploadError } = await adminClient.storage
+      const { error: uploadError } = await userClient.storage
         .from(BUCKET)
         .upload(storagePath, bytes, {
           contentType,
@@ -191,7 +187,7 @@ export default async (request: Request, _context: Context) => {
         });
       if (uploadError) throw uploadError;
 
-      const { error: insertError } = await adminClient.from("vehicle_media").insert({
+      const { error: insertError } = await userClient.from("vehicle_media").insert({
         vehicle_id: vehicleId,
         kind: "image",
         source_url: sourceUrl,
@@ -202,14 +198,14 @@ export default async (request: Request, _context: Context) => {
         migration_error: null,
       });
       if (insertError) {
-        await adminClient.storage.from(BUCKET).remove([storagePath]);
+        await userClient.storage.from(BUCKET).remove([storagePath]);
         throw insertError;
       }
       existingAttachmentIds.add(attachment.id);
       inserted += 1;
     } catch (error) {
       failed += 1;
-      if (storagePath) await adminClient.storage.from(BUCKET).remove([storagePath]);
+      if (storagePath) await userClient.storage.from(BUCKET).remove([storagePath]);
       const message = error instanceof Error ? error.message : "Unknown sync error";
       console.warn(`Trello attachment ${attachment.id} could not be synced: ${message}`);
     }
@@ -224,7 +220,7 @@ export default async (request: Request, _context: Context) => {
     ));
   }
 
-  const { error: updateError } = await adminClient
+    const { error: updateError } = await userClient
     .from("cars")
     .update({ photo_count: orderedImages.length })
     .eq("id", vehicleId);
