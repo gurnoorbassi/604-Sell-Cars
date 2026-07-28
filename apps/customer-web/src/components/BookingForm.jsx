@@ -96,7 +96,13 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
       const result = await api("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, carId: selected.id, appointmentTime, budget }),
+        body: JSON.stringify({
+          ...values,
+          carId: selected.id,
+          appointmentTime,
+          budget,
+          consentSms: values.consentSms === "on",
+        }),
       });
       setConfirmation(result);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -298,6 +304,18 @@ export default function BookingForm({ initialCarId = "", compact = false }) {
           </label>
         </div>
       </section>
+
+      <label className="mt-6 flex cursor-pointer items-start gap-3 border border-white/10 bg-[#0a0c0f] p-4 text-sm leading-6 text-neutral-300">
+        <input
+          type="checkbox"
+          name="consentSms"
+          className="mt-1 h-4 w-4 shrink-0 accent-[#ef4538]"
+        />
+        <span>
+          By submitting, you agree to receive text messages from 604SellsCars about your inquiry and appointment.
+          Msg &amp; data rates may apply. Reply STOP to opt out.
+        </span>
+      </label>
 
       {error && <p role="alert" className="mt-5 border border-red-400/30 bg-red-500/10 p-3 text-sm font-semibold text-red-200">{error}</p>}
       <button disabled={submitting} className="mt-6 flex min-h-14 w-full items-center justify-center gap-3 bg-[#ef4538] px-5 py-4 font-black text-white transition hover:bg-[#d9362b] disabled:opacity-60">

@@ -16,6 +16,8 @@ const PAYMENT_METHODS = new Set(["Cash", "Finance", "Lease"]);
 const CREDIT_RANGES = new Set(["Excellent (750+)", "Good (680–749)", "Fair (600–679)", "Rebuilding (under 600)", "Not sure"]);
 const HEARD_FROM = new Set(["Instagram", "Facebook", "Google", "Referral", "Other"]);
 const HANDOFF_STATUSES = new Set(["pending_confirmation", "verified", "handed_off", "source_alternative", "closed"]);
+const APPOINTMENT_STATUSES = new Set(["new", "assigned", "booked", "cancelled", "completed", "no_show"]);
+const ACTIVE_APPOINTMENT_STATUSES = ["new", "assigned", "booked"];
 const PUBLIC_CACHE_HEADERS = {
   "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
   "Netlify-CDN-Cache-Control": "public, durable, s-maxage=300, stale-while-revalidate=3600",
@@ -121,6 +123,110 @@ function normalizePhone(value: unknown) {
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
   if (digits.length >= 8 && digits.length <= 15) return `+${digits}`;
   throw new Error("Enter a valid phone number.");
+}
+
+async function secretsMatch(left: string, right: string) {
+  const encoder = new TextEncoder();
+  const [leftHash, rightHash] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(left)),
+    crypto.subtle.digest("SHA-256", encoder.encode(right)),
+  ]);
+  const a = new Uint8Array(leftHash);
+  const b = new Uint8Array(rightHash);
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+async function hasAutomationAccess(request: Request) {
+  const expected = Netlify.env.get("N8N_AUTOMATION_API_KEY") || "";
+  const provided = request.headers.get("x-604sc-automation-key") || "";
+  return Boolean(expected && provided && await secretsMatch(provided, expected));
+}
+
+function automationLeadPayload(lead: Record<string, any>) {
+  const car = lead.cars || {};
+  const vehicle = [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ")
+    || car.title
+    || "Vehicle";
+  return {
+    leadId: lead.id,
+    customerName: lead.name,
+    customerPhone: lead.phone,
+    vehicle,
+    appointmentAt: lead.appointment_time,
+    status: lead.appointment_status,
+    consentSms: Boolean(lead.consent_sms),
+    assignedRep: lead.assigned_to,
+    reminder24hSentAt: lead.reminder_24h_sent_at,
+    reminder3hSentAt: lead.reminder_3h_sent_at,
+    reminder1hSentAt: lead.reminder_1h_sent_at,
+    createdAt: lead.created_at,
+    lot: lead.appointment_lot,
+    lotName: car.lot_name || null,
+    lotAddress: car.lot_address || null,
+  };
+}
+
+async function getAutomationLead(supabase: any, leadId: string | number) {
+  const { data, error } = await supabase
+    .from("leads")
+    .select(`
+      id, name, phone, appointment_time, appointment_status, consent_sms,
+      assigned_to, reminder_24h_sent_at, reminder_3h_sent_at,
+      reminder_1h_sent_at, created_at, appointment_lot,
+      cars!leads_car_id_fkey(year, make, model, trim, title, lot_name, lot_address)
+    `)
+    .eq("id", leadId)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? automationLeadPayload(data) : null;
+}
+
+async function dispatchLeadIntake(supabase: any, leadId: string | number) {
+  const webhookUrl = Netlify.env.get("N8N_INTAKE_WEBHOOK_URL") || "";
+  const automationKey = Netlify.env.get("N8N_AUTOMATION_API_KEY") || "";
+  if (!webhookUrl || !automationKey) return;
+  const lead = await getAutomationLead(supabase, leadId);
+  if (!lead) return;
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-604sc-automation-key": automationKey,
+      },
+      body: JSON.stringify(lead),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!response.ok) {
+      console.error("Lead automation intake rejected", { leadId, status: response.status });
+    }
+  } catch (error) {
+    console.error("Lead automation intake unavailable", { leadId, error });
+  }
+}
+
+async function dispatchLeadCancellation(supabase: any, leadId: string | number) {
+  const webhookUrl = Netlify.env.get("N8N_CANCELLATION_WEBHOOK_URL") || "";
+  const automationKey = Netlify.env.get("N8N_AUTOMATION_API_KEY") || "";
+  if (!webhookUrl || !automationKey) return;
+  const lead = await getAutomationLead(supabase, leadId);
+  if (!lead) return;
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-604sc-automation-key": automationKey,
+      },
+      body: JSON.stringify(lead),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!response.ok) {
+      console.error("Lead cancellation automation rejected", { leadId, status: response.status });
+    }
+  } catch (error) {
+    console.error("Lead cancellation automation unavailable", { leadId, error });
+  }
 }
 
 function isPublicCar(car: Record<string, any>) {
@@ -460,7 +566,7 @@ async function slots(id: string, supabase: any) {
     .from("leads")
     .select("appointment_time")
     .eq("appointment_lot", car.lot)
-    .eq("appointment_status", "booked")
+    .in("appointment_status", ACTIVE_APPOINTMENT_STATUSES)
     .gt("appointment_time", new Date().toISOString())
     .lte("appointment_time", end);
   if (bookedError) throw bookedError;
@@ -485,6 +591,7 @@ async function submitLead(request: Request, supabase: any) {
   const heardFrom = clean(input.heardFrom, 40);
   const budget = Number(input.budget);
   const downPayment = input.downPayment === "" || input.downPayment == null ? null : Number(input.downPayment);
+  const consentSms = input.consentSms === true || input.consentSms === "on";
   if (!name || !phone || !email || !carId || !appointmentTime || !paymentMethod || !heardFrom) {
     return json({ error: "Name, phone, email, vehicle, budget, payment method, appointment time, and how you heard about us are required." }, 422);
   }
@@ -497,7 +604,7 @@ async function submitLead(request: Request, supabase: any) {
   if (creditRange && !CREDIT_RANGES.has(creditRange)) return json({ error: "Choose a valid credit range." }, 422);
   if (!HEARD_FROM.has(heardFrom)) return json({ error: "Choose how you heard about us." }, 422);
   if (Number.isNaN(Date.parse(appointmentTime))) return json({ error: "Enter a valid appointment time." }, 422);
-  const { data, error } = await supabase.rpc("submit_lead", {
+  const { data, error } = await supabase.rpc("submit_lead_with_sms_consent", {
     p_name: name,
     p_phone: phone,
     p_email: email,
@@ -509,8 +616,10 @@ async function submitLead(request: Request, supabase: any) {
     p_appointment_time: appointmentTime,
     p_heard_from: heardFrom,
     p_customer_notes: clean(input.notes, 5_000) || null,
+    p_consent_sms: consentSms,
   });
   if (error) throw error;
+  if (data?.lead?.id) await dispatchLeadIntake(supabase, data.lead.id);
   return json(data, data?.isNew ? 201 : 200);
 }
 
@@ -637,6 +746,96 @@ function accessibleLots(membership: Record<string, any>) {
     : [];
 }
 
+async function automationRoute(request: Request, pathname: string, supabase: any) {
+  if (!await hasAutomationAccess(request)) {
+    return json({ error: "Automation access denied." }, 401);
+  }
+
+  const url = new URL(request.url);
+
+  if (request.method === "GET" && pathname === "/api/automation/reminders") {
+    const now = DateTime.utc();
+    const { data, error } = await supabase
+      .from("leads")
+      .select(`
+        id, name, phone, appointment_time, appointment_status, consent_sms,
+        assigned_to, reminder_24h_sent_at, reminder_3h_sent_at,
+        reminder_1h_sent_at, created_at, appointment_lot,
+        cars!leads_car_id_fkey(year, make, model, trim, title, lot_name, lot_address)
+      `)
+      .in("appointment_status", ACTIVE_APPOINTMENT_STATUSES)
+      .eq("consent_sms", true)
+      .gt("appointment_time", now.minus({ hours: 2 }).toISO())
+      .lte("appointment_time", now.plus({ hours: 24, minutes: 15 }).toISO())
+      .order("appointment_time", { ascending: true });
+    if (error) throw error;
+    return json((data || []).map(automationLeadPayload));
+  }
+
+  if (request.method === "GET" && pathname === "/api/automation/leads/by-phone") {
+    const phone = normalizePhone(url.searchParams.get("phone"));
+    const { data, error } = await supabase
+      .from("leads")
+      .select(`
+        id, name, phone, appointment_time, appointment_status, consent_sms,
+        assigned_to, reminder_24h_sent_at, reminder_3h_sent_at,
+        reminder_1h_sent_at, created_at, appointment_lot,
+        cars!leads_car_id_fkey(year, make, model, trim, title, lot_name, lot_address)
+      `)
+      .eq("phone", phone)
+      .in("appointment_status", ACTIVE_APPOINTMENT_STATUSES)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return json(data
+      ? { found: true, lead: automationLeadPayload(data) }
+      : { found: false, customerPhone: phone });
+  }
+
+  const reminderMatch = pathname.match(/^\/api\/automation\/leads\/(\d+)\/reminders\/(24h|3h|1h)$/);
+  if (request.method === "PATCH" && reminderMatch) {
+    const column = {
+      "24h": "reminder_24h_sent_at",
+      "3h": "reminder_3h_sent_at",
+      "1h": "reminder_1h_sent_at",
+    }[reminderMatch[2]] as string;
+    const { data, error } = await supabase
+      .from("leads")
+      .update({ [column]: new Date().toISOString() })
+      .eq("id", reminderMatch[1])
+      .in("appointment_status", ACTIVE_APPOINTMENT_STATUSES)
+      .eq("consent_sms", true)
+      .is(column, null)
+      .select("id")
+      .maybeSingle();
+    if (error) throw error;
+    return json({ updated: Boolean(data), leadId: Number(reminderMatch[1]), stage: reminderMatch[2] });
+  }
+
+  const statusMatch = pathname.match(/^\/api\/automation\/leads\/(\d+)\/status$/);
+  if (request.method === "PATCH" && statusMatch) {
+    const input = await request.json();
+    const status = clean(input.status, 40);
+    if (!APPOINTMENT_STATUSES.has(status)) return json({ error: "Invalid appointment status." }, 422);
+    const update: Record<string, any> = { appointment_status: status };
+    if (status === "assigned" && clean(input.assignedRep, 200)) {
+      update.assigned_to = clean(input.assignedRep, 200);
+    }
+    const { data, error } = await supabase
+      .from("leads")
+      .update(update)
+      .eq("id", statusMatch[1])
+      .select("id")
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return json({ error: "Lead not found." }, 404);
+    return json({ updated: true, lead: await getAutomationLead(supabase, statusMatch[1]) });
+  }
+
+  return json({ error: "Not found." }, 404);
+}
+
 async function adminRoute(request: Request, pathname: string, supabase: any) {
   const auth = await requireTeam(request, supabase);
   if (auth.response) return auth.response;
@@ -678,7 +877,7 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
   const leadMatch = pathname.match(/^\/api\/admin\/leads\/(\d+)$/);
   if (request.method === "PATCH" && leadMatch) {
     const { data: current, error: currentError } = await supabase.from("leads")
-      .select("id, appointment_lot, assigned_to")
+      .select("id, appointment_lot, appointment_status, assigned_to")
       .eq("id", leadMatch[1])
       .maybeSingle();
     if (currentError) throw currentError;
@@ -687,7 +886,7 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
       return json({ error: "You do not have access to this lead." }, 403);
     }
     const input = await request.json();
-    if (input.appointmentStatus && !["booked", "cancelled"].includes(input.appointmentStatus)) {
+    if (input.appointmentStatus && !APPOINTMENT_STATUSES.has(input.appointmentStatus)) {
       return json({ error: "Invalid appointment status." }, 422);
     }
     if (input.handoffStatus && !HANDOFF_STATUSES.has(input.handoffStatus)) {
@@ -702,6 +901,9 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
     const { data, error } = await supabase.from("leads").update(update)
       .eq("id", leadMatch[1]).select().maybeSingle();
     if (error) throw error;
+    if (current.appointment_status !== "cancelled" && data?.appointment_status === "cancelled") {
+      await dispatchLeadCancellation(supabase, data.id);
+    }
     return json(data);
   }
 
@@ -829,6 +1031,7 @@ export default async (request: Request, _context: Context) => {
   if (!supabase) return withCors(json({ error: "Database API is not configured." }, 503));
   const pathname = new URL(request.url).pathname.replace(/\/+$/, "") || "/";
   try {
+    if (pathname.startsWith("/api/automation")) return withCors(await automationRoute(request, pathname, supabase));
     if (pathname.startsWith("/api/admin")) return withCors(await adminRoute(request, pathname, supabase));
     if (request.method === "GET" && pathname === "/api/config") {
       return withCors(json({ metaPixelId: Netlify.env.get("META_PIXEL_ID") || "", timezone: TIMEZONE }));
