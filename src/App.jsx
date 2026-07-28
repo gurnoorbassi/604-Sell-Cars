@@ -3,7 +3,7 @@ import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
-  ShieldCheck, Users, Download, RefreshCw,
+  ShieldCheck, Users, Download, RefreshCw, Share2,
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
 import { chunkArray, tierFor } from "./lib/inventory";
@@ -53,14 +53,12 @@ const toJpegBlob = (sourceBlob) => {
   });
 };
 
-const downloadCarPictures = async (car, onProgress) => {
-  const { default: JSZip } = await import("jszip");
-  const zip = new JSZip();
+const prepareCarPictures = async (car, onProgress) => {
   const failed = [];
   let completed = 0;
-  let saved = 0;
   const total = car.photos.length;
   const width = String(total).length;
+  const files = new Array(total);
 
   for (const photoBatch of chunkArray(car.photos.map((url, index) => ({ url, index })), IMAGE_DOWNLOAD_CONCURRENCY)) {
     await Promise.all(photoBatch.map(async ({ url, index }) => {
@@ -70,8 +68,11 @@ const downloadCarPictures = async (car, onProgress) => {
         const blob = await response.blob();
         if (!blob.type.startsWith("image/")) throw new Error("The server did not return an image");
         const jpegBlob = await toJpegBlob(blob);
-        zip.file(`${String(index + 1).padStart(width, "0")}.jpg`, jpegBlob);
-        saved += 1;
+        const filename = `${String(index + 1).padStart(width, "0")}.jpg`;
+        files[index] = new File([jpegBlob], filename, {
+          type: "image/jpeg",
+          lastModified: Date.now(),
+        });
       } catch (error) {
         failed.push(`Picture ${index + 1}: ${error.message || "download failed"}`);
       } finally {
@@ -81,10 +82,20 @@ const downloadCarPictures = async (car, onProgress) => {
     }));
   }
 
-  if (!saved) throw new Error("None of this car's pictures could be downloaded.");
+  const preparedFiles = files.filter(Boolean);
+  if (!preparedFiles.length) throw new Error("None of this car's pictures could be downloaded.");
+  return { files: preparedFiles, failed };
+};
+
+const downloadPreparedPictures = async (car, prepared, onProgress) => {
+  const { default: JSZip } = await import("jszip");
+  const zip = new JSZip();
+  prepared.files.forEach((file) => zip.file(file.name, file));
+
+  const { failed } = prepared;
   if (failed.length) {
     zip.file("download-errors.txt", [
-      `${failed.length} of ${total} pictures could not be downloaded.`,
+      `${failed.length} of ${car.photos.length} pictures could not be downloaded.`,
       "Try refreshing the inventory and downloading again.",
       "",
       ...failed,
@@ -105,7 +116,12 @@ const downloadCarPictures = async (car, onProgress) => {
   link.remove();
   setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
 
-  return { failed: failed.length, saved };
+  return { failed: failed.length, saved: prepared.files.length };
+};
+
+const downloadCarPictures = async (car, onProgress) => {
+  const prepared = await prepareCarPictures(car, onProgress);
+  return downloadPreparedPictures(car, prepared, onProgress);
 };
 
 const uploadResumableFile = (file, storagePath, session, onProgress) => new Promise((resolve, reject) => {
@@ -1101,6 +1117,12 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
   const [pictureDownloadMessage, setPictureDownloadMessage] = useState("");
   const [gallerySyncing, setGallerySyncing] = useState(false);
   const [gallerySyncMessage, setGallerySyncMessage] = useState("");
+  const [cameraRollBatch, setCameraRollBatch] = useState(null);
+  const [cameraRollProgress, setCameraRollProgress] = useState(null);
+  const [cameraRollMessage, setCameraRollMessage] = useState("");
+  const supportsFileSharing = typeof navigator !== "undefined"
+    && typeof navigator.share === "function"
+    && typeof navigator.canShare === "function";
 
   const syncFullGallery = async () => {
     if (!isOwner || gallerySyncing || !car.trelloUrl) return;
@@ -1125,6 +1147,58 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
     }
   };
 
+  useEffect(() => {
+    setCameraRollBatch(null);
+    setCameraRollProgress(null);
+    setCameraRollMessage("");
+  }, [car.id]);
+
+  const saveToCameraRoll = async () => {
+    setCameraRollMessage("");
+
+    if (cameraRollBatch) {
+      let canShareBatch = false;
+      try {
+        canShareBatch = navigator.canShare({ files: cameraRollBatch.files });
+      } catch {
+        canShareBatch = false;
+      }
+
+      if (!canShareBatch) {
+        setCameraRollMessage("This phone cannot share this whole batch. Use Download JPEG ZIP below.");
+        return;
+      }
+
+      try {
+        await navigator.share({
+          files: cameraRollBatch.files,
+          title: `${car.title} pictures`,
+        });
+        setCameraRollMessage("Save menu opened. Choose Save Images on iPhone, or Photos/Gallery on Samsung.");
+      } catch (error) {
+        if (error.name === "AbortError") {
+          setCameraRollMessage("Save menu closed. Tap the button when you are ready to save.");
+        } else {
+          setCameraRollMessage("This phone could not open the batch save menu. Use Download JPEG ZIP below.");
+        }
+      }
+      return;
+    }
+
+    setCameraRollProgress({ phase: "downloading", completed: 0, total: car.photos.length });
+    try {
+      const prepared = await prepareCarPictures(car, setCameraRollProgress);
+      setCameraRollBatch(prepared);
+      setCameraRollMessage(prepared.failed.length
+        ? `Prepared ${prepared.files.length} JPEGs; ${prepared.failed.length} failed. Tap again to open the phone save menu.`
+        : `Prepared all ${prepared.files.length} JPEGs. Tap again to open the phone save menu.`);
+    } catch (error) {
+      setCameraRollMessage(error.message || "Pictures could not be prepared. Use Download JPEG ZIP below.");
+    } finally {
+      setCameraRollProgress(null);
+    }
+  };
+
   const saveAllPictures = async () => {
     setPictureDownloadMessage("");
     setPictureDownload({ phase: "downloading", completed: 0, total: car.photos.length });
@@ -1145,6 +1219,11 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
     : pictureDownload
       ? `Downloading ${pictureDownload.completed}/${pictureDownload.total}`
       : `Save all pictures as JPEG (${car.photos?.length || 0})`;
+  const cameraRollLabel = cameraRollProgress
+    ? `Preparing ${cameraRollProgress.completed}/${cameraRollProgress.total}`
+    : cameraRollBatch
+      ? `Tap again to open save menu (${cameraRollBatch.files.length})`
+      : `Save to Camera Roll (${car.photos?.length || 0})`;
 
   return (
     <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm flex justify-end" onClick={onClose}>
@@ -1190,12 +1269,28 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
                   {gallerySyncMessage}
                 </p>
               )}
+              {supportsFileSharing && (
+                <>
+                  <button type="button" onClick={saveToCameraRoll} disabled={Boolean(cameraRollProgress)}
+                    className="mb-2 flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-blue-500 disabled:cursor-wait disabled:opacity-60">
+                    {cameraRollProgress
+                      ? <LoaderCircle className="h-4 w-4 animate-spin" />
+                      : <Share2 className="h-4 w-4" />}
+                    {cameraRollLabel}
+                  </button>
+                  {cameraRollMessage && (
+                    <p role="status" className="mb-3 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs text-blue-100">
+                      {cameraRollMessage}
+                    </p>
+                  )}
+                </>
+              )}
               <button type="button" onClick={saveAllPictures} disabled={Boolean(pictureDownload)}
                 className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800/80 px-3 py-2.5 text-sm font-semibold text-neutral-100 hover:border-neutral-500 hover:bg-neutral-800 disabled:cursor-wait disabled:opacity-60">
                 {pictureDownload
                   ? <LoaderCircle className="h-4 w-4 animate-spin" />
                   : <Download className="h-4 w-4" />}
-                {pictureDownloadLabel}
+                {pictureDownloadLabel.replace("Save all pictures as JPEG", "Download JPEG ZIP")}
               </button>
               {pictureDownloadMessage && (
                 <p role="status" className={`mb-3 rounded-lg border px-3 py-2 text-xs ${
