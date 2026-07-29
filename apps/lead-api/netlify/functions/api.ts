@@ -181,6 +181,17 @@ async function getAutomationLead(supabase: any, leadId: string | number) {
   return data ? automationLeadPayload(data) : null;
 }
 
+async function deleteLead(supabase: any, leadId: string | number) {
+  const { data, error } = await supabase
+    .from("leads")
+    .delete()
+    .eq("id", leadId)
+    .select("id")
+    .maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
+}
+
 async function dispatchLeadIntake(supabase: any, leadId: string | number) {
   const webhookUrl = Netlify.env.get("N8N_INTAKE_WEBHOOK_URL") || "";
   const automationKey = Netlify.env.get("N8N_AUTOMATION_API_KEY") || "";
@@ -830,7 +841,12 @@ async function automationRoute(request: Request, pathname: string, supabase: any
       .maybeSingle();
     if (error) throw error;
     if (!data) return json({ error: "Lead not found." }, 404);
-    return json({ updated: true, lead: await getAutomationLead(supabase, statusMatch[1]) });
+    const lead = await getAutomationLead(supabase, statusMatch[1]);
+    if (status === "cancelled") {
+      const deleted = await deleteLead(supabase, statusMatch[1]);
+      return json({ updated: true, deleted, lead });
+    }
+    return json({ updated: true, lead });
   }
 
   return json({ error: "Not found." }, 404);
@@ -904,8 +920,12 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
     const { data, error } = await supabase.from("leads").update(update)
       .eq("id", leadMatch[1]).select().maybeSingle();
     if (error) throw error;
-    if (current.appointment_status !== "cancelled" && data?.appointment_status === "cancelled") {
-      await dispatchLeadCancellation(supabase, data.id);
+    if (data?.appointment_status === "cancelled") {
+      if (current.appointment_status !== "cancelled") {
+        await dispatchLeadCancellation(supabase, data.id);
+      }
+      const deleted = await deleteLead(supabase, data.id);
+      return json({ ...data, deleted });
     }
     return json(data);
   }

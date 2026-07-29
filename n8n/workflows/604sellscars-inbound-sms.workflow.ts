@@ -232,6 +232,7 @@ const cancelLead = node({
   },
   output: [{
     updated: true,
+    deleted: true,
     lead: {
       leadId: 123,
       customerName: "Test Customer",

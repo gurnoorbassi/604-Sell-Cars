@@ -71,7 +71,7 @@ The existing Supabase and admin environment variables remain unchanged.
 - Verify the stored phone is E.164 and the appointment is UTC.
 - Set an appointment about 24 hours away and run Workflow B twice: T3 sends once.
 - Repeat at about 3 hours and 1 hour: T4 and T5 each send once.
-- Reply `CANCEL`: status becomes `cancelled`; customer gets T6; owner gets T7.
+- Reply `CANCEL`: the API captures the cancellation details, deletes the lead, then the customer gets T6 and the owner gets T7.
 - Cancel a fresh lead in the lead desk: the same status changes and notifications
   occur.
 - Run Workflow B after either cancellation path: no reminder is sent.
@@ -83,7 +83,7 @@ The existing Supabase and admin environment variables remain unchanged.
 
 - `appointment_status` is the single source of truth.
 - Active statuses are `new`, `assigned`, and `booked`.
-- Terminal statuses are `cancelled`, `completed`, and `no_show`.
+- `completed` and `no_show` are terminal statuses. Cancellation permanently removes the lead after the cancellation payload is captured.
 - Customer SMS is allowed only when `consent_sms` is true.
 - Owner alerts are internal and are not suppressed by customer SMS consent.
 - The reminder engine polls every 15 minutes and sends only the earliest

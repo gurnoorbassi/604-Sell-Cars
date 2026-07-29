@@ -18,7 +18,7 @@ const APPOINTMENT_STATUSES = [
   ["new", "New"],
   ["assigned", "Assigned"],
   ["booked", "Booked"],
-  ["cancelled", "Cancelled"],
+  ["cancelled", "Cancel & delete"],
   ["completed", "Completed"],
   ["no_show", "No-show"],
 ];
@@ -99,7 +99,7 @@ function LeadDesk() {
 
   async function saveLead(lead) {
     try {
-      await api(`/api/admin/leads/${lead.id}`, {
+      const result = await api(`/api/admin/leads/${lead.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,7 +109,7 @@ function LeadDesk() {
           handoffStatus: lead.handoff_status,
         }),
       });
-      setNotice(`Saved ${lead.name}.`);
+      setNotice(result.deleted ? `Cancelled and deleted ${lead.name}.` : `Saved ${lead.name}.`);
       await load();
     } catch (error) {
       setNotice(error.message);
@@ -252,7 +252,7 @@ function BuyerLead({ lead, update, save }) {
         <DeskSelect label="Appointment" value={lead.appointment_status} onChange={(value) => update({ appointment_status: value })} options={APPOINTMENT_STATUSES} />
         <DeskSelect label="Handoff" value={lead.handoff_status || "pending_confirmation"} onChange={(value) => update({ handoff_status: value })} options={HANDOFFS} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none focus:border-white/30" rows="2" /></label>
-        <button onClick={save} className="self-end bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b]">Save</button>
+        <button onClick={save} className="self-end bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b]">{lead.appointment_status === "cancelled" ? "Cancel & delete" : "Save"}</button>
       </div>
     </article>
   );
