@@ -51,9 +51,10 @@ function LeadDesk() {
   const [view, setView] = useState("buyers");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  const load = async () => {
-    setLoading(true);
+  const load = async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     try {
       const [buyerRows, sellerRows] = await Promise.all([
         api(`/api/admin/leads?lot=${encodeURIComponent(lot)}&date=${encodeURIComponent(date)}`),
@@ -61,16 +62,31 @@ function LeadDesk() {
       ]);
       setLeads(buyerRows);
       setSellerLeads(sellerRows);
+      setLastUpdated(new Date());
     } catch (error) {
       setNotice(error.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     load();
     api("/api/admin/lots").then(setLots).catch(() => {});
+  }, [lot, date]);
+
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === "visible") load({ silent: true });
+    };
+    const interval = window.setInterval(refresh, 15_000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
   }, [lot, date]);
 
   const today = new Date().toDateString();
@@ -127,8 +143,9 @@ function LeadDesk() {
             <h1 className="mt-3 text-[clamp(2.6rem,5vw,4.6rem)] font-black leading-none tracking-[-.06em]">Lead desk</h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">Verify the vehicle first, then hand a confirmed appointment to the rep who can access that lot.</p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={load} className="grid h-11 w-11 place-items-center border border-white/15 bg-[#111418] hover:border-white/30" aria-label="Refresh leads"><RefreshCw size={16} /></button>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {lastUpdated && <span className="mr-1 text-xs text-neutral-500">Updated {lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>}
+            <button onClick={load} className="grid h-11 w-11 place-items-center border border-white/15 bg-[#111418] hover:border-white/30" aria-label="Refresh leads"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /></button>
             <a href="https://dealership-inventory-board.netlify.app" className="flex h-11 items-center gap-2 border border-white/15 bg-[#111418] px-4 text-sm font-bold transition hover:border-white/30">Inventory board <ArrowUpRight size={14} /></a>
           </div>
         </div>
@@ -224,7 +241,10 @@ function BuyerLead({ lead, update, save }) {
             `1h ${lead.reminder_1h_sent_at ? "sent" : "pending"}`,
           ].join(" · ")}
         />
-        <Data term="Lead ID / created" value={`#${lead.id} · ${new Date(lead.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`} />
+        <Data
+          term="Lead ID / activity"
+          value={`#${lead.id} · ${new Date(lead.updated_at || lead.created_at).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}${lead.updated_at && lead.updated_at !== lead.created_at ? " (updated)" : ""}`}
+        />
       </dl>
 
       <div className="mt-5 grid gap-3 border-t border-white/10 pt-5 lg:grid-cols-[1fr_190px_220px_2fr_auto]">

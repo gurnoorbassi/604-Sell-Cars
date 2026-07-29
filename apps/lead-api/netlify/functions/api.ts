@@ -847,6 +847,9 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
     let query = supabase
       .from("leads")
       .select("*, cars!leads_car_id_fkey(year, make, model, trim, title, status, lot, lot_name, lot_address)")
+      // Phone is the dedupe key, so a repeat booking updates the existing row.
+      // Sort by activity so that updated leads return to the top of the desk.
+      .order("updated_at", { ascending: false })
       .order("created_at", { ascending: false });
     const lots = accessibleLots(membership);
     if (!isManager) {
