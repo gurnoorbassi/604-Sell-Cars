@@ -18,7 +18,7 @@
     "sync:trello-photos": "node --env-file-if-exists=.env scripts/sync-all-trello-photos.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.110.8",
+    "@supabase/supabase-js": "2.111.0",
     "@vitejs/plugin-react": "6.0.4",
     "autoprefixer": "10.5.4",
     "jszip": "3.10.1",
