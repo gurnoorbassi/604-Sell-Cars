@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
 import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
@@ -7,10 +7,19 @@ import {
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
 import { chunkArray, tierFor } from "./lib/inventory";
+import {
+  MAX_FILES_PER_PICK,
+  MAX_PREVIEW_FILES,
+  MAX_UPLOAD_BYTES,
+  MAX_UPLOAD_MB,
+  contentTypeForMedia,
+  fileIdentity,
+  isImageFile,
+  isVideoFile,
+  mergeUploadSelection,
+} from "./lib/mediaUploads";
 import { supabase, supabasePublishableKey, supabaseUrl } from "./lib/supabase";
 
-const MAX_UPLOAD_MB = 50;
-const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
 const RESUMABLE_UPLOAD_THRESHOLD = 6 * 1024 * 1024;
 const SUPABASE_PROJECT_REF = new URL(supabaseUrl).hostname.split(".")[0];
 const IMAGE_DOWNLOAD_CONCURRENCY = 4;
@@ -546,7 +555,7 @@ export default function SellsCarsBoard() {
     const id = form.id || crypto.randomUUID();
     const manualPhotos = form.manualPhotos || [];
     const uploadFiles = form.uploadFiles || [];
-    const hasCoverImage = manualPhotos.length > 0 || uploadFiles.some((file) => file.type.startsWith("image/"));
+    const hasCoverImage = manualPhotos.length > 0 || uploadFiles.some(isImageFile);
     if (!form.id && !hasCoverImage) {
       setAppError("Add a front exterior photo before listing this vehicle. The first image becomes its website cover.");
       setSaving(false);
@@ -613,7 +622,7 @@ export default function SellsCarsBoard() {
           });
         } else {
           const { error: uploadError } = await supabase.storage.from("vehicle-media")
-            .upload(storagePath, file, { contentType: file.type || "image/jpeg", upsert: false });
+            .upload(storagePath, file, { contentType: contentTypeForMedia(file), upsert: false });
           if (uploadError) throw uploadError;
           setUploadProgress(Math.round(((index + 1) / uploadFiles.length) * 100));
         }
@@ -625,11 +634,11 @@ export default function SellsCarsBoard() {
       }
       const { error: mediaRowError } = await supabase.from("vehicle_media").insert({
         vehicle_id: id,
-        kind: file.type.startsWith("video/") ? "video" : "image",
+        kind: isVideoFile(file) ? "video" : "image",
         storage_path: storagePath,
         source_url: "",
         sort_order: (form.storedMediaCount || 0) + manualPhotos.length + index,
-        mime_type: file.type || null,
+        mime_type: contentTypeForMedia(file),
       });
       if (mediaRowError) {
         await supabase.storage.from("vehicle-media").remove([storagePath]);
@@ -1389,6 +1398,7 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
 }
 
 function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, onSave, onClose }) {
+  const uploadInputId = useId();
   const tier = tierFor(form.price);
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [descriptionError, setDescriptionError] = useState("");
@@ -1397,9 +1407,14 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
   const [filePreviews, setFilePreviews] = useState([]);
 
   useEffect(() => {
-    const previews = (form.uploadFiles || []).map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
+    const uploadFiles = form.uploadFiles || [];
+    const coverIndex = uploadFiles.findIndex(isImageFile);
+    const previewIndexes = Array.from({ length: Math.min(MAX_PREVIEW_FILES, uploadFiles.length) }, (_, index) => index);
+    if (coverIndex >= MAX_PREVIEW_FILES) previewIndexes.push(coverIndex);
+    const previews = [...new Set(previewIndexes)].map((index) => ({
+      file: uploadFiles[index],
+      index,
+      url: URL.createObjectURL(uploadFiles[index]),
     }));
     setFilePreviews(previews);
     return () => previews.forEach((preview) => URL.revokeObjectURL(preview.url));
@@ -1422,7 +1437,9 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
 
   const coverUploadIndex = (form.manualPhotos || []).length
     ? -1
-    : filePreviews.findIndex(({ file }) => file.type.startsWith("image/"));
+    : (form.uploadFiles || []).findIndex(isImageFile);
+
+  const selectedFileCount = (form.uploadFiles || []).length;
 
   const generateDescription = async () => {
     if (!form.title.trim() || generatingDescription) return;
@@ -1461,13 +1478,13 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
     }
   };
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4 overflow-y-auto">
-      <div className="bg-neutral-900 border border-neutral-700 rounded-2xl w-full max-w-xl my-8">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4">
+      <div className="my-0 flex max-h-[calc(100dvh-1rem)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900 sm:my-8 sm:max-h-[calc(100dvh-4rem)]">
+        <div className="flex shrink-0 items-center justify-between border-b border-neutral-800 px-4 py-3 sm:px-5 sm:py-4">
           <h2 className="font-bold">{form.id ? "Edit car" : "Add car"}</h2>
-          <button onClick={onClose} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
+          <button type="button" onClick={onClose} className="grid min-h-11 min-w-11 place-items-center text-neutral-500 hover:text-white" aria-label="Close vehicle editor"><X className="w-5 h-5" /></button>
         </div>
-        <div className="p-5 space-y-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 [-webkit-overflow-scrolling:touch] sm:p-5">
           <div className="flex gap-3">
             <F label="Car" className="flex-1">
               <input className="inp" value={form.title} placeholder="2018 Mercedes Benz S63 AMG"
@@ -1589,29 +1606,36 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
               <p className="text-xs font-bold text-red-200">Cover photo rule</p>
               <p className="mt-1 text-[11px] leading-relaxed text-neutral-400">Choose a clear front exterior photo first. The image marked Cover is used on the website and inventory cards.</p>
             </div>
-            <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-sm text-neutral-400 hover:border-neutral-500 hover:text-white">
+            <label htmlFor={uploadInputId} className="relative mt-1 flex min-h-14 cursor-pointer touch-manipulation items-center justify-center gap-2 overflow-hidden rounded-lg border border-dashed border-neutral-700 bg-neutral-800/50 px-3 py-4 text-center text-sm text-neutral-300 hover:border-neutral-500 hover:text-white">
               <Upload className="h-4 w-4" />
               {form.uploadFiles?.length ? "Add more photos or videos" : "Choose files from this device"}
-              <input className="hidden" type="file" accept="image/*,video/mp4,video/quicktime" multiple
+              <input id={uploadInputId} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" type="file"
+                aria-label="Choose vehicle photos or videos" accept="image/*,video/mp4,video/quicktime,video/x-m4v,.heic,.heif,.mov,.mp4,.m4v" multiple
                 onChange={(event) => {
                   const selectedFiles = Array.from(event.target.files || []);
-                  const oversizedFiles = selectedFiles.filter((file) => file.size > MAX_UPLOAD_BYTES);
-                  const validFiles = selectedFiles.filter((file) => file.size <= MAX_UPLOAD_BYTES);
-                  setFileError(oversizedFiles.length ? `${oversizedFiles.map((file) => file.name).join(", ")} exceeded ${MAX_UPLOAD_MB} MB and was not selected.` : "");
                   setForm((current) => {
-                    const existingFiles = current.uploadFiles || [];
-                    const existingKeys = new Set(existingFiles.map((file) => `${file.name}:${file.size}:${file.lastModified}`));
-                    const newFiles = validFiles.filter((file) => !existingKeys.has(`${file.name}:${file.size}:${file.lastModified}`));
-                    return { ...current, uploadFiles: [...existingFiles, ...newFiles] };
+                    const result = mergeUploadSelection(current.uploadFiles || [], selectedFiles);
+                    const messages = [];
+                    if (result.oversized.length) messages.push(`${result.oversized.length} file${result.oversized.length === 1 ? " was" : "s were"} over ${MAX_UPLOAD_MB} MB.`);
+                    if (result.unsupported.length) messages.push(`${result.unsupported.length} unsupported file${result.unsupported.length === 1 ? " was" : "s were"} skipped.`);
+                    if (result.skippedForBatchLimit) messages.push(`Only the first ${MAX_FILES_PER_PICK} new files were added. Choose the rest in another batch.`);
+                    setFileError(messages.join(" "));
+                    return { ...current, uploadFiles: result.files };
                   });
                   event.target.value = "";
                 }} />
             </label>
+            {selectedFileCount > 0 && (
+              <div className="mt-2 flex items-center justify-between gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs">
+                <span className="font-semibold text-emerald-200">{selectedFileCount} file{selectedFileCount === 1 ? "" : "s"} ready to upload</span>
+                <span className="text-neutral-400">First photo = cover</span>
+              </div>
+            )}
             {filePreviews.length > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {filePreviews.map(({ file, url }, index) => (
-                  <div key={`${file.name}:${file.size}:${file.lastModified}`} className="group relative overflow-hidden rounded-xl border border-neutral-700 bg-neutral-950">
-                    {file.type.startsWith("video/") ? (
+                {filePreviews.map(({ file, url, index }) => (
+                  <div key={fileIdentity(file)} className="group relative overflow-hidden rounded-xl border border-neutral-700 bg-neutral-950">
+                    {isVideoFile(file) ? (
                       <video src={url} controls preload="metadata" className="aspect-[4/3] w-full bg-black object-cover" />
                     ) : (
                       <img src={url} alt={`Selected upload: ${file.name}`} className="aspect-[4/3] w-full object-cover" />
@@ -1620,12 +1644,12 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                       className="absolute right-1.5 top-1.5 rounded-full bg-black/75 p-1 text-white shadow hover:bg-red-600">
                       <X className="h-3.5 w-3.5" />
                     </button>
-                    {file.type.startsWith("image/") && index === coverUploadIndex && (
+                    {isImageFile(file) && index === coverUploadIndex && (
                       <span className="absolute left-1.5 top-1.5 rounded bg-red-600 px-2 py-1 text-[9px] font-black uppercase tracking-[.12em] text-white">
                         Cover
                       </span>
                     )}
-                    {file.type.startsWith("image/") && index !== coverUploadIndex && !(form.manualPhotos || []).length && (
+                    {isImageFile(file) && index !== coverUploadIndex && !(form.manualPhotos || []).length && (
                       <button type="button" onClick={() => makeUploadCover(index)}
                         className="absolute left-1.5 top-1.5 rounded bg-black/75 px-2 py-1 text-[9px] font-bold uppercase tracking-[.08em] text-white hover:bg-red-600">
                         Make cover
@@ -1638,15 +1662,18 @@ function EditModal({ form, setForm, toggleIn, session, saving, uploadProgress, o
                 ))}
               </div>
             )}
-            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">New listings require at least one image. No fixed file-count limit. Supabase Free allows up to {MAX_UPLOAD_MB} MB per file; large files use resumable chunks.</p>
+            {selectedFileCount > filePreviews.length && (
+              <p className="mt-2 text-xs text-neutral-400">Showing {filePreviews.length} previews to keep your phone fast. All {selectedFileCount} selected files will upload.</p>
+            )}
+            <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">Choose up to {MAX_FILES_PER_PICK} files each time. You can add more batches to the same car. Maximum {MAX_UPLOAD_MB} MB per file; large files use resumable uploads.</p>
             {fileError && <p className="mt-1.5 text-xs text-red-300">{fileError}</p>}
           </F>
         </div>
-        <div className="flex gap-2 px-5 py-4 border-t border-neutral-800">
-          <button onClick={onClose} disabled={saving} className="flex-1 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 disabled:opacity-40 text-sm font-medium">Cancel</button>
-          <button onClick={onSave} disabled={saving || !form.title.trim()}
-            className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-sm font-bold">
-            {uploadProgress !== null ? `Uploading ${uploadProgress}%` : saving ? "Saving…" : form.id ? "Save changes" : "Add to board"}
+        <div className="flex shrink-0 gap-2 border-t border-neutral-800 bg-neutral-900 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-5 sm:py-4">
+          <button type="button" onClick={onClose} disabled={saving} className="min-h-12 flex-1 rounded-lg bg-neutral-800 px-2 py-2 text-sm font-medium hover:bg-neutral-700 disabled:opacity-40">Cancel</button>
+          <button type="button" onClick={onSave} disabled={saving || !form.title.trim()}
+            className="min-h-12 flex-[1.5] rounded-lg bg-red-600 px-2 py-2 text-sm font-bold text-white hover:bg-red-500 disabled:opacity-40">
+            {uploadProgress !== null ? `Uploading ${uploadProgress}%` : saving ? "Saving…" : selectedFileCount ? `${form.id ? "Save & upload" : "Add & upload"} ${selectedFileCount}` : form.id ? "Save changes" : "Add to board"}
           </button>
         </div>
       </div>
