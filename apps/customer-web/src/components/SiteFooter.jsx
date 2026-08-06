@@ -4,15 +4,15 @@ import { PUBLIC_BOOKING_URL, WEBSITE_URL } from "../lib/links";
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#050607] text-neutral-400">
-      <div className="mx-auto grid w-[min(1340px,92vw)] gap-10 py-12 md:grid-cols-[1.35fr_.7fr_1fr] md:py-16">
+    <footer className="border-t border-white/10 bg-[#08090b] text-neutral-400">
+      <div className="mx-auto grid w-[min(1440px,92vw)] gap-10 py-12 md:grid-cols-[1.35fr_.7fr_1fr] md:py-16">
         <div>
           <a href={WEBSITE_URL} className="inline-flex items-center gap-3 text-white">
-            <span className="grid h-10 w-[52px] place-items-center bg-[#ef4538] text-sm font-black italic">604</span>
-            <span><strong className="block text-base font-black tracking-[-.04em]">SELL CARS</strong><small className="mt-1 block text-[7px] font-bold uppercase tracking-[.22em] text-neutral-500">Vehicle marketplace</small></span>
+            <span className="grid h-11 w-[58px] place-items-center bg-[#f2473d] text-sm font-black italic">604</span>
+            <span><strong className="block text-base font-black tracking-[-.04em]">SELLSCARS</strong><small className="mt-1 block text-[7px] font-bold uppercase tracking-[.22em] text-neutral-500">Lower Mainland marketplace</small></span>
           </a>
           <p className="mt-5 max-w-md text-sm leading-6">
-            Search live vehicles, see the approximate area, and let our team confirm the car before you make the drive.
+            Live vehicles from trusted partner lots across the Lower Mainland. Find the right car, request a time, and let our team coordinate the correct location.
           </p>
         </div>
         <div>

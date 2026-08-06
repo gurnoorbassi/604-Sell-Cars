@@ -170,19 +170,21 @@ function LeadDesk() {
   const updateSeller = (id, patch) => setSellerLeads((rows) => rows.map((row) => row.id === id ? { ...row, ...patch } : row));
 
   return (
-    <div className="min-h-screen bg-[#08090b] text-white">
+    <div className="operations-ui min-h-screen bg-[#f1f3f5] text-[#17191d] lg:grid lg:grid-cols-[252px_minmax(0,1fr)]">
+      <OperationsSidebar buyerCount={leads.length} sellerCount={sellerLeads.length} appointmentCount={stats.today} />
+      <div className="min-w-0">
       <SiteHeader admin />
-      <main className="mx-auto w-[min(1440px,94vw)] py-8 sm:py-12">
+      <main className="mx-auto w-[min(1480px,94vw)] py-8 sm:py-10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#ff655a]">604SELLSCARS operations</p>
-            <h1 className="mt-3 text-[clamp(2.6rem,5vw,4.6rem)] font-black leading-none tracking-[-.06em]">Lead desk</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">Verify the vehicle first, then hand a confirmed appointment to the rep who can access that lot.</p>
+            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#ef4538]">Lead operations</p>
+            <h1 className="mt-2 text-[clamp(2.25rem,4vw,3.65rem)] font-black leading-none tracking-[-.055em]">Lead desk</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-500">Verify the vehicle, confirm the appointment, and hand the lead to the right rep.</p>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
             {lastUpdated && <span className="mr-1 text-xs text-neutral-500">Updated {lastUpdated.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>}
-            <button onClick={load} className="grid h-11 w-11 place-items-center border border-white/15 bg-[#111418] hover:border-white/30" aria-label="Refresh leads"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /></button>
-            <a href="https://dealership-inventory-board.netlify.app" className="flex h-11 items-center gap-2 border border-white/15 bg-[#111418] px-4 text-sm font-bold transition hover:border-white/30">Inventory board <ArrowUpRight size={14} /></a>
+            <button onClick={load} className="grid h-11 w-11 place-items-center border border-black/10 bg-white hover:border-black/25" aria-label="Refresh leads"><RefreshCw size={16} className={loading ? "animate-spin" : ""} /></button>
+            <a href="https://dealership-inventory-board.netlify.app" className="flex h-11 items-center gap-2 bg-[#17191d] px-4 text-sm font-bold text-white transition hover:bg-black">Inventory board <ArrowUpRight size={14} /></a>
           </div>
         </div>
 
@@ -233,7 +235,35 @@ function LeadDesk() {
           </div>
         )}
       </main>
+      </div>
     </div>
+  );
+}
+
+function OperationsSidebar({ buyerCount, sellerCount, appointmentCount }) {
+  return (
+    <aside className="operations-sidebar hidden min-h-screen flex-col border-r border-white/10 bg-[#111317] px-4 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen">
+      <a href="https://604-sell-cars-website.netlify.app" className="flex items-center gap-3 px-2 py-2">
+        <span className="grid h-11 w-[58px] place-items-center bg-[#f2473d] text-sm font-black italic">604</span>
+        <span><strong className="block text-sm font-black tracking-[-.04em]">SELLSCARS</strong><small className="mt-1 block text-[7px] font-bold uppercase tracking-[.22em] text-neutral-500">Operations desk</small></span>
+      </a>
+      <nav className="mt-10 grid gap-1 text-sm font-bold">
+        <a href="#buyer-leads" className="flex items-center justify-between bg-white px-4 py-3 text-black"><span>Leads</span><b>{buyerCount}</b></a>
+        <a href="#appointments" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Appointments</span><b>{appointmentCount}</b></a>
+        <a href="https://dealership-inventory-board.netlify.app" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Inventory</span><ArrowUpRight size={14} /></a>
+        <a href="#seller-leads" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Seller leads</span><b>{sellerCount}</b></a>
+      </nav>
+      <div className="mt-9 border-t border-white/10 pt-6">
+        <p className="px-4 text-[9px] font-black uppercase tracking-[.18em] text-neutral-600">Quick views</p>
+        <button className="mt-3 flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-[#f2473d]" />New and unassigned</button>
+        <button className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-amber-400" />Needs verification</button>
+        <button className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-emerald-400" />Appointment set</button>
+      </div>
+      <div className="mt-auto flex items-center gap-3 border-t border-white/10 px-2 pt-5">
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs font-black">GB</span>
+        <div><strong className="block text-sm">Gurnoor Bassi</strong><small className="text-xs text-neutral-500">Owner account</small></div>
+      </div>
+    </aside>
   );
 }
 

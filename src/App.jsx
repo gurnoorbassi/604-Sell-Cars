@@ -3,7 +3,7 @@ import * as tus from "tus-js-client";
 import {
   Plus, X, Pencil, Trash2, Car, Image as ImageIcon, Check,
   RotateCcw, Search, Flame, Sparkles, FileText, ExternalLink, LogOut, Upload, LoaderCircle,
-  ShieldCheck, Users, Download, RefreshCw, Share2,
+  ShieldCheck, Users, Download, RefreshCw, Share2, ChevronRight,
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
 import {
@@ -809,15 +809,18 @@ export default function SellsCarsBoard() {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans">
-      <header className="sticky top-0 z-20 bg-neutral-950/95 backdrop-blur border-b border-neutral-800">
+    <div className="inventory-ops-ui min-h-screen bg-[#f1f3f5] text-[#17191d] font-sans lg:grid lg:grid-cols-[252px_minmax(0,1fr)]">
+      <InventorySidebar liveCount={liveCount} soldCount={soldCount} tab={tab} setTab={setTab} qualityStatus={qualityStatus} session={session} />
+      <div className="min-w-0">
+      <header className="sticky top-0 z-20 border-b border-black/10 bg-white/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 pt-3 pb-2 flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-lg bg-red-600 grid place-items-center">
               <Car className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-extrabold tracking-tight leading-none">604SELLSCARS</h1>
+              <p className="text-[9px] font-black uppercase tracking-[.18em] text-red-500">Owner inventory</p>
+              <h1 className="mt-1 font-extrabold tracking-tight leading-none">Vehicle inventory</h1>
               <p className="text-[11px] text-neutral-500 leading-none mt-1">
                 {membershipRole === "bdc" ? "BDC inventory · view only" : membershipRole === "admin" ? "Admin inventory" : "Owner inventory"}
               </p>
@@ -882,7 +885,13 @@ export default function SellsCarsBoard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-5">
+       <main className="max-w-[1480px] mx-auto px-4 py-6 sm:px-6">
+         <section className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="Inventory overview">
+           <InventoryStat label="Live inventory" value={liveCount} featured />
+           <InventoryStat label="Partner lots" value={DEALERSHIPS.length} detail="Connected inventory sources" />
+           <InventoryStat label="Media ready" value={cars.filter((car) => matchesInventoryTab(car.status, "live") && car.photos?.length >= 8).length} detail="Live vehicles with 8+ photos" />
+           <InventoryStat label="Needs attention" value={cars.filter((car) => matchesInventoryTab(car.status, "live") && (!car.stock || !car.kms || !car.price || !car.photos?.length)).length} detail="Live vehicles missing a core detail" alert />
+         </section>
         {appError && <p className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{appError}</p>}
         {loading ? (
           <p className="text-neutral-500 text-sm text-center py-24">Loading shared inventory…</p>
@@ -930,8 +939,45 @@ export default function SellsCarsBoard() {
           galleryStatus={galleryStatus} galleryBatchStarting={galleryBatchStarting}
           onStartGalleryBatch={startGalleryBatch} qualityStatus={qualityStatus} />
       )}
-      <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
+       <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}`}</style>
+      </div>
     </div>
+  );
+}
+
+function InventorySidebar({ liveCount, soldCount, tab, setTab, qualityStatus, session }) {
+  return (
+    <aside className="inventory-sidebar hidden min-h-screen flex-col border-r border-white/10 bg-[#111317] px-4 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen">
+      <div className="flex items-center gap-3 px-2 py-2">
+        <span className="grid h-11 w-[58px] place-items-center bg-[#f2473d] text-sm font-black italic">604</span>
+        <span><strong className="block text-sm font-black tracking-[-.04em]">SELLSCARS</strong><small className="mt-1 block text-[7px] font-bold uppercase tracking-[.22em] text-neutral-500">Owner inventory</small></span>
+      </div>
+      <nav className="mt-10 grid gap-1 text-sm font-bold">
+        <button onClick={() => setTab("live")} className={`flex items-center justify-between px-4 py-3 text-left ${tab === "live" ? "bg-white text-black" : "text-neutral-300 hover:bg-white/5"}`}><span>Inventory</span><b>{liveCount}</b></button>
+        <button onClick={() => setTab("sold")} className={`flex items-center justify-between px-4 py-3 text-left ${tab === "sold" ? "bg-white text-black" : "text-neutral-300 hover:bg-white/5"}`}><span>Sold vehicles</span><b>{soldCount}</b></button>
+        <a href="https://604-sell-cars-leads.netlify.app" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Lead desk</span><ChevronRight className="h-4 w-4" /></a>
+      </nav>
+      <div className="mt-9 border-t border-white/10 pt-6">
+        <p className="px-4 text-[9px] font-black uppercase tracking-[.18em] text-neutral-600">Inventory health</p>
+        <div className="mt-3 flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-red-500" />Missing stock</span><b>{qualityStatus.missingStock}</b></div>
+        <div className="flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-amber-400" />Missing media</span><b>{qualityStatus.missingMedia || 0}</b></div>
+        <div className="flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-emerald-400" />Gallery sync</span><b>Live</b></div>
+      </div>
+      <div className="mt-auto flex items-center gap-3 border-t border-white/10 px-2 pt-5">
+        <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs font-black">GB</span>
+        <div className="min-w-0"><strong className="block truncate text-sm">{session.user.email}</strong><small className="text-xs text-neutral-500">Owner account</small></div>
+      </div>
+    </aside>
+  );
+}
+
+function InventoryStat({ label, value, detail, featured = false, alert = false }) {
+  return (
+    <article className={`min-h-28 border p-5 shadow-[0_10px_28px_rgba(24,28,35,.04)] ${featured ? "border-[#f2473d] bg-[#f2473d] text-white" : alert ? "border-amber-300 bg-amber-50" : "border-black/10 bg-white"}`}>
+      <span className={`text-[9px] font-black uppercase tracking-[.15em] ${featured ? "text-white/70" : "text-neutral-500"}`}>{label}</span>
+      <strong className="mt-2 block text-3xl font-black tracking-[-.04em]">{value}</strong>
+      {detail && <small className={`mt-2 block text-xs ${featured ? "text-white/70" : "text-neutral-500"}`}>{detail}</small>}
+    </article>
   );
 }
 

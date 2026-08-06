@@ -8,7 +8,7 @@ import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
 import VehicleImage from "../components/VehicleImage";
 import { api, carImages, carName, priceLabel } from "../lib/api";
-import { WEBSITE_URL } from "../lib/links";
+import { PUBLIC_BOOKING_URL, WEBSITE_URL } from "../lib/links";
 import { setPageMeta } from "../lib/pageMeta";
 
 const readParams = () => new URLSearchParams(window.location.search);
@@ -190,7 +190,7 @@ export default function PublicSite() {
 }
 
 function HomePage({ cars, heroCars, filters, loading, error }) {
-  const [heroReady, setHeroReady] = useState(false);
+  const heroReady = false;
   const heroCarById = new Map(heroCars.map((car) => [car.id, car]));
   const displayCars = cars.map((car) => heroCarById.get(car.id) || car);
   const photographed = displayCars.filter((car) => carImages(car).length);
@@ -199,8 +199,6 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
     .sort((a, b) => showcaseRank(a) - showcaseRank(b)
       || Number(b.price_amount || 0) - Number(a.price_amount || 0))
     .slice(0, 10);
-  const heroCoverUrls = highEndCars.map((car) => heroImageSources(car)[0]).filter(Boolean);
-  const heroCoverKey = heroCoverUrls.join("|");
   const featuredCandidates = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
       || String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
@@ -217,33 +215,12 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
     if (featured.length === 8) break;
     if (!featured.some((item) => item.id === car.id)) featured.push(car);
   }
-
-  useEffect(() => {
-    setHeroReady(false);
-    if (!heroCoverUrls.length) return undefined;
-    let cancelled = false;
-    const preload = heroCoverUrls.slice(0, 3).map((source) => new Promise((resolve) => {
-      const image = new Image();
-      const timeout = window.setTimeout(resolve, 5_000);
-      const finish = () => {
-        window.clearTimeout(timeout);
-        resolve();
-      };
-      image.onload = finish;
-      image.onerror = finish;
-      image.src = source;
-    }));
-    Promise.all(preload).then(() => {
-      if (!cancelled) setHeroReady(true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [heroCoverKey]);
+  const heroFeatured = highEndCars[0] || featured[0] || photographed[0];
+  const partnerLotCount = Math.max(4, new Set(displayCars.map((car) => car.location_label).filter(Boolean)).size);
 
   return (
     <main>
-      <section className="hero-stage relative min-h-[690px] overflow-hidden border-b border-white/10 sm:min-h-[760px]">
+      {false && <section className="hidden">
         {highEndCars.length ? (
           <div className="hero-media absolute inset-0">
             <div className={`hero-gallery-track${heroReady ? " is-ready" : ""}`}>
@@ -301,9 +278,11 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
             <TickerContent ariaHidden />
           </div>
         </div>
-      </section>
+      </section>}
 
-      <section className="motion-section mx-auto w-[min(1340px,92vw)] py-14 sm:py-20">
+      <ApprovedHero car={heroFeatured} vehicleCount={cars.length} partnerLotCount={partnerLotCount} />
+
+      <section className="motion-section mx-auto w-[min(1440px,92vw)] py-14 sm:py-20">
         <SectionHeader kicker="Selected inventory" title="Vehicles worth a closer look." text="Live availability, clean media, and approximate location—nothing that sends you chasing the wrong car.">
           <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-white">View all <ArrowRight size={14} /></a>
         </SectionHeader>
@@ -345,6 +324,52 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
 
       <SellerSection cars={cars} />
     </main>
+  );
+}
+
+function ApprovedHero({ car, vehicleCount, partnerLotCount }) {
+  return (
+    <section className="relative overflow-hidden border-b border-white/10 bg-[#0c0e11]">
+      <div className="mx-auto grid min-h-[680px] w-[min(1440px,92vw)] gap-12 py-12 lg:grid-cols-[.88fr_1.12fr] lg:items-center lg:py-16">
+        <div className="relative z-10 py-6">
+          <p className="hero-line hero-line-1 text-[10px] font-black uppercase tracking-[.22em] text-[#ff655a]">Lower Mainland inventory · Updated daily</p>
+          <h1 className="hero-line hero-line-2 mt-6 max-w-3xl text-[clamp(3.2rem,6.4vw,6.75rem)] font-black leading-[.88] tracking-[-.07em]">
+            Find the right car.<br /><span className="text-neutral-500">See it today.</span>
+          </h1>
+          <p className="hero-line hero-line-3 mt-7 max-w-xl text-base leading-7 text-neutral-300 sm:text-lg">
+            Browse live vehicles across our partner lots, choose the one you want, and request the correct location in a couple of minutes.
+          </p>
+          <div className="hero-line hero-line-4 mt-8 flex flex-wrap gap-3">
+            <a href={`${WEBSITE_URL}/inventory`} className="inline-flex min-h-12 items-center gap-2 bg-[#f2473d] px-6 text-sm font-black text-white transition hover:bg-[#d9362b]">Browse inventory <ArrowRight size={16} /></a>
+            <a href={PUBLIC_BOOKING_URL} className="inline-flex min-h-12 items-center gap-2 border border-white/20 px-6 text-sm font-black text-white transition hover:border-white/50 hover:bg-white/5">Book a visit <ArrowRight size={16} /></a>
+          </div>
+          <div className="mt-12 grid max-w-xl grid-cols-3 border-y border-white/10 py-5">
+            <div><strong className="block text-2xl font-black">{vehicleCount}</strong><span className="mt-1 block text-[9px] font-black uppercase tracking-[.13em] text-neutral-500">Vehicles live</span></div>
+            <div className="border-l border-white/10 pl-5"><strong className="block text-2xl font-black">{partnerLotCount}</strong><span className="mt-1 block text-[9px] font-black uppercase tracking-[.13em] text-neutral-500">Partner lots</span></div>
+            <div className="border-l border-white/10 pl-5"><strong className="block text-2xl font-black">14 days</strong><span className="mt-1 block text-[9px] font-black uppercase tracking-[.13em] text-neutral-500">Booking times</span></div>
+          </div>
+        </div>
+
+        <div className="relative min-h-[430px] sm:min-h-[560px]">
+          <div className="absolute -right-6 top-10 h-[72%] w-[38%] bg-[#f2473d]" aria-hidden="true" />
+          <div className="absolute inset-x-0 top-0 h-[72%] overflow-hidden bg-[#171a1f] shadow-[0_35px_90px_rgba(0,0,0,.42)] sm:left-4 sm:right-14">
+            {car && <VehicleImage sources={heroImageSources(car)} alt={carName(car)} loading="eager" fetchPriority="high" className="h-full w-full object-cover" />}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+            {car && <span className="absolute right-4 top-4 flex items-center gap-2 bg-black/70 px-3 py-2 text-xs font-bold"><Camera size={14} />{carImages(car).length}</span>}
+          </div>
+          {car && (
+            <a href={`${WEBSITE_URL}/cars/${encodeURIComponent(car.id)}`} className="absolute bottom-0 left-0 right-0 border border-white/10 bg-[#111317] p-5 shadow-[0_28px_70px_rgba(0,0,0,.5)] transition hover:border-white/25 sm:left-[18%] sm:p-7">
+              <p className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[.15em] text-[#ff655a]"><MapPin size={12} />{car.location_label}{car.stock ? ` · #${car.stock}` : ""}</p>
+              <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+                <h2 className="max-w-md text-[clamp(1.5rem,2.4vw,2.35rem)] font-black leading-[1.05] tracking-[-.05em]">{carName(car)}</h2>
+                <div className="text-right"><strong className="block text-2xl font-black">{priceLabel(car)}</strong><span className="text-xs font-semibold text-neutral-500">View full details →</span></div>
+              </div>
+            </a>
+          )}
+        </div>
+      </div>
+      <div className="motion-ticker border-t border-white/10 bg-[#08090b] py-4" aria-label="Marketplace benefits"><div className="motion-ticker-track"><TickerContent /><TickerContent ariaHidden /></div></div>
+    </section>
   );
 }
 

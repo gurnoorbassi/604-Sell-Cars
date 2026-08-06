@@ -9,8 +9,8 @@ export default function CarCard({ car }) {
     ? [images[1], ...images.filter((_, index) => index !== 1)]
     : images;
   return (
-    <a href={`/cars/${encodeURIComponent(car.id)}`} className="reveal-card group block min-w-0 transition duration-300 hover:-translate-y-1 hover:drop-shadow-[0_20px_30px_rgba(0,0,0,.35)]">
-      <div className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[radial-gradient(circle_at_center,#1a1d22_0%,#0c0e11_72%)]">
+    <a href={`/cars/${encodeURIComponent(car.id)}`} className="reveal-card group block min-w-0 border border-white/10 bg-[#111317] transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_22px_55px_rgba(0,0,0,.28)]">
+      <div className="relative aspect-[16/11] overflow-hidden bg-[radial-gradient(circle_at_center,#1a1d22_0%,#0c0e11_72%)]">
         {preferredImages[0] ? (
           <VehicleImage sources={preferredImages} alt={carName(car)}
             className="vehicle-card-image h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
@@ -36,7 +36,7 @@ export default function CarCard({ car }) {
         </span>
       </div>
 
-      <div className="border-b border-white/10 pb-5 pt-4">
+      <div className="p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="flex min-w-0 items-center gap-1.5 truncate text-[9px] font-black uppercase tracking-[.14em] text-[#ff5a50]">
             <MapPin size={11} className="shrink-0" />{car.location_label}
@@ -44,7 +44,7 @@ export default function CarCard({ car }) {
           {car.stock && <span className="shrink-0 text-[9px] font-semibold text-neutral-600">#{car.stock}</span>}
         </div>
         <h3 className="mt-2 line-clamp-2 min-h-[3.1rem] text-xl font-black leading-[1.2] tracking-[-.035em] transition group-hover:text-[#ff5a50]">{carName(car)}</h3>
-        <div className="mt-4 flex items-end justify-between gap-3">
+        <div className="mt-5 flex items-end justify-between gap-3 border-t border-white/10 pt-4">
           <strong className="text-2xl font-black tracking-[-.04em]">{priceLabel(car)}</strong>
           <span className="mb-0.5 flex shrink-0 items-center gap-1.5 text-xs font-semibold text-neutral-400">
             <Gauge size={14} />{mileageLabel(car)}

@@ -36,3 +36,61 @@ select {
 .inp:focus {
   border-color: #666;
 }
+
+.inventory-ops-ui header .bg-neutral-900,
+.inventory-ops-ui header input {
+  border-color: rgb(17 24 39 / .12) !important;
+  background: #f6f7f8 !important;
+  color: #17191d !important;
+}
+
+.inventory-ops-ui header .border-neutral-800 {
+  border-color: rgb(17 24 39 / .12) !important;
+}
+
+.inventory-ops-ui header .text-neutral-400,
+.inventory-ops-ui header .text-neutral-500 {
+  color: #666d79 !important;
+}
+
+.inventory-ops-ui header .text-neutral-800 {
+  color: #c3c7cd !important;
+}
+
+.inventory-ops-ui main > p,
+.inventory-ops-ui main .text-neutral-500 {
+  color: #666d79 !important;
+}
+
+.inventory-ops-ui main > div.grid > div {
+  border-color: rgb(17 24 39 / .1) !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #17191d !important;
+  box-shadow: 0 12px 30px rgb(24 28 35 / .05);
+}
+
+.inventory-ops-ui main > div.grid > div:hover {
+  border-color: rgb(17 24 39 / .28) !important;
+}
+
+.inventory-ops-ui main > div.grid > div img,
+.inventory-ops-ui main > div.grid > div button > div:first-child {
+  background: #e9ebee !important;
+}
+
+.inventory-ops-ui main > div.grid > div h3 {
+  color: #17191d;
+}
+
+.inventory-ops-ui main > div.grid > div .text-neutral-400,
+.inventory-ops-ui main > div.grid > div .text-neutral-500,
+.inventory-ops-ui main > div.grid > div .text-neutral-600 {
+  color: #69707c !important;
+}
+
+@media (max-width: 1023px) {
+  .inventory-ops-ui header > div:first-child > div:first-child {
+    display: flex;
+  }
+}
