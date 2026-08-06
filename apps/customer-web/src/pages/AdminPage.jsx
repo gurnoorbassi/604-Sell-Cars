@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowUpRight, CalendarDays, Phone, RefreshCw, UserRound } from "lucide-react";
+import { AlertTriangle, ArrowUpRight, CalendarDays, Phone, RefreshCw, Trash2, UserRound } from "lucide-react";
 import AuthScreen from "../AuthScreen";
 import SiteHeader from "../components/SiteHeader";
 import { api, carName } from "../lib/api";
@@ -52,6 +52,7 @@ function LeadDesk() {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [deletingLead, setDeletingLead] = useState("");
 
   const load = async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -130,6 +131,40 @@ function LeadDesk() {
     }
   }
 
+  async function removeBuyerLead(lead) {
+    if (!window.confirm(`Permanently delete ${lead.name}'s buyer lead? This cannot be undone.`)) return;
+    const key = `buyer:${lead.id}`;
+    setDeletingLead(key);
+    try {
+      const result = await api(`/api/admin/leads/${lead.id}`, { method: "DELETE" });
+      if (!result.deleted) throw new Error("The lead could not be deleted.");
+      setLeads((rows) => rows.filter((row) => row.id !== lead.id));
+      setNotice(`Deleted ${lead.name}'s buyer lead.`);
+      setLastUpdated(new Date());
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setDeletingLead("");
+    }
+  }
+
+  async function removeSellerLead(lead) {
+    if (!window.confirm(`Permanently delete ${lead.name}'s seller lead and its uploaded media? This cannot be undone.`)) return;
+    const key = `seller:${lead.id}`;
+    setDeletingLead(key);
+    try {
+      const result = await api(`/api/admin/seller-leads/${lead.id}`, { method: "DELETE" });
+      if (!result.deleted) throw new Error("The lead could not be deleted.");
+      setSellerLeads((rows) => rows.filter((row) => row.id !== lead.id));
+      setNotice(`Deleted ${lead.name}'s seller lead.`);
+      setLastUpdated(new Date());
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setDeletingLead("");
+    }
+  }
+
   const updateBuyer = (id, patch) => setLeads((rows) => rows.map((row) => row.id === id ? { ...row, ...patch } : row));
   const updateSeller = (id, patch) => setSellerLeads((rows) => rows.map((row) => row.id === id ? { ...row, ...patch } : row));
 
@@ -178,14 +213,16 @@ function LeadDesk() {
         {loading ? <p className="py-16 text-center text-sm text-neutral-500">Loading current leads…</p> : view === "buyers" ? (
           <div className="mt-5 grid gap-4">
             {leads.map((lead) => (
-              <BuyerLead key={lead.id} lead={lead} update={(patch) => updateBuyer(lead.id, patch)} save={() => saveLead(lead)} />
+              <BuyerLead key={lead.id} lead={lead} update={(patch) => updateBuyer(lead.id, patch)} save={() => saveLead(lead)}
+                remove={() => removeBuyerLead(lead)} deleting={deletingLead === `buyer:${lead.id}`} />
             ))}
             {!leads.length && <Empty text="No buyer leads match the current filters." />}
           </div>
         ) : (
           <div className="mt-5 grid gap-4">
             {sellerLeads.map((lead) => (
-              <SellerLead key={lead.id} lead={lead} update={(patch) => updateSeller(lead.id, patch)} save={() => saveSeller(lead)} />
+              <SellerLead key={lead.id} lead={lead} update={(patch) => updateSeller(lead.id, patch)} save={() => saveSeller(lead)}
+                remove={() => removeSellerLead(lead)} deleting={deletingLead === `seller:${lead.id}`} />
             ))}
             {!sellerLeads.length && <Empty text="No seller leads yet." />}
           </div>
@@ -195,7 +232,7 @@ function LeadDesk() {
   );
 }
 
-function BuyerLead({ lead, update, save }) {
+function BuyerLead({ lead, update, save, remove, deleting }) {
   const unavailable = lead.routing_flag === "SOURCE ALTERNATIVE";
   return (
     <article className={`border bg-[#111418] p-4 sm:p-6 ${unavailable ? "border-amber-400/40" : "border-white/10"}`}>
@@ -252,13 +289,21 @@ function BuyerLead({ lead, update, save }) {
         <DeskSelect label="Appointment" value={lead.appointment_status} onChange={(value) => update({ appointment_status: value })} options={APPOINTMENT_STATUSES} />
         <DeskSelect label="Handoff" value={lead.handoff_status || "pending_confirmation"} onChange={(value) => update({ handoff_status: value })} options={HANDOFFS} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none focus:border-white/30" rows="2" /></label>
-        <button onClick={save} className="self-end bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b]">{lead.appointment_status === "cancelled" ? "Cancel & delete" : "Save"}</button>
+        <div className="flex gap-2 self-end">
+          <button type="button" onClick={remove} disabled={deleting}
+            className="flex min-h-11 items-center justify-center gap-2 border border-red-500/40 px-4 py-3 text-sm font-black text-red-300 transition hover:border-red-400 hover:bg-red-500/10 disabled:cursor-wait disabled:opacity-50"
+            aria-label={`Delete buyer lead for ${lead.name}`}>
+            <Trash2 size={15} />{deleting ? "Deleting…" : "Delete"}
+          </button>
+          <button type="button" onClick={save} disabled={deleting}
+            className="min-h-11 bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b] disabled:opacity-50">{lead.appointment_status === "cancelled" ? "Cancel & delete" : "Save"}</button>
+        </div>
       </div>
     </article>
   );
 }
 
-function SellerLead({ lead, update, save }) {
+function SellerLead({ lead, update, save, remove, deleting }) {
   return (
     <article className="border border-white/10 bg-[#111418] p-4 sm:p-6">
       <div className="flex flex-wrap justify-between gap-4 border-b border-white/10 pb-4">
@@ -275,7 +320,14 @@ function SellerLead({ lead, update, save }) {
         <DeskField label="Assigned rep" value={lead.assigned_to || ""} onChange={(value) => update({ assigned_to: value })} />
         <DeskSelect label="Status" value={lead.status} onChange={(value) => update({ status: value })} options={[["new", "New"], ["contacted", "Contacted"], ["closed", "Closed"]]} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none" rows="2" /></label>
-        <button onClick={save} className="self-end bg-[#ef4538] px-5 py-3 text-sm font-black">Save</button>
+        <div className="flex gap-2 self-end">
+          <button type="button" onClick={remove} disabled={deleting}
+            className="flex min-h-11 items-center justify-center gap-2 border border-red-500/40 px-4 py-3 text-sm font-black text-red-300 transition hover:border-red-400 hover:bg-red-500/10 disabled:cursor-wait disabled:opacity-50"
+            aria-label={`Delete seller lead for ${lead.name}`}>
+            <Trash2 size={15} />{deleting ? "Deleting…" : "Delete"}
+          </button>
+          <button type="button" onClick={save} disabled={deleting} className="min-h-11 bg-[#ef4538] px-5 py-3 text-sm font-black disabled:opacity-50">Save</button>
+        </div>
       </div>
     </article>
   );

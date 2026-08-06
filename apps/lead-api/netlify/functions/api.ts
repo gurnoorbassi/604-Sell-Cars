@@ -958,6 +958,21 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
   }
 
   const leadMatch = pathname.match(/^\/api\/admin\/leads\/(\d+)$/);
+  if (request.method === "DELETE" && leadMatch) {
+    const { data: current, error: currentError } = await supabase.from("leads")
+      .select("id, appointment_lot")
+      .eq("id", leadMatch[1])
+      .maybeSingle();
+    if (currentError) throw currentError;
+    if (!current) return json({ error: "Lead not found." }, 404);
+    if (!isManager && !accessibleLots(membership).includes(current.appointment_lot)) {
+      return json({ error: "You do not have access to this lead." }, 403);
+    }
+    const deleted = await deleteLead(supabase, current.id);
+    if (!deleted) return json({ error: "Lead not found." }, 404);
+    return json({ deleted: true, id: current.id });
+  }
+
   if (request.method === "PATCH" && leadMatch) {
     const { data: current, error: currentError } = await supabase.from("leads")
       .select("id, appointment_lot, appointment_status, assigned_to")
@@ -1014,6 +1029,19 @@ async function adminRoute(request: Request, pathname: string, supabase: any) {
   }
 
   const sellerMatch = pathname.match(/^\/api\/admin\/seller-leads\/(\d+)$/);
+  if (request.method === "DELETE" && sellerMatch) {
+    let deleteQuery = supabase.from("seller_leads").delete().eq("id", sellerMatch[1]);
+    if (!isManager) deleteQuery = deleteQuery.eq("assigned_to", membership.email);
+    const { data, error } = await deleteQuery.select("id, media_paths").maybeSingle();
+    if (error) throw error;
+    if (!data) return json({ error: "Seller lead not found." }, 404);
+    if (data.media_paths?.length) {
+      const { error: mediaError } = await supabase.storage.from(SELLER_MEDIA_BUCKET).remove(data.media_paths);
+      if (mediaError) console.error("Seller lead media cleanup failed", { leadId: data.id, error: mediaError });
+    }
+    return json({ deleted: true, id: data.id });
+  }
+
   if (request.method === "PATCH" && sellerMatch) {
     const input = await request.json();
     const update: Record<string, any> = {
