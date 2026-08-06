@@ -43,7 +43,7 @@ const vehicleMakes = [
 ];
 
 function detectedMake(car) {
-  if (car?.make) return car.make;
+  if (car?.make) return vehicleMakes.find((make) => make.toLowerCase() === String(car.make).toLowerCase()) || car.make;
   const source = `${car?.title || ""} ${car?.model || ""}`.replace(/[-_/]+/g, " ");
   return vehicleMakes.find((make) => {
     if (make === "Mercedes-Benz") return /\b(?:mercedes(?:\s+benz)?|mb)\b/i.test(source);
@@ -53,7 +53,8 @@ function detectedMake(car) {
 }
 
 function mergedFilters(payload = {}, cars = []) {
-  const unique = (values, descending = false) => [...new Set(values.filter(Boolean))]
+  const unique = (values, descending = false) => [...new Map(values.filter(Boolean)
+    .map((value) => [String(value).toLocaleLowerCase(), value])).values()]
     .sort((a, b) => descending ? Number(b) - Number(a) : String(a).localeCompare(String(b)));
   const fuelValues = cars
     .flatMap((car) => [car.fuel_type, ...(car.fuel_tags || [])])
