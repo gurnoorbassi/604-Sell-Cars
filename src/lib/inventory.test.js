@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { chunkArray, tierFor } from "./inventory";
+import {
+  chunkArray,
+  databaseStatusForUi,
+  matchesInventoryTab,
+  tierFor,
+  uiStatusForDatabase,
+} from "./inventory";
 
 describe("tierFor", () => {
   it("classifies dealership price strings", () => {
@@ -25,5 +31,20 @@ describe("chunkArray", () => {
 
   it("rejects invalid chunk sizes", () => {
     expect(() => chunkArray([1], 0)).toThrow("positive integer");
+  });
+});
+
+describe("inventory statuses", () => {
+  it("uses the database check-constraint values for quick actions", () => {
+    expect(databaseStatusForUi("live")).toBe("available");
+    expect(databaseStatusForUi("available")).toBe("available");
+    expect(databaseStatusForUi("sold")).toBe("sold");
+  });
+
+  it("keeps available and sold vehicles in exactly one UI tab", () => {
+    expect(uiStatusForDatabase("available")).toBe("live");
+    expect(matchesInventoryTab("available", "live")).toBe(true);
+    expect(matchesInventoryTab("available", "sold")).toBe(false);
+    expect(matchesInventoryTab("sold", "sold")).toBe(true);
   });
 });

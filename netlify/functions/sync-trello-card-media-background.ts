@@ -28,6 +28,7 @@ type TrelloCard = {
 type MediaRow = {
   id: number;
   source_url: string;
+  storage_path: string | null;
   sort_order: number;
 };
 
@@ -143,7 +144,7 @@ export default async (request: Request, _context: Context) => {
 
   const { data: existingData, error: existingError } = await userClient
     .from("vehicle_media")
-    .select("id, source_url, sort_order")
+    .select("id, source_url, storage_path, sort_order")
     .eq("vehicle_id", vehicleId)
     .eq("kind", "image")
     .order("sort_order");
@@ -152,7 +153,20 @@ export default async (request: Request, _context: Context) => {
     return;
   }
   const existing = (existingData || []) as MediaRow[];
-  const existingAttachmentIds = new Set(existing.map((item) => attachmentIdFromUrl(item.source_url)).filter(Boolean));
+  const existingByAttachment = new Map(existing
+    .map((item) => [attachmentIdFromUrl(item.source_url), item] as const)
+    .filter(([attachmentId]) => Boolean(attachmentId)));
+  const { data: storedFiles, error: storedFilesError } = await userClient.storage
+    .from(BUCKET)
+    .list(vehicleId, { limit: 1000 });
+  if (storedFilesError) {
+    console.error(`Full gallery sync could not verify stored files: ${storedFilesError.message}`);
+    return;
+  }
+  const storedPaths = new Set((storedFiles || []).map((file) => `${vehicleId}/${file.name}`));
+  const existingAttachmentIds = new Set([...existingByAttachment.entries()]
+    .filter(([, item]) => item.storage_path && storedPaths.has(item.storage_path))
+    .map(([attachmentId]) => attachmentId));
   const occupiedSortOrders = new Set(existing.map((item) => item.sort_order));
   const trelloAuthorization = `OAuth oauth_consumer_key="${trelloKey}", oauth_token="${trelloToken}"`;
   let inserted = 0;
@@ -160,8 +174,9 @@ export default async (request: Request, _context: Context) => {
 
   const syncOne = async (attachment: TrelloAttachment, sourceIndex: number) => {
     if (existingAttachmentIds.has(attachment.id)) return;
-    let sortOrder = sourceIndex;
-    while (occupiedSortOrders.has(sortOrder)) sortOrder += orderedImages.length;
+    const existingRow = existingByAttachment.get(attachment.id);
+    let sortOrder = existingRow?.sort_order ?? sourceIndex;
+    while (!existingRow && occupiedSortOrders.has(sortOrder)) sortOrder += orderedImages.length;
     occupiedSortOrders.add(sortOrder);
     const sourceUrl = sourceFor(attachment);
     let storagePath = "";
@@ -177,17 +192,18 @@ export default async (request: Request, _context: Context) => {
         throw new Error(`Image size ${bytes.byteLength} is outside the allowed range`);
       }
       const extension = extensionFor(contentType, sourceUrl);
-      storagePath = `${vehicleId}/${String(sortOrder).padStart(3, "0")}-trello-${attachment.id}.${extension}`;
+      storagePath = existingRow?.storage_path
+        || `${vehicleId}/${String(sortOrder).padStart(3, "0")}-trello-${attachment.id}.${extension}`;
       const { error: uploadError } = await userClient.storage
         .from(BUCKET)
         .upload(storagePath, bytes, {
           contentType,
-          upsert: false,
+          upsert: Boolean(existingRow),
           cacheControl: "31536000",
         });
       if (uploadError) throw uploadError;
 
-      const { error: insertError } = await userClient.from("vehicle_media").insert({
+      const mediaValues = {
         vehicle_id: vehicleId,
         kind: "image",
         source_url: sourceUrl,
@@ -196,16 +212,19 @@ export default async (request: Request, _context: Context) => {
         mime_type: contentType,
         migration_attempted_at: new Date().toISOString(),
         migration_error: null,
-      });
+      };
+      const { error: insertError } = existingRow
+        ? await userClient.from("vehicle_media").update(mediaValues).eq("id", existingRow.id)
+        : await userClient.from("vehicle_media").insert(mediaValues);
       if (insertError) {
-        await userClient.storage.from(BUCKET).remove([storagePath]);
+        if (!existingRow) await userClient.storage.from(BUCKET).remove([storagePath]);
         throw insertError;
       }
       existingAttachmentIds.add(attachment.id);
       inserted += 1;
     } catch (error) {
       failed += 1;
-      if (storagePath) await userClient.storage.from(BUCKET).remove([storagePath]);
+      if (storagePath && !existingRow) await userClient.storage.from(BUCKET).remove([storagePath]);
       const message = error instanceof Error ? error.message : "Unknown sync error";
       console.warn(`Trello attachment ${attachment.id} could not be synced: ${message}`);
     }

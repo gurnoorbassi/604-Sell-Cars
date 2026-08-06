@@ -17,3 +17,11 @@ export const chunkArray = (items, size) => {
   }
   return chunks;
 };
+
+export const databaseStatusForUi = (status) => status === "sold" ? "sold" : "available";
+
+export const uiStatusForDatabase = (status) => status === "sold" ? "sold" : "live";
+
+export const matchesInventoryTab = (status, tab) => (
+  tab === "sold" ? uiStatusForDatabase(status) === "sold" : uiStatusForDatabase(status) === "live"
+);

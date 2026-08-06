@@ -6,7 +6,14 @@ import {
   ShieldCheck, Users, Download, RefreshCw, Share2,
 } from "lucide-react";
 import AuthScreen, { PasswordUpdateScreen } from "./AuthScreen";
-import { chunkArray, tierFor } from "./lib/inventory";
+import {
+  chunkArray,
+  databaseStatusForUi,
+  matchesInventoryTab,
+  tierFor,
+  uiStatusForDatabase,
+} from "./lib/inventory";
+import { normalizeVehicleClassification } from "./lib/vehicleClassification";
 import {
   MAX_FILES_PER_PICK,
   MAX_PREVIEW_FILES,
@@ -195,11 +202,16 @@ const rowToCar = (row, signedUrls) => {
   const hasCarfaxUrl = Boolean(row.carfax_url?.trim());
   const internalLabels = (row.internal_labels || row.labels || []).filter((label) => label !== "HAS CARFAX");
   if (hasCarfaxUrl) internalLabels.push("HAS CARFAX");
+  const urlForMedia = (item) => (
+    (item.storage_path && signedUrls.get(item.storage_path))
+    || signedUrls.get(item.source_url)
+    || item.source_url
+  );
   const photos = media.filter((item) => item.kind === "image").map((item) =>
-    item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
+    urlForMedia(item),
   ).filter(Boolean);
   const videos = media.filter((item) => item.kind === "video").map((item) =>
-    item.storage_path ? signedUrls.get(item.storage_path) : (signedUrls.get(item.source_url) || item.source_url),
+    urlForMedia(item),
   ).filter(Boolean);
   return {
     id: row.id, title: row.title, stock: row.stock, price: row.price, kms: row.kms,
@@ -212,10 +224,12 @@ const rowToCar = (row, signedUrls) => {
     manualPhotos: media.filter((item) => item.kind === "image" && !item.storage_path).map((item) => item.source_url),
     storagePaths: media.map((item) => item.storage_path).filter(Boolean),
     storedMediaCount: media.filter((item) => item.storage_path).length,
+    storedImageCount: media.filter((item) => item.kind === "image" && item.storage_path).length,
+    missingStoredMediaCount: media.filter((item) => item.storage_path && !signedUrls.get(item.storage_path)).length,
     failedMediaCount: media.filter((item) => item.migration_error).length,
     updatedAt: row.updated_at,
     version: row.version || 1,
-    hot: row.hot, isNew: row.is_new, status: row.status === "available" ? "live" : row.status,
+    hot: row.hot, isNew: row.is_new, status: uiStatusForDatabase(row.status),
   };
 };
 
@@ -241,7 +255,7 @@ const carToRow = (car, userId) => {
   photo_count: Number(car.photoCount) || 0,
   hot: !!car.hot,
   is_new: !!car.isNew,
-  status: car.status === "sold" ? "sold" : "available",
+  status: databaseStatusForUi(car.status),
   year: parts.year || null,
   make: parts.make || null,
   model: parts.model || null,
@@ -380,7 +394,10 @@ export default function SellsCarsBoard() {
     }
 
     const trelloUrls = [...new Set(rows.flatMap((row) => row.vehicle_media || [])
-      .filter((item) => !item.storage_path && item.source_url?.startsWith("https://trello.com/"))
+      .filter((item) => (
+        (!item.storage_path || !signedUrls.has(item.storage_path))
+        && item.source_url?.startsWith("https://trello.com/")
+      ))
       .map((item) => item.source_url))];
     if (trelloUrls.length) {
       try {
@@ -448,7 +465,7 @@ export default function SellsCarsBoard() {
   }, [cars]);
 
   const visible = cars.filter((c) => {
-    if (tab === "sold" ? c.status !== "sold" : c.status !== "live") return false;
+    if (!matchesInventoryTab(c.status, tab)) return false;
     if (f.dealership && c.dealership !== f.dealership) return false;
     if (f.body && c.bodyType !== f.body) return false;
     if (f.fuel && !c.fuelTags.includes(f.fuel)) return false;
@@ -477,25 +494,38 @@ export default function SellsCarsBoard() {
   const galleryStatus = {
     vehicles: cars.filter((car) => car.trelloUrl).length,
     incomplete: cars.filter((car) => car.trelloUrl && car.photos.length < car.photoCount).length,
+    repairNeeded: cars.filter((car) => car.trelloUrl && (car.photos.length < car.photoCount || car.missingStoredMediaCount > 0)).length,
+    missingPermanent: cars.reduce((total, car) => total + car.missingStoredMediaCount, 0),
     stored: cars.reduce((total, car) => total + car.photos.length, 0),
     expected: cars.reduce((total, car) => total + Number(car.photoCount || 0), 0),
   };
 
   const updateStatus = async (id, values) => {
+    setAppError("");
     if (!canEdit) {
       setAppError("BDC accounts have view-only access.");
-      return;
+      return false;
     }
     const currentCar = cars.find((car) => car.id === id);
-    const { data: updated, error } = await supabase.from("cars").update({
+    const databaseValues = {
       ...values,
+      ...(Object.hasOwn(values, "status") ? { status: databaseStatusForUi(values.status) } : {}),
+    };
+    const { data: updated, error } = await supabase.from("cars").update({
+      ...databaseValues,
       updated_at: new Date().toISOString(),
       updated_by: session.user.id,
     }).eq("id", id).eq("version", currentCar?.version || 1).select("version, updated_at").maybeSingle();
-    if (error) setAppError(error.message);
-    else if (!updated) setAppError("This car was changed by another admin. Refresh and try again.");
+    if (error) {
+      setAppError(error.message);
+      return false;
+    } else if (!updated) {
+      setAppError("This car was changed by another admin. Refresh and try again.");
+      return false;
+    }
     else {
       const uiValues = { ...values };
+      if (Object.hasOwn(uiValues, "status")) uiValues.status = uiStatusForDatabase(databaseValues.status);
       if (Object.hasOwn(uiValues, "is_new")) {
         uiValues.isNew = uiValues.is_new;
         delete uiValues.is_new;
@@ -503,14 +533,16 @@ export default function SellsCarsBoard() {
       setCars((current) => current.map((car) => car.id === id
         ? { ...car, ...uiValues, version: updated.version, updatedAt: updated.updated_at }
         : car));
+      return true;
     }
   };
 
   const markSold = async (id) => {
-    await updateStatus(id, { status: "sold", hot: false, is_new: false });
-    setDetail(null);
+    if (await updateStatus(id, { status: "sold", hot: false, is_new: false })) setDetail(null);
   };
-  const relist = async (id) => { await updateStatus(id, { status: "live" }); setDetail(null); };
+  const relist = async (id) => {
+    if (await updateStatus(id, { status: "live" })) setDetail(null);
+  };
   const remove = async (id) => {
     if (!canEdit) {
       setAppError("BDC accounts have view-only access.");
@@ -567,12 +599,12 @@ export default function SellsCarsBoard() {
       setSaving(false);
       return;
     }
-    const record = {
+    const record = normalizeVehicleClassification({
       ...form,
       id,
       isNew: form.id ? form.isNew : true,
-      photoCount: (form.storedMediaCount || 0) + manualPhotos.length + uploadFiles.length,
-    };
+      photoCount: (form.storedImageCount || 0) + manualPhotos.length + uploadFiles.filter(isImageFile).length,
+    });
     const row = carToRow(record, session.user.id);
     const saveQuery = form.id
       ? supabase.from("cars").update(row).eq("id", id).eq("version", form.version || 1).select("id").maybeSingle()
@@ -740,7 +772,7 @@ export default function SellsCarsBoard() {
   };
 
   const startGalleryBatch = async () => {
-    if (!isOwner || galleryBatchStarting || !galleryStatus.incomplete) return;
+    if (!isOwner || galleryBatchStarting || !galleryStatus.repairNeeded) return;
     setGalleryBatchStarting(true);
     setTeamError("");
     setTeamNotice("");
@@ -755,7 +787,7 @@ export default function SellsCarsBoard() {
       if (!response.ok && response.status !== 202) {
         throw new Error("The full inventory gallery sync could not be started.");
       }
-      setTeamNotice(`Full gallery sync started for ${galleryStatus.incomplete} incomplete vehicles. It is safe to close this panel.`);
+      setTeamNotice(`Gallery verification started for ${galleryStatus.repairNeeded} vehicles. It is safe to close this panel.`);
     } catch (error) {
       setTeamError(error.message || "The full inventory gallery sync could not be started.");
     } finally {
@@ -954,17 +986,17 @@ function TeamPanel({
             <div>
               <p className="text-sm font-semibold text-neutral-200">Complete vehicle galleries</p>
               <p className="mt-1 text-xs text-neutral-500">
-                {galleryStatus.stored.toLocaleString()} of {galleryStatus.expected.toLocaleString()} photos available
-                {" · "}{galleryStatus.incomplete} of {galleryStatus.vehicles} galleries incomplete
+                {galleryStatus.stored.toLocaleString()} of {galleryStatus.expected.toLocaleString()} expected photos available
+                {" · "}{galleryStatus.missingPermanent.toLocaleString()} permanent copies missing
               </p>
             </div>
             <button onClick={onStartGalleryBatch}
-              disabled={galleryBatchStarting || !galleryStatus.incomplete}
+              disabled={galleryBatchStarting || !galleryStatus.repairNeeded}
               className="rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-500 disabled:opacity-40">
-              {galleryBatchStarting ? "Starting…" : "Sync every gallery"}
+              {galleryBatchStarting ? "Starting…" : "Verify & repair galleries"}
             </button>
           </div>
-          <p className="mt-2 text-[11px] text-neutral-500">Adds missing Trello exterior and interior photos without duplicating files already stored.</p>
+          <p className="mt-2 text-[11px] text-neutral-500">Missing permanent copies temporarily display through Trello. Upgrade storage capacity before running a full repair.</p>
         </div>
 
         <div className="border-b border-neutral-800 p-5">
@@ -1289,7 +1321,8 @@ function DetailPanel({ car, canEdit, isOwner, session, onClose, onSold, onRelist
             {car.dealership && <Tag>{car.dealership}</Tag>}
             {car.bodyType && <Tag>{car.bodyType}</Tag>}
             {car.fuelTags.map((t) => <Tag key={t}>{t}</Tag>)}
-            {car.photoCount > 0 && <Tag>{car.photoCount} media files</Tag>}
+            {car.photoCount > 0 && <Tag>{car.photoCount} photo{car.photoCount === 1 ? "" : "s"}</Tag>}
+            {car.videos?.length > 0 && <Tag>{car.videos.length} video{car.videos.length === 1 ? "" : "s"}</Tag>}
           </div>
           {car.photos?.length > 0 && (
             <div className="mt-4">

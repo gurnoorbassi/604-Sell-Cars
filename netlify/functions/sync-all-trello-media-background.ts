@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Context } from "@netlify/functions";
 
 const SUPABASE_URL = "https://uduartuijwldxhgpmwks.supabase.co";
-const DISPATCH_CONCURRENCY = 5;
-const DISPATCH_PAUSE_MS = 250;
+const DISPATCH_CONCURRENCY = 3;
+const DISPATCH_PAUSE_MS = 500;
 
 type CarRow = {
   id: string;
@@ -56,10 +56,9 @@ export default async (request: Request, _context: Context) => {
     return;
   }
 
-  const incompleteCars = ((data || []) as CarRow[]).filter((car) => {
-    const imageCount = (car.vehicle_media || []).filter((item) => item.kind === "image").length;
-    return Boolean(car.trello_url) && imageCount < Number(car.photo_count || 0);
-  });
+  // A database media row can outlive its physical storage object. The per-card
+  // worker is idempotent, so verify every Trello-linked gallery.
+  const incompleteCars = ((data || []) as CarRow[]).filter((car) => Boolean(car.trello_url));
   const origin = new URL(request.url).origin;
   let queued = 0;
   let failed = 0;
