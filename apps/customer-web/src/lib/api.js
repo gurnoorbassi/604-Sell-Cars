@@ -55,6 +55,7 @@ export const carName = (car) => {
   const raw = String((car.make && car.model ? structuredName : car.title) || structuredName || "")
     .replace(/[*_]/g, "")
     .replace(/^\s*[-–—]+\s*/, "")
+    .replace(/^\s*(?:stock\s*)?#?[a-z0-9-]+\s+(?=(?:19|20)\d{2}\b)/i, "")
     .replace(/\b((?:19|20)\d{2})[-_](?=[a-z])/gi, "$1 ")
     .replace(/\s+/g, " ")
     .trim();
@@ -62,8 +63,10 @@ export const carName = (car) => {
     .split(/\s+[-–—]\s+(?=(?:\d[\d,\sXx]*\s*KM|\$|BRAND NEW|MORE COLOU?RS|[*(]*(?:LEASE|FINANCE)))/i)[0]
     .replace(/\s+[-–—]\s+\d{1,3}\s*[Kk]\s*KMS?\b.*$/i, "")
     .replace(/^#[A-Z0-9-]+\s+/i, "")
-    .replace(/\s+\$\d{1,3}(?:[,\s]\d{3})\b.*$/i, "")
+    .replace(/\s+\$\d[\d,\s]*\b.*$/i, "")
     .replace(/\s+\d{1,3}(?:[,\s]\d{3}|\s*[Xx]{3})\s*KMS?\b.*$/i, "")
+    .replace(/\s+cash\s+(?:truck|car|price)\b.*$/i, "")
+    .replace(/\s+hot\s+unkt\b.*$/i, "")
     .replace(/\s+(?:fully loaded|with aftermarket rims)\b.*$/i, "")
     .trim();
   return titleCaseVehicle(withoutSalesCopy || raw || "Vehicle");
