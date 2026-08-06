@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Config, Context } from "@netlify/functions";
 import { DateTime } from "luxon";
+import { CORS_METHODS } from "../../lib/cors";
 
 const TIMEZONE = "America/Vancouver";
 const OPENING_HOUR = 10;
@@ -1137,7 +1138,7 @@ export default async (request: Request, _context: Context) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Authorization, Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, OPTIONS",
+        "Access-Control-Allow-Methods": CORS_METHODS,
         "Access-Control-Max-Age": "86400",
       },
     });
@@ -1170,7 +1171,7 @@ function withCors(response: Response) {
   const headers = new Headers(response.headers);
   headers.set("Access-Control-Allow-Origin", "*");
   headers.set("Access-Control-Allow-Headers", "Authorization, Content-Type");
-  headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, OPTIONS");
+  headers.set("Access-Control-Allow-Methods", CORS_METHODS);
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 

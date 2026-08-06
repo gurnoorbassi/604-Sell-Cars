@@ -1,0 +1,1 @@
+export const CORS_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS";

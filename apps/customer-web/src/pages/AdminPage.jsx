@@ -53,6 +53,7 @@ function LeadDesk() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [deletingLead, setDeletingLead] = useState("");
+  const [confirmingDelete, setConfirmingDelete] = useState("");
 
   const load = async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
@@ -132,7 +133,6 @@ function LeadDesk() {
   }
 
   async function removeBuyerLead(lead) {
-    if (!window.confirm(`Permanently delete ${lead.name}'s buyer lead? This cannot be undone.`)) return;
     const key = `buyer:${lead.id}`;
     setDeletingLead(key);
     try {
@@ -145,11 +145,11 @@ function LeadDesk() {
       setNotice(error.message);
     } finally {
       setDeletingLead("");
+      setConfirmingDelete("");
     }
   }
 
   async function removeSellerLead(lead) {
-    if (!window.confirm(`Permanently delete ${lead.name}'s seller lead and its uploaded media? This cannot be undone.`)) return;
     const key = `seller:${lead.id}`;
     setDeletingLead(key);
     try {
@@ -162,6 +162,7 @@ function LeadDesk() {
       setNotice(error.message);
     } finally {
       setDeletingLead("");
+      setConfirmingDelete("");
     }
   }
 
@@ -214,7 +215,9 @@ function LeadDesk() {
           <div className="mt-5 grid gap-4">
             {leads.map((lead) => (
               <BuyerLead key={lead.id} lead={lead} update={(patch) => updateBuyer(lead.id, patch)} save={() => saveLead(lead)}
-                remove={() => removeBuyerLead(lead)} deleting={deletingLead === `buyer:${lead.id}`} />
+                remove={() => removeBuyerLead(lead)} deleting={deletingLead === `buyer:${lead.id}`}
+                confirmingDelete={confirmingDelete === `buyer:${lead.id}`}
+                requestDelete={() => setConfirmingDelete(`buyer:${lead.id}`)} cancelDelete={() => setConfirmingDelete("")} />
             ))}
             {!leads.length && <Empty text="No buyer leads match the current filters." />}
           </div>
@@ -222,7 +225,9 @@ function LeadDesk() {
           <div className="mt-5 grid gap-4">
             {sellerLeads.map((lead) => (
               <SellerLead key={lead.id} lead={lead} update={(patch) => updateSeller(lead.id, patch)} save={() => saveSeller(lead)}
-                remove={() => removeSellerLead(lead)} deleting={deletingLead === `seller:${lead.id}`} />
+                remove={() => removeSellerLead(lead)} deleting={deletingLead === `seller:${lead.id}`}
+                confirmingDelete={confirmingDelete === `seller:${lead.id}`}
+                requestDelete={() => setConfirmingDelete(`seller:${lead.id}`)} cancelDelete={() => setConfirmingDelete("")} />
             ))}
             {!sellerLeads.length && <Empty text="No seller leads yet." />}
           </div>
@@ -232,7 +237,7 @@ function LeadDesk() {
   );
 }
 
-function BuyerLead({ lead, update, save, remove, deleting }) {
+function BuyerLead({ lead, update, save, remove, deleting, confirmingDelete, requestDelete, cancelDelete }) {
   const unavailable = lead.routing_flag === "SOURCE ALTERNATIVE";
   return (
     <article className={`border bg-[#111418] p-4 sm:p-6 ${unavailable ? "border-amber-400/40" : "border-white/10"}`}>
@@ -290,11 +295,8 @@ function BuyerLead({ lead, update, save, remove, deleting }) {
         <DeskSelect label="Handoff" value={lead.handoff_status || "pending_confirmation"} onChange={(value) => update({ handoff_status: value })} options={HANDOFFS} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none focus:border-white/30" rows="2" /></label>
         <div className="flex gap-2 self-end">
-          <button type="button" onClick={remove} disabled={deleting}
-            className="flex min-h-11 items-center justify-center gap-2 border border-red-500/40 px-4 py-3 text-sm font-black text-red-300 transition hover:border-red-400 hover:bg-red-500/10 disabled:cursor-wait disabled:opacity-50"
-            aria-label={`Delete buyer lead for ${lead.name}`}>
-            <Trash2 size={15} />{deleting ? "Deleting…" : "Delete"}
-          </button>
+          <DeleteControls type="buyer" name={lead.name} confirming={confirmingDelete} deleting={deleting}
+            requestDelete={requestDelete} cancelDelete={cancelDelete} confirmDelete={remove} />
           <button type="button" onClick={save} disabled={deleting}
             className="min-h-11 bg-[#ef4538] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d9362b] disabled:opacity-50">{lead.appointment_status === "cancelled" ? "Cancel & delete" : "Save"}</button>
         </div>
@@ -303,7 +305,7 @@ function BuyerLead({ lead, update, save, remove, deleting }) {
   );
 }
 
-function SellerLead({ lead, update, save, remove, deleting }) {
+function SellerLead({ lead, update, save, remove, deleting, confirmingDelete, requestDelete, cancelDelete }) {
   return (
     <article className="border border-white/10 bg-[#111418] p-4 sm:p-6">
       <div className="flex flex-wrap justify-between gap-4 border-b border-white/10 pb-4">
@@ -321,15 +323,37 @@ function SellerLead({ lead, update, save, remove, deleting }) {
         <DeskSelect label="Status" value={lead.status} onChange={(value) => update({ status: value })} options={[["new", "New"], ["contacted", "Contacted"], ["closed", "Closed"]]} />
         <label className="text-[9px] font-black uppercase tracking-[.12em] text-neutral-500">Internal notes<textarea value={lead.notes || ""} onChange={(event) => update({ notes: event.target.value })} className="mt-2 min-h-11 w-full border border-white/10 bg-[#090b0e] p-3 text-base font-normal normal-case tracking-normal text-white outline-none" rows="2" /></label>
         <div className="flex gap-2 self-end">
-          <button type="button" onClick={remove} disabled={deleting}
-            className="flex min-h-11 items-center justify-center gap-2 border border-red-500/40 px-4 py-3 text-sm font-black text-red-300 transition hover:border-red-400 hover:bg-red-500/10 disabled:cursor-wait disabled:opacity-50"
-            aria-label={`Delete seller lead for ${lead.name}`}>
-            <Trash2 size={15} />{deleting ? "Deleting…" : "Delete"}
-          </button>
+          <DeleteControls type="seller" name={lead.name} confirming={confirmingDelete} deleting={deleting}
+            requestDelete={requestDelete} cancelDelete={cancelDelete} confirmDelete={remove} />
           <button type="button" onClick={save} disabled={deleting} className="min-h-11 bg-[#ef4538] px-5 py-3 text-sm font-black disabled:opacity-50">Save</button>
         </div>
       </div>
     </article>
+  );
+}
+
+function DeleteControls({ type, name, confirming, deleting, requestDelete, cancelDelete, confirmDelete }) {
+  if (!confirming) {
+    return (
+      <button type="button" onClick={requestDelete} disabled={deleting}
+        className="flex min-h-11 items-center justify-center gap-2 border border-red-500/40 px-4 py-3 text-sm font-black text-red-300 transition hover:border-red-400 hover:bg-red-500/10 disabled:cursor-wait disabled:opacity-50"
+        aria-label={`Delete ${type} lead for ${name}`}>
+        <Trash2 size={15} />Delete
+      </button>
+    );
+  }
+  return (
+    <div className="flex gap-2" role="group" aria-label={`Confirm deletion for ${name}`}>
+      <button type="button" onClick={cancelDelete} disabled={deleting}
+        className="min-h-11 border border-white/20 px-3 py-3 text-sm font-black text-neutral-300 disabled:opacity-50">
+        Keep lead
+      </button>
+      <button type="button" onClick={confirmDelete} disabled={deleting}
+        className="flex min-h-11 items-center justify-center gap-2 bg-red-600 px-4 py-3 text-sm font-black text-white transition hover:bg-red-500 disabled:cursor-wait disabled:opacity-50"
+        aria-label={`Confirm delete ${type} lead for ${name}`}>
+        <Trash2 size={15} />{deleting ? "Deleting…" : "Confirm delete"}
+      </button>
+    </div>
   );
 }
 
