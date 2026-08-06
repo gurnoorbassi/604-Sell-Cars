@@ -267,22 +267,63 @@ function normalizedYear(car: Record<string, any>) {
   return Number.isInteger(stored) && stored >= 1980 && stored <= maximum ? stored : null;
 }
 
-function normalizedMake(value: unknown) {
-  const make = clean(value, 80);
+const VEHICLE_MAKES = [
+  "Alfa Romeo", "Aston Martin", "Land Rover", "Mercedes-Benz", "Rolls-Royce",
+  "Volkswagen", "Mitsubishi", "Chevrolet", "Lamborghini", "Maserati",
+  "Chrysler", "Cadillac", "Genesis", "Hyundai", "Infiniti", "Porsche",
+  "Subaru", "Toyota", "Bentley", "Lincoln", "Acura", "Audi", "BMW",
+  "Buick", "Dodge", "Ferrari", "Ford", "GMC", "Honda", "Jaguar", "Jeep",
+  "Kia", "Lexus", "Mazda", "McLaren", "MINI", "Nissan", "Pontiac", "Ram",
+  "Tesla", "Volvo",
+];
+
+function normalizedMake(car: Record<string, any>) {
+  const make = clean(car.make, 80);
   const aliases: Record<string, string> = {
     chevorlet: "Chevrolet",
+    chevy: "Chevrolet",
     infinity: "Infiniti",
+    mb: "Mercedes-Benz",
+    mercedes: "Mercedes-Benz",
     "mercedes benz": "Mercedes-Benz",
+    "rolls royce": "Rolls-Royce",
+    vw: "Volkswagen",
   };
-  return aliases[make.toLowerCase()] || make;
+  const stored = aliases[make.toLowerCase()] || make;
+  if (stored) return VEHICLE_MAKES.find((candidate) => candidate.toLowerCase() === stored.toLowerCase()) || stored;
+  const source = clean(`${car.title || ""} ${car.model || ""}`, 1_000)
+    .replace(/[-_/]+/g, " ");
+  const detected = VEHICLE_MAKES.find((candidate) => {
+    const pattern = candidate === "Mercedes-Benz"
+      ? /\b(?:mercedes(?:\s+benz)?|mb)\b/i
+      : candidate === "Rolls-Royce"
+        ? /\brolls[\s-]*royce\b/i
+        : new RegExp(`\\b${candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    return pattern.test(source);
+  });
+  return detected || "";
+}
+
+function normalizedFuelType(car: Record<string, any>) {
+  const stored = clean(car.fuel_type, 80);
+  if (stored) return stored;
+  const source = [car.title, car.model, ...(Array.isArray(car.fuel_tags) ? car.fuel_tags : [])]
+    .filter(Boolean).join(" ");
+  if (/\b(?:plug[ -]?in hybrid|phev)\b/i.test(source)) return "Plug-in Hybrid";
+  if (/\b(?:hybrid|hev)\b/i.test(source)) return "Hybrid";
+  if (/\b(?:electric|ev)\b/i.test(source)) return "Electric";
+  if (/\bdiesel\b/i.test(source)) return "Diesel";
+  if (/\bgas(?:oline)?\b/i.test(source)) return "Gasoline";
+  return "";
 }
 
 function normalizeCar(car: Record<string, any>) {
   return {
     ...car,
     year: normalizedYear(car),
-    make: normalizedMake(car.make),
+    make: normalizedMake(car),
     mileage: normalizedMileage(car),
+    fuel_type: normalizedFuelType(car),
   };
 }
 
@@ -503,7 +544,7 @@ async function publicCars(request: Request, supabase: any) {
       .sort((a, b) => showcaseRank(a) - showcaseRank(b))
       .slice(0, 10);
   }
-  let rows = await withSignedMedia(supabase, publicRows);
+  let rows = (await withSignedMedia(supabase, publicRows)).map(normalizeCar);
   const search = clean(url.searchParams.get("search") || url.searchParams.get("q")).toLowerCase();
   const exact = (key: string, getter: (car: Record<string, any>) => unknown) => {
     const value = clean(url.searchParams.get(key));
@@ -639,8 +680,10 @@ async function submitSellerLead(request: Request, supabase: any) {
   const name = clean(form.get("name"), 150);
   const phone = normalizePhone(form.get("phone"));
   const vehicle = clean(form.get("vehicle"), 500);
+  const privacyConsent = clean(form.get("privacyConsent"));
   const files = form.getAll("photos").filter((value): value is File => value instanceof File && value.size > 0);
   if (!name || !vehicle) throw new Error("Name, phone, and vehicle are required.");
+  if (privacyConsent !== "on") throw new Error("Privacy consent is required.");
   if (files.length > 8) throw new Error("Upload a maximum of 8 images.");
   if (files.some((file) => !file.type.startsWith("image/"))) throw new Error("Seller uploads must be images.");
   if (files.some((file) => file.size > 12 * 1024 * 1024)) throw new Error("Each image must be 12 MB or smaller.");
@@ -682,7 +725,7 @@ async function submitSellerLead(request: Request, supabase: any) {
 async function filters(supabase: any) {
   const { data, error } = await withJwtClockRetry(() => supabase
     .from("cars")
-    .select("title, lot, lot_name, lot_address, dealership, body_type, fuel_type, make, year")
+    .select("title, model, fuel_tags, lot, lot_name, lot_address, dealership, body_type, fuel_type, make, year")
     .eq("status", "available")
     .neq("lot", "LOCATION_REQUIRED")
     .neq("lot_address", "ADDRESS REQUIRED"));

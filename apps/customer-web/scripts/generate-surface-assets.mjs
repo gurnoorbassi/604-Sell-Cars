@@ -26,6 +26,10 @@ const cars = await response.json();
 const urls = [
   { location: websiteUrl },
   { location: `${websiteUrl}/inventory` },
+  { location: `${websiteUrl}/about` },
+  { location: `${websiteUrl}/privacy` },
+  { location: `${websiteUrl}/terms` },
+  { location: `${websiteUrl}/book` },
   ...cars.map((car) => ({
     location: `${websiteUrl}/cars/${encodeURIComponent(car.id)}`,
     lastModified: validDate(car.updated_at || car.created_at),

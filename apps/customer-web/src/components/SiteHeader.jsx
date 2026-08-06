@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, CalendarDays, Menu, X } from "lucide-react";
-import { ADMIN_URL, BOARD_URL, LANDING_URL, WEBSITE_URL } from "../lib/links";
+import { ADMIN_URL, BOARD_URL, PUBLIC_BOOKING_URL, WEBSITE_URL } from "../lib/links";
 
 export default function SiteHeader({ admin = false }) {
   const [scrolled, setScrolled] = useState(false);
@@ -57,7 +57,7 @@ export default function SiteHeader({ admin = false }) {
               <a href={WEBSITE_URL} className="px-4 py-3 text-neutral-400 transition hover:text-white">Home</a>
               <a href={`${WEBSITE_URL}/inventory`} className="px-4 py-3 text-neutral-300 transition hover:text-white">Inventory</a>
               <a href={`${WEBSITE_URL}/#list-with-us`} className="px-4 py-3 text-neutral-400 transition hover:text-white">Sell your vehicle</a>
-              <a href={LANDING_URL} className="mt-2 flex min-h-11 items-center justify-center gap-2 bg-[#ef4538] px-5 text-white transition hover:bg-[#d9362b] md:ml-2 md:mt-0">
+              <a href={PUBLIC_BOOKING_URL} className="mt-2 flex min-h-11 items-center justify-center gap-2 bg-[#ef4538] px-5 text-white transition hover:bg-[#d9362b] md:ml-2 md:mt-0">
                 <CalendarDays size={15} />Book a viewing
               </a>
             </>

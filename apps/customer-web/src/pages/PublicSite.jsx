@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowRight, Camera, Check, ChevronRight, MapPin, Search,
+  ArrowRight, Camera, Check, ChevronDown, ChevronRight, MapPin, Search,
   ShieldCheck, SlidersHorizontal, Upload,
 } from "lucide-react";
 import CarCard from "../components/CarCard";
@@ -33,6 +33,39 @@ const bodyTypes = [
   ["Coupe", /coupe/i],
   ["EV", /electric|ev/i],
 ];
+const vehicleMakes = [
+  "Alfa Romeo", "Aston Martin", "Land Rover", "Mercedes-Benz", "Rolls-Royce",
+  "Volkswagen", "Mitsubishi", "Chevrolet", "Lamborghini", "Maserati", "Chrysler",
+  "Cadillac", "Genesis", "Hyundai", "Infiniti", "Porsche", "Subaru", "Toyota",
+  "Bentley", "Lincoln", "Acura", "Audi", "BMW", "Buick", "Dodge", "Ferrari",
+  "Ford", "GMC", "Honda", "Jaguar", "Jeep", "Kia", "Lexus", "Mazda", "McLaren",
+  "MINI", "Nissan", "Pontiac", "Ram", "Tesla", "Volvo",
+];
+
+function detectedMake(car) {
+  if (car?.make) return car.make;
+  const source = `${car?.title || ""} ${car?.model || ""}`.replace(/[-_/]+/g, " ");
+  return vehicleMakes.find((make) => {
+    if (make === "Mercedes-Benz") return /\b(?:mercedes(?:\s+benz)?|mb)\b/i.test(source);
+    if (make === "Rolls-Royce") return /\brolls[\s-]*royce\b/i.test(source);
+    return new RegExp(`\\b${make.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(source);
+  }) || "";
+}
+
+function mergedFilters(payload = {}, cars = []) {
+  const unique = (values, descending = false) => [...new Set(values.filter(Boolean))]
+    .sort((a, b) => descending ? Number(b) - Number(a) : String(a).localeCompare(String(b)));
+  const fuelValues = cars
+    .flatMap((car) => [car.fuel_type, ...(car.fuel_tags || [])])
+    .filter((value) => /^(?:gasoline|diesel|electric|hybrid|plug-in hybrid|hydrogen)$/i.test(String(value || "")));
+  return {
+    cities: unique([...(payload.cities || []), ...cars.map((car) => car.city)]),
+    body_types: unique([...(payload.body_types || []), ...cars.map((car) => car.body_type)]),
+    fuel_types: unique([...(payload.fuel_types || []), ...fuelValues]),
+    makes: unique([...(payload.makes || []), ...cars.map(detectedMake)]),
+    years: unique([...(payload.years || []), ...cars.map((car) => car.year)], true),
+  };
+}
 
 const SHOWCASE_RULES = [
   /\b2021\b.*\bC63S?\b/i,
@@ -89,9 +122,9 @@ export default function PublicSite() {
         } else {
           setError(carsResult.reason?.message || "Inventory is temporarily unavailable.");
         }
-        if (filtersResult.status === "fulfilled") {
-          setFilters(filtersResult.value);
-        }
+        const loadedCars = carsResult.status === "fulfilled" ? carsResult.value : [];
+        const loadedFilters = filtersResult.status === "fulfilled" ? filtersResult.value : {};
+        setFilters(mergedFilters(loadedFilters, loadedCars));
         if (heroResult.status === "fulfilled") {
           setHeroCars(heroResult.value);
         }
@@ -167,10 +200,22 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
     .slice(0, 10);
   const heroCoverUrls = highEndCars.map((car) => heroImageSources(car)[0]).filter(Boolean);
   const heroCoverKey = heroCoverUrls.join("|");
-  const featured = [...photographed]
+  const featuredCandidates = [...photographed]
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-      || Number(b.price_amount || 0) - Number(a.price_amount || 0))
-    .slice(0, 8);
+      || String(b.updated_at || "").localeCompare(String(a.updated_at || "")));
+  const featured = [];
+  const usedMakes = new Set();
+  for (const car of featuredCandidates) {
+    const make = detectedMake(car) || carName(car).split(" ")[1] || car.id;
+    if (usedMakes.has(make)) continue;
+    featured.push(car);
+    usedMakes.add(make);
+    if (featured.length === 8) break;
+  }
+  for (const car of featuredCandidates) {
+    if (featured.length === 8) break;
+    if (!featured.some((item) => item.id === car.id)) featured.push(car);
+  }
 
   useEffect(() => {
     setHeroReady(false);
@@ -257,7 +302,7 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
         </div>
       </section>
 
-      <section className="motion-section mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
+      <section className="motion-section mx-auto w-[min(1340px,92vw)] py-14 sm:py-20">
         <SectionHeader kicker="Selected inventory" title="Vehicles worth a closer look." text="Live availability, clean media, and approximate location—nothing that sends you chasing the wrong car.">
           <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-white">View all <ArrowRight size={14} /></a>
         </SectionHeader>
@@ -269,7 +314,7 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
         )}
       </section>
 
-      <section className="border-y border-white/10 bg-[#0d0f12] py-16 sm:py-24">
+      <section className="border-y border-white/10 bg-[#0d0f12] py-14 sm:py-20">
         <div className="motion-section mx-auto w-[min(1340px,92vw)]">
           <SectionHeader kicker="Start with the shape" title="Browse by body type." />
           <div className="mt-9 grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -288,7 +333,7 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
         </div>
       </section>
 
-      <section id="how-it-works" className="motion-section mx-auto w-[min(1340px,92vw)] py-16 sm:py-24">
+      <section id="how-it-works" className="motion-section mx-auto w-[min(1340px,92vw)] py-14 sm:py-20">
         <SectionHeader kicker="No wasted drives" title="Find it. We reserve it. You drive it." />
         <div className="mt-10 grid border border-white/10 md:grid-cols-3">
           <Step number="01" title="Find it" text="Search live inventory by vehicle, budget, body style, and city." />
@@ -304,7 +349,10 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
 
 function InventoryPage({ cars, filters, current, loading, error }) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(24);
   const hasFilters = [...current.keys()].some((key) => current.get(key));
+
+  useEffect(() => setVisibleCount(24), [current]);
 
   return (
     <main>
@@ -334,7 +382,9 @@ function InventoryPage({ cars, filters, current, loading, error }) {
             </div>
             <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-1">
               <FilterInput label="Search" name="search" value={current.get("search")} placeholder="Make, model, keyword" />
-              <FilterSelect label="Approximate area" name="city" values={filters.cities} value={current.get("city")} placeholder="Every city" />
+              {filters.cities.length > 1
+                ? <FilterSelect label="Approximate area" name="city" values={filters.cities} value={current.get("city")} placeholder="Every city" />
+                : <FilterStatic label="Approximate area" value={filters.cities[0] ? `${filters.cities[0]} area` : "Loading areas…"} />}
               <FilterSelect label="Make" name="make" values={filters.makes} value={current.get("make")} placeholder="Every make" />
               <FilterSelect label="Body style" name="bodyType" values={filters.body_types} value={current.get("bodyType")} placeholder="Every body style" />
               <FilterSelect label="Fuel type" name="fuel" values={filters.fuel_types} value={current.get("fuel")} placeholder="Every fuel type" />
@@ -368,7 +418,15 @@ function InventoryPage({ cars, filters, current, loading, error }) {
           {error && <ErrorMessage text={error} />}
           {loading ? <InventorySkeleton columns={3} /> : (
             <div className="inventory-grid mt-6 grid gap-x-5 gap-y-9 sm:grid-cols-2 xl:grid-cols-3">
-              {cars.map((car, index) => <div key={car.id} style={{ "--reveal-delay": `${(index % 9) * 60}ms` }}><CarCard car={car} /></div>)}
+              {cars.slice(0, visibleCount).map((car, index) => <div key={car.id} style={{ "--reveal-delay": `${(index % 9) * 60}ms` }}><CarCard car={car} /></div>)}
+            </div>
+          )}
+          {!loading && visibleCount < cars.length && (
+            <div className="mt-10 flex flex-col items-center gap-3 border-t border-white/10 pt-8">
+              <p className="text-xs text-neutral-500">Showing {Math.min(visibleCount, cars.length)} of {cars.length} vehicles</p>
+              <button type="button" onClick={() => setVisibleCount((count) => count + 24)} className="min-h-12 border border-white/20 bg-[#111418] px-7 text-sm font-black text-white transition hover:border-[#ef4538] hover:text-[#ff655a]">
+                Load 24 more
+              </button>
             </div>
           )}
           {!loading && !cars.length && (
@@ -405,7 +463,7 @@ function SellerSection() {
   }
 
   return (
-    <section id="list-with-us" className="relative overflow-hidden border-t border-white/10 bg-[#111418] py-16 sm:py-24">
+    <section id="list-with-us" className="relative overflow-hidden border-t border-white/10 bg-[#111418] py-14 sm:py-20">
       <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(239,69,56,.13),transparent_65%)]" />
       <div className="motion-section relative mx-auto grid w-[min(1180px,92vw)] gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
         <div>
@@ -424,6 +482,10 @@ function SellerSection() {
               <Upload size={18} />Choose up to 8 images
               <input type="file" name="photos" accept="image/*" multiple className="sr-only" />
             </span>
+          </label>
+          <label className="flex items-start gap-3 text-xs leading-5 text-neutral-400 sm:col-span-2">
+            <input type="checkbox" name="privacyConsent" required className="mt-1 h-4 w-4 accent-[#ef4538]" />
+            <span>I agree that 604 Sell Cars may use these details and photos to review my vehicle and contact me. See the <a className="font-bold text-white underline" href={`${WEBSITE_URL}/privacy`}>Privacy Policy</a>.</span>
           </label>
           {message && <p className="border border-white/10 bg-white/5 p-3 text-sm text-neutral-300 sm:col-span-2">{message}</p>}
           <button disabled={busy} className="flex min-h-12 items-center justify-center gap-2 bg-[#ef4538] px-5 text-sm font-black text-white transition hover:bg-[#d9362b] disabled:opacity-60 sm:col-span-2">
@@ -528,17 +590,37 @@ function FilterInput({ label, name, value, placeholder }) {
 }
 
 function FilterSelect({ label, name, values = [], value, placeholder, pairs = false }) {
+  const [selected, setSelected] = useState(value || "");
+  const detailsRef = useRef(null);
+  const normalizedOptions = values.filter(Boolean).map((item) => pairs ? item : [item, item]);
+  const selectedLabel = normalizedOptions.find(([optionValue]) => String(optionValue) === String(selected))?.[1] || placeholder;
   return (
-    <label className="text-[9px] font-black uppercase tracking-[.14em] text-neutral-500">
+    <div className="text-[9px] font-black uppercase tracking-[.14em] text-neutral-500">
+      <span>{label}</span>
+      <input type="hidden" name={name} value={selected} />
+      <details ref={detailsRef} className="filter-menu mt-2 border border-white/10 bg-[#08090b] normal-case tracking-normal text-white">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3 text-base font-semibold">
+          <span className="truncate">{selectedLabel}</span><ChevronDown size={16} className="filter-chevron shrink-0" />
+        </summary>
+        <div className="max-h-56 overflow-y-auto border-t border-white/10 p-1">
+          <button type="button" onClick={() => { setSelected(""); detailsRef.current?.removeAttribute("open"); }} className={`block w-full px-3 py-2 text-left text-sm ${!selected ? "bg-[#ef4538] font-bold" : "hover:bg-white/10"}`}>{placeholder}</button>
+          {normalizedOptions.map(([optionValue, optionLabel]) => (
+            <button type="button" key={optionValue} onClick={() => { setSelected(String(optionValue)); detailsRef.current?.removeAttribute("open"); }} className={`block w-full px-3 py-2 text-left text-sm ${String(selected) === String(optionValue) ? "bg-[#ef4538] font-bold" : "hover:bg-white/10"}`}>
+              {optionLabel}
+            </button>
+          ))}
+        </div>
+      </details>
+    </div>
+  );
+}
+
+function FilterStatic({ label, value }) {
+  return (
+    <div className="text-[9px] font-black uppercase tracking-[.14em] text-neutral-500">
       {label}
-      <select name={name} defaultValue={value || ""} className="mt-2 h-11 w-full border border-white/10 bg-[#08090b] px-3 text-base font-semibold normal-case tracking-normal text-white outline-none focus:border-neutral-500">
-        <option value="">{placeholder}</option>
-        {values.filter(Boolean).map((item) => {
-          const [optionValue, optionLabel] = pairs ? item : [item, item];
-          return <option key={optionValue} value={optionValue}>{optionLabel}</option>;
-        })}
-      </select>
-    </label>
+      <div className="mt-2 flex min-h-11 items-center border border-white/10 bg-[#08090b] px-3 text-base font-semibold normal-case tracking-normal text-neutral-300">{value}</div>
+    </div>
   );
 }
 

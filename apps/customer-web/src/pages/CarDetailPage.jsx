@@ -10,7 +10,7 @@ import {
   api, carImages, carName, carVideos, cleanVehicleDescription,
   mileageLabel, priceLabel, vehicleMileage,
 } from "../lib/api";
-import { LANDING_URL, WEBSITE_URL } from "../lib/links";
+import { PUBLIC_BOOKING_URL, WEBSITE_URL } from "../lib/links";
 import { setPageMeta } from "../lib/pageMeta";
 
 export default function CarDetailPage({ id }) {
@@ -196,7 +196,7 @@ export default function CarDetailPage({ id }) {
                 <span className="mt-1 block text-sm leading-6 text-neutral-300">Approximate area only. Our team shares the handoff details after confirming availability.</span>
               </div>
 
-              <a href={`${LANDING_URL}?car=${encodeURIComponent(car.id)}`} className="mt-4 flex w-full items-center justify-center gap-2 bg-[#ef3f32] p-4 text-sm font-black text-white transition hover:bg-[#d92d22]">
+              <a href={`${PUBLIC_BOOKING_URL}?car=${encodeURIComponent(car.id)}`} className="mt-4 flex w-full items-center justify-center gap-2 bg-[#ef3f32] p-4 text-sm font-black text-white transition hover:bg-[#d92d22]">
                 <CalendarDays size={18} /> Book this vehicle
               </a>
               {car.carfax_url && (
@@ -215,7 +215,7 @@ export default function CarDetailPage({ id }) {
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#090a0c]/95 p-3 backdrop-blur lg:hidden">
         <a
-          href={`${LANDING_URL}?car=${encodeURIComponent(car.id)}`}
+          href={`${PUBLIC_BOOKING_URL}?car=${encodeURIComponent(car.id)}`}
           className="mx-auto flex w-full max-w-lg items-center justify-center gap-2 bg-[#ef3f32] px-5 py-3.5 text-sm font-black text-white"
         >
           <CalendarDays size={17} /> Book a viewing

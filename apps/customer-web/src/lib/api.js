@@ -52,8 +52,10 @@ function titleCaseVehicle(value) {
 
 export const carName = (car) => {
   const structuredName = [car.year, car.make, car.model, car.trim].filter(Boolean).join(" ");
-  const raw = String((car.make || car.model ? structuredName : car.title) || structuredName || "")
+  const raw = String((car.make && car.model ? structuredName : car.title) || structuredName || "")
     .replace(/[*_]/g, "")
+    .replace(/^\s*[-–—]+\s*/, "")
+    .replace(/\b((?:19|20)\d{2})[-_](?=[a-z])/gi, "$1 ")
     .replace(/\s+/g, " ")
     .trim();
   const withoutSalesCopy = raw

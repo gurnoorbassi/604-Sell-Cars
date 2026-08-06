@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowUpRight, CalendarDays, MapPin, ShieldCheck } from "lucide-react";
-import { LANDING_URL, WEBSITE_URL } from "../lib/links";
+import { PUBLIC_BOOKING_URL, WEBSITE_URL } from "../lib/links";
 
 export default function SiteFooter() {
   return (
@@ -19,8 +19,9 @@ export default function SiteFooter() {
           <p className="text-[9px] font-black uppercase tracking-[.18em] text-white">Explore</p>
           <div className="mt-4 grid gap-3 text-sm">
             <a href={`${WEBSITE_URL}/inventory`} className="transition hover:text-white">Browse inventory</a>
-            <a href={LANDING_URL} className="transition hover:text-white">Book a viewing</a>
+            <a href={PUBLIC_BOOKING_URL} className="transition hover:text-white">Book a viewing</a>
             <a href={`${WEBSITE_URL}/#list-with-us`} className="transition hover:text-white">List your vehicle</a>
+            <a href={`${WEBSITE_URL}/about`} className="transition hover:text-white">About 604 Sell Cars</a>
           </div>
         </div>
         <div>
@@ -33,7 +34,11 @@ export default function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex w-[min(1340px,92vw)] flex-wrap items-center justify-between gap-3 py-5 text-[10px]">
           <span>© {new Date().getFullYear()} 604 Sell Cars</span>
-          <a href={`${WEBSITE_URL}/inventory`} className="flex items-center gap-1.5 font-bold text-white">View live inventory <ArrowUpRight size={12} /></a>
+          <div className="flex flex-wrap items-center gap-4">
+            <a href={`${WEBSITE_URL}/privacy`} className="hover:text-white">Privacy</a>
+            <a href={`${WEBSITE_URL}/terms`} className="hover:text-white">Terms</a>
+            <a href={`${WEBSITE_URL}/inventory`} className="flex items-center gap-1.5 font-bold text-white">View live inventory <ArrowUpRight size={12} /></a>
+          </div>
         </div>
       </div>
     </footer>
