@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowRight, Camera, Check, ChevronDown, ChevronRight, MapPin, Search,
+  ArrowRight, Camera, Check, ChevronDown, ChevronRight, Search,
   ShieldCheck, SlidersHorizontal, Upload,
 } from "lucide-react";
 import CarCard from "../components/CarCard";
@@ -215,7 +215,9 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
     if (featured.length === 8) break;
     if (!featured.some((item) => item.id === car.id)) featured.push(car);
   }
-  const heroFeatured = highEndCars[0] || featured[0] || photographed[0];
+  const requestedS63 = [...(heroCars.length ? heroCars : photographed), ...photographed]
+    .find((car) => /\bS63\s*(?:AMG)?\b/i.test(`${car.title || ""} ${carName(car)}`));
+  const heroFeatured = requestedS63 || highEndCars[0] || featured[0] || photographed[0];
   const partnerLotCount = Math.max(4, new Set(displayCars.map((car) => car.location_label).filter(Boolean)).size);
 
   return (
@@ -282,16 +284,18 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
 
       <ApprovedHero car={heroFeatured} vehicleCount={cars.length} partnerLotCount={partnerLotCount} />
 
-      <section className="motion-section mx-auto w-[min(1440px,92vw)] py-14 sm:py-20">
-        <SectionHeader kicker="Selected inventory" title="Vehicles worth a closer look." text="Live availability, clean media, and approximate location—nothing that sends you chasing the wrong car.">
-          <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-white">View all <ArrowRight size={14} /></a>
-        </SectionHeader>
-        {error && <ErrorMessage text={error} />}
-        {loading ? <InventorySkeleton columns={4} /> : (
-          <div className="mt-9 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((car, index) => <div key={car.id} style={{ "--reveal-delay": `${index * 60}ms` }}><CarCard car={car} /></div>)}
-          </div>
-        )}
+      <section className="bg-[#f3f1ec] py-14 text-[#111317] sm:py-20">
+        <div className="motion-section mx-auto w-[min(1340px,92vw)]">
+          <SectionHeader light kicker="Current inventory" title="Recently added" text="Fresh arrivals from the live 604 Sell Cars marketplace.">
+            <a href={`${WEBSITE_URL}/inventory`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.14em] text-[#111317]">View all inventory <ArrowRight size={14} /></a>
+          </SectionHeader>
+          {error && <ErrorMessage text={error} />}
+          {loading ? <InventorySkeleton columns={3} /> : (
+            <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.slice(0, 6).map((car, index) => <div key={car.id} style={{ "--reveal-delay": `${index * 60}ms` }}><CarCard car={car} light /></div>)}
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="border-y border-white/10 bg-[#0d0f12] py-14 sm:py-20">
@@ -328,6 +332,22 @@ function HomePage({ cars, heroCars, filters, loading, error }) {
 }
 
 function ApprovedHero({ car, vehicleCount, partnerLotCount }) {
+  const heroSources = heroImageSources(car).slice(0, 8);
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
+
+  useEffect(() => {
+    setHeroImageIndex(0);
+    if (heroSources.length < 2) return undefined;
+    const timer = window.setInterval(() => {
+      setHeroImageIndex((currentIndex) => (currentIndex + 1) % heroSources.length);
+    }, 4600);
+    return () => window.clearInterval(timer);
+  }, [car?.id, heroSources.length]);
+
+  const activeSources = heroSources.length
+    ? [heroSources[heroImageIndex], ...heroSources.filter((_, index) => index !== heroImageIndex)]
+    : [];
+
   return (
     <section className="relative overflow-hidden border-b border-white/10 bg-[#0c0e11]">
       <div className="mx-auto grid min-h-[680px] w-[min(1440px,92vw)] gap-12 py-12 lg:grid-cols-[.88fr_1.12fr] lg:items-center lg:py-16">
@@ -353,13 +373,13 @@ function ApprovedHero({ car, vehicleCount, partnerLotCount }) {
         <div className="relative min-h-[430px] sm:min-h-[560px]">
           <div className="absolute -right-6 top-10 h-[72%] w-[38%] bg-[#f2473d]" aria-hidden="true" />
           <div className="absolute inset-x-0 top-0 h-[72%] overflow-hidden bg-[#171a1f] shadow-[0_35px_90px_rgba(0,0,0,.42)] sm:left-4 sm:right-14">
-            {car && <VehicleImage sources={heroImageSources(car)} alt={carName(car)} loading="eager" fetchPriority="high" className="h-full w-full object-cover" />}
+            {car && <VehicleImage key={`${car.id}-${heroImageIndex}`} sources={activeSources} alt={carName(car)} loading="eager" fetchPriority="high" className="hero-fade-image h-full w-full object-contain sm:object-cover" />}
             <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
             {car && <span className="absolute right-4 top-4 flex items-center gap-2 bg-black/70 px-3 py-2 text-xs font-bold"><Camera size={14} />{carImages(car).length}</span>}
           </div>
           {car && (
             <a href={`${WEBSITE_URL}/cars/${encodeURIComponent(car.id)}`} className="absolute bottom-0 left-0 right-0 border border-white/10 bg-[#111317] p-5 shadow-[0_28px_70px_rgba(0,0,0,.5)] transition hover:border-white/25 sm:left-[18%] sm:p-7">
-              <p className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[.15em] text-[#ff655a]"><MapPin size={12} />{car.location_label}{car.stock ? ` · #${car.stock}` : ""}</p>
+              <p className="text-[9px] font-black uppercase tracking-[.15em] text-[#ff655a]">Available now{car.stock ? ` · #${car.stock}` : ""}</p>
               <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
                 <h2 className="max-w-md text-[clamp(1.5rem,2.4vw,2.35rem)] font-black leading-[1.05] tracking-[-.05em]">{carName(car)}</h2>
                 <div className="text-right"><strong className="block text-2xl font-black">{priceLabel(car)}</strong><span className="text-xs font-semibold text-neutral-500">View full details →</span></div>
@@ -545,13 +565,13 @@ function SellerSection() {
   );
 }
 
-function SectionHeader({ kicker, title, text, children }) {
+function SectionHeader({ kicker, title, text, children, light = false }) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-6">
       <div>
         <p className="text-[9px] font-black uppercase tracking-[.2em] text-[#ff655a]">{kicker}</p>
         <h2 className="mt-3 max-w-4xl text-[clamp(2.1rem,4vw,3.9rem)] font-black leading-[1] tracking-[-.055em]">{title}</h2>
-        {text && <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">{text}</p>}
+        {text && <p className={`mt-4 max-w-2xl text-sm leading-6 ${light ? "text-neutral-600" : "text-neutral-400"}`}>{text}</p>}
       </div>
       {children}
     </div>

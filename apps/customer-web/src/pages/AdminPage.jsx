@@ -49,6 +49,7 @@ function LeadDesk() {
   const [lot, setLot] = useState("");
   const [date, setDate] = useState("");
   const [view, setView] = useState("buyers");
+  const [quickView, setQuickView] = useState("all");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -98,6 +99,26 @@ function LeadDesk() {
     pending: leads.filter((lead) => lead.handoff_status === "pending_confirmation").length,
     alternatives: leads.filter((lead) => lead.routing_flag === "SOURCE ALTERNATIVE").length,
   }), [leads]);
+
+  const appointmentLeads = useMemo(() => leads
+    .filter((lead) => lead.appointment_time && !["cancelled", "completed", "no_show"].includes(lead.appointment_status))
+    .sort((a, b) => new Date(a.appointment_time) - new Date(b.appointment_time)), [leads]);
+  const quickCounts = useMemo(() => ({
+    new: leads.filter((lead) => lead.appointment_status === "new" || !lead.assigned_to).length,
+    verification: leads.filter((lead) => lead.handoff_status === "pending_confirmation" || lead.routing_flag === "SOURCE ALTERNATIVE").length,
+    appointment: appointmentLeads.length,
+  }), [leads, appointmentLeads]);
+  const filteredBuyerLeads = useMemo(() => {
+    if (quickView === "new") return leads.filter((lead) => lead.appointment_status === "new" || !lead.assigned_to);
+    if (quickView === "verification") return leads.filter((lead) => lead.handoff_status === "pending_confirmation" || lead.routing_flag === "SOURCE ALTERNATIVE");
+    if (quickView === "appointment") return appointmentLeads;
+    return leads;
+  }, [leads, appointmentLeads, quickView]);
+
+  const showView = (nextView, nextQuickView = "all") => {
+    setView(nextView);
+    setQuickView(nextQuickView);
+  };
 
   async function saveLead(lead) {
     try {
@@ -171,7 +192,15 @@ function LeadDesk() {
 
   return (
     <div className="operations-ui min-h-screen bg-[#f1f3f5] text-[#17191d] lg:grid lg:grid-cols-[252px_minmax(0,1fr)]">
-      <OperationsSidebar buyerCount={leads.length} sellerCount={sellerLeads.length} appointmentCount={stats.today} />
+      <OperationsSidebar
+        buyerCount={leads.length}
+        sellerCount={sellerLeads.length}
+        appointmentCount={appointmentLeads.length}
+        quickCounts={quickCounts}
+        activeView={view}
+        activeQuickView={quickView}
+        onShow={showView}
+      />
       <div className="min-w-0">
       <SiteHeader admin />
       <main className="mx-auto w-[min(1480px,94vw)] py-8 sm:py-10">
@@ -188,7 +217,7 @@ function LeadDesk() {
           </div>
         </div>
 
-        {notice && <button onClick={() => setNotice("")} className="mt-5 w-full border border-[#ef4538]/30 bg-[#ef4538]/10 p-3 text-left text-sm text-red-100">{notice} ×</button>}
+        {notice && <button onClick={() => setNotice("")} className="mt-5 w-full border border-[#ef4538]/30 bg-[#ef4538]/10 p-3 text-left text-sm text-red-700">{notice} ×</button>}
 
         <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Stat label="Buyer leads" value={stats.total} />
@@ -198,11 +227,13 @@ function LeadDesk() {
         </div>
 
         <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-b border-white/10">
-          <div className="flex gap-1">
-            <Tab active={view === "buyers"} onClick={() => setView("buyers")}>Buyer leads ({leads.length})</Tab>
-            <Tab active={view === "sellers"} onClick={() => setView("sellers")}>Seller leads ({sellerLeads.length})</Tab>
+          <div className="flex max-w-full gap-1 overflow-x-auto">
+            <Tab active={view === "buyers"} onClick={() => showView("buyers")}>Buyer leads ({leads.length})</Tab>
+            <Tab active={view === "appointments"} onClick={() => showView("appointments")}>Appointments ({appointmentLeads.length})</Tab>
+            <Tab active={view === "sellers"} onClick={() => showView("sellers")}>Seller leads ({sellerLeads.length})</Tab>
+            <Tab active={view === "lots"} onClick={() => showView("lots")}>Partner lots ({lots.length})</Tab>
           </div>
-          {view === "buyers" && (
+          {(view === "buyers" || view === "appointments") && (
             <div className="mb-3 grid w-full gap-3 sm:w-auto sm:grid-cols-2">
               <select value={lot} onChange={(event) => setLot(event.target.value)} className="h-10 border border-white/10 bg-[#111418] px-3 text-base text-white outline-none">
                 <option value="">All permitted lots</option>
@@ -213,17 +244,17 @@ function LeadDesk() {
           )}
         </div>
 
-        {loading ? <p className="py-16 text-center text-sm text-neutral-500">Loading current leads…</p> : view === "buyers" ? (
+        {loading ? <p className="py-16 text-center text-sm text-neutral-500">Loading current leads…</p> : (view === "buyers" || view === "appointments") ? (
           <div className="mt-5 grid gap-4">
-            {leads.map((lead) => (
+            {(view === "appointments" ? appointmentLeads : filteredBuyerLeads).map((lead) => (
               <BuyerLead key={lead.id} lead={lead} update={(patch) => updateBuyer(lead.id, patch)} save={() => saveLead(lead)}
                 remove={() => removeBuyerLead(lead)} deleting={deletingLead === `buyer:${lead.id}`}
                 confirmingDelete={confirmingDelete === `buyer:${lead.id}`}
                 requestDelete={() => setConfirmingDelete(`buyer:${lead.id}`)} cancelDelete={() => setConfirmingDelete("")} />
             ))}
-            {!leads.length && <Empty text="No buyer leads match the current filters." />}
+            {!(view === "appointments" ? appointmentLeads : filteredBuyerLeads).length && <Empty text={view === "appointments" ? "No active appointments match the current filters." : "No buyer leads match the current view."} />}
           </div>
-        ) : (
+        ) : view === "sellers" ? (
           <div className="mt-5 grid gap-4">
             {sellerLeads.map((lead) => (
               <SellerLead key={lead.id} lead={lead} update={(patch) => updateSeller(lead.id, patch)} save={() => saveSeller(lead)}
@@ -233,6 +264,24 @@ function LeadDesk() {
             ))}
             {!sellerLeads.length && <Empty text="No seller leads yet." />}
           </div>
+        ) : (
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {lots.map((item) => {
+              const matchesLot = (lead) => lead.appointment_lot === item.lot || lead.lot === item.lot || lead.lot_name === item.lot_name;
+              const leadCount = leads.filter(matchesLot).length;
+              const appointmentCount = appointmentLeads.filter(matchesLot).length;
+              return (
+                <article key={item.lot} className="border border-black/10 bg-white p-5">
+                  <p className="text-[9px] font-black uppercase tracking-[.15em] text-[#ef4538]">Partner lot</p>
+                  <h2 className="mt-2 text-xl font-black">{item.lot_name}</h2>
+                  <p className="mt-2 text-sm leading-6 text-neutral-500">{item.lot_address || "Address managed in inventory"}</p>
+                  <div className="mt-5 grid grid-cols-2 border-t border-black/10 pt-4 text-sm"><span><b className="block text-xl">{leadCount}</b>Leads</span><span><b className="block text-xl">{appointmentCount}</b>Appointments</span></div>
+                  <button type="button" onClick={() => { setLot(item.lot); showView("appointments"); }} className="mt-5 w-full border border-black/15 px-4 py-3 text-sm font-black hover:border-black/40">View appointments</button>
+                </article>
+              );
+            })}
+            {!lots.length && <Empty text="No partner lots are available." />}
+          </div>
         )}
       </main>
       </div>
@@ -240,7 +289,13 @@ function LeadDesk() {
   );
 }
 
-function OperationsSidebar({ buyerCount, sellerCount, appointmentCount }) {
+function OperationsSidebar({ buyerCount, sellerCount, appointmentCount, quickCounts, activeView, activeQuickView, onShow }) {
+  const mainButton = (key, label, count) => (
+    <button type="button" onClick={() => onShow(key)} className={`flex items-center justify-between px-4 py-3 text-left ${activeView === key && activeQuickView === "all" ? "bg-white text-black" : "text-neutral-300 hover:bg-white/5"}`}><span>{label}</span>{count != null && <b>{count}</b>}</button>
+  );
+  const quickButton = (key, label, count, color) => (
+    <button type="button" onClick={() => onShow(key === "appointment" ? "appointments" : "buyers", key)} className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold ${activeQuickView === key ? "bg-white/10 text-white" : "text-neutral-400 hover:bg-white/5"}`}><span className="flex items-center gap-3"><i className={`h-2 w-2 rounded-full ${color}`} />{label}</span><b>{count}</b></button>
+  );
   return (
     <aside className="operations-sidebar hidden min-h-screen flex-col border-r border-white/10 bg-[#111317] px-4 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen">
       <a href="https://604-sell-cars-website.netlify.app" className="flex items-center gap-3 px-2 py-2">
@@ -248,16 +303,17 @@ function OperationsSidebar({ buyerCount, sellerCount, appointmentCount }) {
         <span><strong className="block text-sm font-black tracking-[-.04em]">SELLSCARS</strong><small className="mt-1 block text-[7px] font-bold uppercase tracking-[.22em] text-neutral-500">Operations desk</small></span>
       </a>
       <nav className="mt-10 grid gap-1 text-sm font-bold">
-        <a href="#buyer-leads" className="flex items-center justify-between bg-white px-4 py-3 text-black"><span>Leads</span><b>{buyerCount}</b></a>
-        <a href="#appointments" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Appointments</span><b>{appointmentCount}</b></a>
+        {mainButton("buyers", "Leads", buyerCount)}
+        {mainButton("appointments", "Appointments", appointmentCount)}
         <a href="https://dealership-inventory-board.netlify.app" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Inventory</span><ArrowUpRight size={14} /></a>
-        <a href="#seller-leads" className="flex items-center justify-between px-4 py-3 text-neutral-300 hover:bg-white/5"><span>Seller leads</span><b>{sellerCount}</b></a>
+        {mainButton("lots", "Partner lots", null)}
+        {mainButton("sellers", "Seller leads", sellerCount)}
       </nav>
       <div className="mt-9 border-t border-white/10 pt-6">
         <p className="px-4 text-[9px] font-black uppercase tracking-[.18em] text-neutral-600">Quick views</p>
-        <button className="mt-3 flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-[#f2473d]" />New and unassigned</button>
-        <button className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-amber-400" />Needs verification</button>
-        <button className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-neutral-400"><i className="h-2 w-2 rounded-full bg-emerald-400" />Appointment set</button>
+        <div className="mt-3">{quickButton("new", "New and unassigned", quickCounts.new, "bg-[#f2473d]")}</div>
+        {quickButton("verification", "Needs verification", quickCounts.verification, "bg-amber-400")}
+        {quickButton("appointment", "Appointment set", quickCounts.appointment, "bg-emerald-400")}
       </div>
       <div className="mt-auto flex items-center gap-3 border-t border-white/10 px-2 pt-5">
         <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xs font-black">GB</span>

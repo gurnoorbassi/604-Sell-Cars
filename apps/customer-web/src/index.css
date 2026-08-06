@@ -125,6 +125,10 @@ select {
   animation: hero-scale 1.2s cubic-bezier(.2,.72,.2,1) both;
 }
 
+.hero-fade-image {
+  animation: hero-photo-fade 1s ease both;
+}
+
 .hero-media {
   inset: 0 !important;
   overflow: hidden;
@@ -365,6 +369,11 @@ select {
 @keyframes hero-scale {
   from { transform: scale(1.05); }
   to { transform: scale(1); }
+}
+
+@keyframes hero-photo-fade {
+  from { opacity: .12; transform: scale(1.025); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes hero-line-in {

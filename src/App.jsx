@@ -182,6 +182,56 @@ const numericValue = (value) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
+const BOARD_ACRONYMS = new Set(["AMG", "AT4", "AWD", "BMW", "EV", "FWD", "GMC", "GT", "HD", "N", "SB", "SEL", "SUV", "TECH", "XLE"]);
+
+const cleanInventoryTitle = (car) => {
+  const raw = String(car?.title || "Vehicle")
+    .replace(/[*_]/g, "")
+    .replace(/^\s*(?:stock\s*)?#?[a-z0-9-]+\s+(?=(?:19|20)\d{2}\b)/i, "")
+    .replace(/\s+@[^-–—]+$/i, "")
+    .replace(/\s+[-–—]\s+["'(]*(?:BRAND NEW|MORE COLOU?RS|LEASE|FINANCE).*$/i, "")
+    .split(/\s+[-–—]\s+(?=(?:\d[\d,\sXx]*\s*KMS?|\$|\d+\s*(?:BW|BIWEEKLY)|LEASE|FINANCE))/i)[0]
+    .replace(/\s+\d{1,3}(?:[,\s]\d{3}|\s*[Xx]{3})\s*KMS?\b.*$/i, "")
+    .replace(/\s+\$\s?\d[\d,\s]*\b.*$/i, "")
+    .replace(/\bmercedes\s+benz\b/gi, "Mercedes-Benz")
+    .replace(/\s+/g, " ")
+    .trim();
+  return raw.split(" ").map((word) => {
+    if (/^mercedes-benz$/i.test(word)) return "Mercedes-Benz";
+    if (/^xdrive$/i.test(word)) return "xDrive";
+    if (/^(?:19|20)\d{2}$/.test(word) || /\d/.test(word) || BOARD_ACRONYMS.has(word.toUpperCase())) return word.toUpperCase();
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }).join(" ") || "Vehicle";
+};
+
+const boardPriceLabel = (car) => {
+  const value = numericValue(car?.price);
+  return value ? `$${value.toLocaleString()}` : "Price needed";
+};
+
+const boardMileageLabel = (car) => {
+  const title = String(car?.title || "");
+  const exactFromTitle = title.match(/(?:^|[^\d])(\d{1,3})[,\s]+(\d{3})\s*KMS?\b/i);
+  if (exactFromTitle) return `${Number(`${exactFromTitle[1]}${exactFromTitle[2]}`).toLocaleString()} km`;
+  const approximateFromTitle = title.match(/(?:^|[^\d])(\d{1,3})\s*[, ]?\s*[Xx]{3}\s*KMS?\b/i);
+  if (approximateFromTitle) return `Approx. ${(Number(approximateFromTitle[1]) * 1000).toLocaleString()} km`;
+  const raw = String(car?.kms || "");
+  if (!numericValue(raw) && /brand new|lease payment/i.test(title)) return "New vehicle";
+  const value = numericValue(raw);
+  if (!value) return "Mileage needed";
+  const approximate = /x|approx/i.test(raw);
+  const normalized = approximate && value < 1000 ? value * 1000 : value;
+  return `${approximate ? "Approx. " : ""}${normalized.toLocaleString()} km`;
+};
+
+const attentionIssuesFor = (car) => [
+  !String(car?.title || "").trim() ? "Missing vehicle name" : null,
+  !String(car?.dealership || car?.lot || "").trim() ? "Missing partner lot" : null,
+  !numericValue(car?.price) ? "Missing price" : null,
+  !numericValue(car?.kms) && !/brand new|lease payment/i.test(String(car?.title || "")) ? "Missing mileage" : null,
+  !car?.photos?.length ? "Missing photos" : null,
+].filter(Boolean);
+
 const loadAllVehicleMedia = async () => {
   const pageSize = 1000;
   const media = [];
@@ -316,6 +366,7 @@ export default function SellsCarsBoard() {
   const [migrationStarting, setMigrationStarting] = useState(false);
   const [galleryBatchStarting, setGalleryBatchStarting] = useState(false);
   const [displayLimit, setDisplayLimit] = useState(48);
+  const [attentionOnly, setAttentionOnly] = useState(false);
   const isOwner = membershipRole === "owner";
   const canEdit = membershipRole === "owner" || membershipRole === "admin";
 
@@ -456,7 +507,11 @@ export default function SellsCarsBoard() {
 
   useEffect(() => {
     setDisplayLimit(48);
-  }, [tab, search, f.dealership, f.body, f.fuel, f.tier, f.flag]);
+  }, [tab, search, f.dealership, f.body, f.fuel, f.tier, f.flag, attentionOnly]);
+
+  useEffect(() => {
+    if (tab !== "live") setAttentionOnly(false);
+  }, [tab]);
 
   useEffect(() => {
     if (!detail) return;
@@ -466,6 +521,7 @@ export default function SellsCarsBoard() {
 
   const visible = cars.filter((c) => {
     if (!matchesInventoryTab(c.status, tab)) return false;
+    if (attentionOnly && !attentionIssuesFor(c).length) return false;
     if (f.dealership && c.dealership !== f.dealership) return false;
     if (f.body && c.bodyType !== f.body) return false;
     if (f.fuel && !c.fuelTags.includes(f.fuel)) return false;
@@ -478,13 +534,15 @@ export default function SellsCarsBoard() {
 
   const liveCount = cars.filter((c) => c.status === "live").length;
   const soldCount = cars.filter((c) => c.status === "sold").length;
-  const activeFilters = Object.values(f).filter(Boolean).length;
+  const attentionCars = cars.filter((car) => matchesInventoryTab(car.status, "live") && attentionIssuesFor(car).length);
+  const activeFilters = Object.values(f).filter(Boolean).length + Number(attentionOnly);
   const stockCounts = cars.reduce((counts, car) => {
     if (car.stock) counts.set(car.stock, (counts.get(car.stock) || 0) + 1);
     return counts;
   }, new Map());
   const qualityStatus = {
     missingStock: cars.filter((car) => !car.stock).length,
+    missingMedia: cars.filter((car) => matchesInventoryTab(car.status, "live") && !car.photos?.length).length,
     missingDealership: cars.filter((car) => !car.dealership).length,
     missingKms: cars.filter((car) => !car.kms).length,
     missingPrice: cars.filter((car) => !car.price).length,
@@ -810,7 +868,8 @@ export default function SellsCarsBoard() {
 
   return (
     <div className="inventory-ops-ui min-h-screen bg-[#f1f3f5] text-[#17191d] font-sans lg:grid lg:grid-cols-[252px_minmax(0,1fr)]">
-      <InventorySidebar liveCount={liveCount} soldCount={soldCount} tab={tab} setTab={setTab} qualityStatus={qualityStatus} session={session} />
+      <InventorySidebar liveCount={liveCount} soldCount={soldCount} tab={tab} setTab={setTab} qualityStatus={qualityStatus} session={session}
+        attentionCount={attentionCars.length} attentionOnly={attentionOnly} onAttention={() => { setTab("live"); setAttentionOnly((value) => !value); }} />
       <div className="min-w-0">
       <header className="sticky top-0 z-20 border-b border-black/10 bg-white/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 pt-3 pb-2 flex items-center gap-3 flex-wrap">
@@ -890,8 +949,14 @@ export default function SellsCarsBoard() {
            <InventoryStat label="Live inventory" value={liveCount} featured />
            <InventoryStat label="Partner lots" value={DEALERSHIPS.length} detail="Connected inventory sources" />
            <InventoryStat label="Media ready" value={cars.filter((car) => matchesInventoryTab(car.status, "live") && car.photos?.length >= 8).length} detail="Live vehicles with 8+ photos" />
-           <InventoryStat label="Needs attention" value={cars.filter((car) => matchesInventoryTab(car.status, "live") && (!car.stock || !car.kms || !car.price || !car.photos?.length)).length} detail="Live vehicles missing a core detail" alert />
+           {attentionCars.length > 0 && <InventoryStat label="Needs attention" value={attentionCars.length} detail="Open the vehicles and see each issue" alert active={attentionOnly} onClick={() => { setTab("live"); setAttentionOnly((value) => !value); }} />}
          </section>
+        {attentionOnly && (
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <span><b>Needs attention:</b> showing only vehicles with a missing required detail. Every card lists the exact issue.</span>
+            <button type="button" onClick={() => setAttentionOnly(false)} className="border border-amber-400 px-3 py-1.5 font-bold">Show all inventory</button>
+          </div>
+        )}
         {appError && <p className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{appError}</p>}
         {loading ? (
           <p className="text-neutral-500 text-sm text-center py-24">Loading shared inventory…</p>
@@ -905,7 +970,7 @@ export default function SellsCarsBoard() {
             <p className="text-xs text-neutral-500 mb-3">{visible.length} car{visible.length !== 1 ? "s" : ""}</p>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
               {visible.slice(0, displayLimit).map((car) => (
-                <CarCard key={car.id} car={car} canEdit={canEdit}
+                <CarCard key={car.id} car={car} canEdit={canEdit} issues={attentionIssuesFor(car)}
                   onOpen={() => setDetail(car)} onSold={() => markSold(car.id)} />
               ))}
             </div>
@@ -945,7 +1010,7 @@ export default function SellsCarsBoard() {
   );
 }
 
-function InventorySidebar({ liveCount, soldCount, tab, setTab, qualityStatus, session }) {
+function InventorySidebar({ liveCount, soldCount, tab, setTab, qualityStatus, session, attentionCount, attentionOnly, onAttention }) {
   return (
     <aside className="inventory-sidebar hidden min-h-screen flex-col border-r border-white/10 bg-[#111317] px-4 py-5 text-white lg:sticky lg:top-0 lg:flex lg:h-screen">
       <div className="flex items-center gap-3 px-2 py-2">
@@ -959,7 +1024,7 @@ function InventorySidebar({ liveCount, soldCount, tab, setTab, qualityStatus, se
       </nav>
       <div className="mt-9 border-t border-white/10 pt-6">
         <p className="px-4 text-[9px] font-black uppercase tracking-[.18em] text-neutral-600">Inventory health</p>
-        <div className="mt-3 flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-red-500" />Missing stock</span><b>{qualityStatus.missingStock}</b></div>
+        {attentionCount > 0 && <button type="button" onClick={onAttention} className={`mt-3 flex w-full items-center justify-between px-4 py-3 text-left text-sm ${attentionOnly ? "bg-amber-400/15 text-amber-200" : "text-neutral-400 hover:bg-white/5"}`}><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-red-500" />Needs attention</span><b>{attentionCount}</b></button>}
         <div className="flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-amber-400" />Missing media</span><b>{qualityStatus.missingMedia || 0}</b></div>
         <div className="flex items-center justify-between px-4 py-3 text-sm text-neutral-400"><span className="flex items-center gap-3"><i className="h-2 w-2 rounded-full bg-emerald-400" />Gallery sync</span><b>Live</b></div>
       </div>
@@ -971,13 +1036,14 @@ function InventorySidebar({ liveCount, soldCount, tab, setTab, qualityStatus, se
   );
 }
 
-function InventoryStat({ label, value, detail, featured = false, alert = false }) {
+function InventoryStat({ label, value, detail, featured = false, alert = false, active = false, onClick }) {
+  const Element = onClick ? "button" : "article";
   return (
-    <article className={`min-h-28 border p-5 shadow-[0_10px_28px_rgba(24,28,35,.04)] ${featured ? "border-[#f2473d] bg-[#f2473d] text-white" : alert ? "border-amber-300 bg-amber-50" : "border-black/10 bg-white"}`}>
+    <Element type={onClick ? "button" : undefined} onClick={onClick} className={`min-h-28 border p-5 text-left shadow-[0_10px_28px_rgba(24,28,35,.04)] ${featured ? "border-[#f2473d] bg-[#f2473d] text-white" : alert ? `border-amber-300 bg-amber-50 ${active ? "ring-2 ring-amber-400" : "hover:border-amber-500"}` : "border-black/10 bg-white"}`}>
       <span className={`text-[9px] font-black uppercase tracking-[.15em] ${featured ? "text-white/70" : "text-neutral-500"}`}>{label}</span>
       <strong className="mt-2 block text-3xl font-black tracking-[-.04em]">{value}</strong>
       {detail && <small className={`mt-2 block text-xs ${featured ? "text-white/70" : "text-neutral-500"}`}>{detail}</small>}
-    </article>
+    </Element>
   );
 }
 
@@ -1169,7 +1235,7 @@ function VehicleImage({ src, alt, className }) {
   );
 }
 
-function CarCard({ car, canEdit, onOpen, onSold }) {
+function CarCard({ car, canEdit, onOpen, onSold, issues = [] }) {
   const sold = car.status === "sold";
   const tier = tierFor(car.price);
   return (
@@ -1183,14 +1249,14 @@ function CarCard({ car, canEdit, onOpen, onSold }) {
             {car.hot && !sold && <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0 mt-0.5" />}
             {car.isNew && !sold && <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />}
             <h3 className={`font-semibold text-[13px] leading-snug line-clamp-2 ${sold ? "text-neutral-500 line-through decoration-red-500/60" : ""}`}>
-              {car.title}
+              {cleanInventoryTitle(car)}
             </h3>
           </div>
           <div className="flex items-center justify-between mt-1.5">
             <span className={`font-bold text-sm ${sold ? "text-neutral-600" : "text-red-400"}`}>
-              {car.price ? `$${car.price}` : "—"}
+              {boardPriceLabel(car)}
             </span>
-            {car.kms && <span className="text-[11px] text-neutral-500">{car.kms} km</span>}
+            <span className="text-[11px] text-neutral-500">{boardMileageLabel(car)}</span>
           </div>
           <div className="flex flex-wrap gap-1 mt-1.5">
             {car.dealership && <Tag>{car.dealership}</Tag>}
@@ -1207,6 +1273,11 @@ function CarCard({ car, canEdit, onOpen, onSold }) {
               {car.labels.map((l) => (
                 <span key={l} title={l} className={`${LABEL_COLORS[l]} h-1.5 flex-1 rounded-full ${sold ? "opacity-30" : ""}`} />
               ))}
+            </div>
+          )}
+          {issues.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {issues.map((issue) => <span key={issue} className="border border-amber-300 bg-amber-50 px-1.5 py-1 text-[9px] font-bold text-amber-800">{issue}</span>)}
             </div>
           )}
         </div>
