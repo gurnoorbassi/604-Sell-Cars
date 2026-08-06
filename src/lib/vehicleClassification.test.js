@@ -6,6 +6,7 @@ describe("vehicle classification", () => {
     expect(inferBodyType({ title: "2024 Honda Civic Hatchback", currentBodyType: "Sedan" })).toBe("Hatchback");
     expect(inferBodyType({ title: "2024 Chrysler Grand Caravan", currentBodyType: "Van" })).toBe("Minivan");
     expect(inferBodyType({ title: "2021 Ford Mustang EcoBoost Convertible", currentBodyType: "Coupe" })).toBe("Convertible");
+    expect(inferBodyType({ title: "2021 Volkswagen Tiguan Comfortline", currentBodyType: "Sedan" })).toBe("SUV");
     expect(inferBodyType({ title: "Unknown model", currentBodyType: "SUV" })).toBe("SUV");
   });
 

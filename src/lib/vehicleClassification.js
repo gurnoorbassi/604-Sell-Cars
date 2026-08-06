@@ -12,6 +12,7 @@ export const inferBodyType = ({ title, description, currentBodyType = "" }) => {
   if (includes(text, /\b(wagon|estate)\b/) || includes(heading, /\b(allroad|avant|v60|v90|e\s?class wagon|3\s?series touring)\b/)) return "Wagon";
   if (includes(text, /\b(pickup|crew cab|double cab|quad cab|regular cab)\b/) || includes(heading, /\b(f-?150|f-?250|f-?350|silverado|sierra|ram 1500|ram 2500|ram 3500|tacoma|tundra|frontier|ridgeline|maverick|ranger|colorado|canyon|gladiator|cybertruck)\b/)) return "Truck";
   if (includes(heading, /\b(wrangler|bronco|defender)\b/) || includes(text, /\b(off[- ]?road)\b/)) return "Offroad";
+  if (includes(heading, /\b(4runner|rav4|cr-v|hr-v|pilot|passport|highlander|sequoia|pathfinder|rogue|murano|armada|qashqai|kicks|tucson|santa fe|palisade|kona|telluride|sorento|sportage|seltos|tiguan|cx-3|cx-30|cx-5|cx-50|cx-9|cx-90|forester|outback|ascent|crosstrek|escape|explorer|expedition|equinox|traverse|tahoe|suburban|terrain|acadia|yukon|cherokee|grand cherokee|compass|durango|model y|model x|cayenne|macan|range rover|evoque|velar)\b/)) return "SUV";
   if (includes(text, /\b(suv|crossover|sport utility)\b/)) return "SUV";
   if (includes(text, /\b(coupe|two-door|2-door)\b/)) return "Coupe";
   if (includes(text, /\b(sedan|saloon)\b/)) return "Sedan";
