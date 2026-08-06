@@ -447,15 +447,18 @@ function InventoryPage({ cars, filters, current, loading, error }) {
 function SellerSection() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [photoCount, setPhotoCount] = useState(0);
 
   async function submit(event) {
     event.preventDefault();
+    const form = event.currentTarget;
     setBusy(true);
     setMessage("");
     try {
-      const result = await api("/api/seller-leads", { method: "POST", body: new FormData(event.currentTarget) });
+      const result = await api("/api/seller-leads", { method: "POST", body: new FormData(form) });
       setMessage(result.message);
-      event.currentTarget.reset();
+      form.reset();
+      setPhotoCount(0);
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -476,12 +479,31 @@ function SellerSection() {
         <form onSubmit={submit} className="grid gap-4 border border-white/10 bg-[#090b0e] p-5 sm:grid-cols-2 sm:p-7">
           <SellerField label="Full name" name="name" placeholder="Your name" />
           <SellerField label="Phone" name="phone" type="tel" placeholder="(604) 555-0123" />
-          <SellerField label="Vehicle" name="vehicle" placeholder="Year, make, model, mileage" wide />
+          <SellerField label="Year" name="year" type="number" inputMode="numeric" min="1900" max="2030" placeholder="2022" />
+          <SellerField label="Make" name="make" autoComplete="organization" placeholder="Mercedes-Benz" />
+          <SellerField label="Model" name="model" placeholder="GLE 350" />
+          <SellerField label="Trim (optional)" name="trim" placeholder="4MATIC, AMG Line, etc." required={false} />
+          <SellerField label="Mileage (km)" name="mileage" type="number" inputMode="numeric" min="0" max="2000000" placeholder="65,000" />
+          <SellerField label="Expected price (optional)" name="askingPrice" type="number" inputMode="numeric" min="0" max="10000000" placeholder="45,000" required={false} />
+          <label className="text-[10px] font-black uppercase tracking-[.13em] text-neutral-500 sm:col-span-2">
+            Features or condition notes (optional)
+            <textarea name="sellerNotes" rows="3" placeholder="Accident history, recent service, key features, damage, or anything else we should know" className="mt-2 w-full border border-white/15 bg-[#111418] p-3 text-base font-normal normal-case tracking-normal text-white outline-none placeholder:text-neutral-600 focus:border-[#ef4538]" />
+          </label>
           <label className="text-[10px] font-black uppercase tracking-[.13em] text-neutral-500 sm:col-span-2">
             Photos
             <span className="mt-2 flex min-h-24 cursor-pointer items-center justify-center gap-3 border border-dashed border-white/20 bg-[#111418] px-4 text-sm font-semibold normal-case tracking-normal text-neutral-400 transition hover:border-white/40">
-              <Upload size={18} />Choose up to 8 images
-              <input type="file" name="photos" accept="image/*" multiple className="sr-only" />
+              <Upload size={18} />{photoCount ? `${photoCount} image${photoCount === 1 ? "" : "s"} selected` : "Choose up to 8 images"}
+              <input type="file" name="photos" accept="image/*" multiple className="sr-only" onChange={(event) => {
+                const count = event.target.files?.length || 0;
+                if (count > 8) {
+                  event.target.value = "";
+                  setPhotoCount(0);
+                  setMessage("Choose a maximum of 8 images.");
+                  return;
+                }
+                setMessage("");
+                setPhotoCount(count);
+              }} />
             </span>
           </label>
           <label className="flex items-start gap-3 text-xs leading-5 text-neutral-400 sm:col-span-2">
@@ -625,11 +647,11 @@ function FilterStatic({ label, value }) {
   );
 }
 
-function SellerField({ label, wide = false, ...props }) {
+function SellerField({ label, wide = false, required = true, ...props }) {
   return (
     <label className={`text-[10px] font-black uppercase tracking-[.13em] text-neutral-500 ${wide ? "sm:col-span-2" : ""}`}>
       {label}
-      <input {...props} required className="mt-2 h-12 w-full border border-white/15 bg-[#111418] px-3 text-base font-normal normal-case tracking-normal text-white outline-none placeholder:text-neutral-600 focus:border-[#ef4538]" />
+      <input {...props} required={required} className="mt-2 h-12 w-full border border-white/15 bg-[#111418] px-3 text-base font-normal normal-case tracking-normal text-white outline-none placeholder:text-neutral-600 focus:border-[#ef4538]" />
     </label>
   );
 }

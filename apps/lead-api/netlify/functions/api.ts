@@ -679,10 +679,31 @@ async function submitSellerLead(request: Request, supabase: any) {
   const form = await request.formData();
   const name = clean(form.get("name"), 150);
   const phone = normalizePhone(form.get("phone"));
-  const vehicle = clean(form.get("vehicle"), 500);
+  const legacyVehicle = clean(form.get("vehicle"), 500);
+  const year = clean(form.get("year"), 4);
+  const make = clean(form.get("make"), 80);
+  const model = clean(form.get("model"), 120);
+  const trim = clean(form.get("trim"), 120);
+  const mileage = clean(form.get("mileage"), 20).replace(/[^0-9]/g, "");
+  const askingPrice = clean(form.get("askingPrice"), 20).replace(/[^0-9]/g, "");
+  const sellerNotes = clean(form.get("sellerNotes"), 1_500);
+  const vehicleParts = [
+    [year, make, model, trim].filter(Boolean).join(" "),
+    mileage ? `${Number(mileage).toLocaleString("en-CA")} km` : "",
+    askingPrice ? `$${Number(askingPrice).toLocaleString("en-CA")} expected` : "",
+    sellerNotes ? `Notes: ${sellerNotes}` : "",
+  ].filter(Boolean);
+  const vehicle = legacyVehicle || vehicleParts.join(" · ");
   const privacyConsent = clean(form.get("privacyConsent"));
   const files = form.getAll("photos").filter((value): value is File => value instanceof File && value.size > 0);
-  if (!name || !vehicle) throw new Error("Name, phone, and vehicle are required.");
+  if (!name || !phone || (!legacyVehicle && (!year || !make || !model || !mileage))) {
+    throw new Error("Name, phone, year, make, model, and mileage are required.");
+  }
+  if (!legacyVehicle) {
+    const numericYear = Number(year);
+    if (!Number.isInteger(numericYear) || numericYear < 1900 || numericYear > 2030) throw new Error("Enter a valid vehicle year.");
+    if (!Number.isFinite(Number(mileage)) || Number(mileage) < 0 || Number(mileage) > 2_000_000) throw new Error("Enter valid mileage in kilometres.");
+  }
   if (privacyConsent !== "on") throw new Error("Privacy consent is required.");
   if (files.length > 8) throw new Error("Upload a maximum of 8 images.");
   if (files.some((file) => !file.type.startsWith("image/"))) throw new Error("Seller uploads must be images.");
