@@ -908,7 +908,7 @@ export default function SellsCarsBoard() {
           )}
           {isOwner && (
             <button onClick={openTeam}
-              className="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-200 hover:bg-amber-500/20">
+              className="flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-bold text-amber-950 shadow-sm transition hover:border-amber-400 hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500">
               <ShieldCheck className="h-4 w-4" /> Admin access
             </button>
           )}
